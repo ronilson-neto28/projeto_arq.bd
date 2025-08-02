@@ -50,12 +50,6 @@
               <div class="col-6 col-md-12 col-xl-5">
                 <h3 class="mb-2">{{ number_format($totalEmpresas, 0, ',', '.') }}</h3>
                 <!--<h3 class="mb-2">3,897</h3>-->
-                <div class="d-flex align-items-baseline">
-                  <p class="text-success">
-                    <span>+3.3%</span>
-                    <i data-lucide="arrow-up" class="icon-sm mb-1"></i>
-                  </p>
-                </div>
               </div>
               <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-center align-items-center">
                 <i data-lucide="home" style="width: 40px; height: 40px;"></i>
@@ -87,10 +81,6 @@
               <div class="col-6 col-md-12 col-xl-5">
                 <h3 class="mb-2">{{ number_format($totalFuncionarios, 0, ',', '.') }}</h3>
                 <div class="d-flex align-items-baseline">
-                  <p class="text-danger">
-                    <span>-2.8%</span>
-                    <i data-lucide="arrow-down" class="icon-sm mb-1"></i>
-                  </p>
                 </div>
               </div>
               <div class="col-6 col-md-12 col-xl-7">
@@ -173,44 +163,6 @@
     </div>
   </div>
 </div> <!-- row -->
-
-<!--<div class="row">         DASHBOARD LEGAL - MAIS NAO IREI USAR
-  <div class="col-12 col-xl-12 grid-margin stretch-card">
-    <div class="card overflow-hidden">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
-          <h6 class="card-title mb-0">Revenue</h6>
-          <div class="dropdown">
-            <a type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
-            </div>
-          </div>
-        </div>
-        <div class="row align-items-start">
-          <div class="col-md-7">
-            <p class="text-secondary fs-13px mb-3 mb-md-0">Revenue is the income that a business has from its normal business activities, usually from the sale of goods and services to customers.</p>
-          </div>
-          <div class="col-md-5 d-flex justify-content-md-end">
-            <div class="btn-group mb-3 mb-md-0" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-outline-primary">Today</button>
-              <button type="button" class="btn btn-outline-primary d-none d-md-block">Week</button>
-              <button type="button" class="btn btn-primary">Month</button>
-              <button type="button" class="btn btn-outline-primary">Year</button>
-            </div>
-          </div>
-        </div>
-        <div id="revenueChart"></div>
-      </div>
-    </div>
-  </div>
-</div> -->
 
 <div class="row">
   <div class="col-lg-7 col-xl-8 grid-margin stretch-card">
