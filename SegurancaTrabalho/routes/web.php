@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EmpresaController;
@@ -12,6 +13,83 @@ use App\Http\Controllers\TipoDeRiscoController;
 use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
 
+
+
+
+////////////////////////////////////////
+// ROTAS PARA NÃO AUTENTICADOS (guest)
+////////////////////////////////////////
+Route::middleware('guest')->prefix('auth')->group(function () {
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login'])->name('login.post');
+
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register'])->name('register.post');
+});
+
+////////////////////////////////////////
+// ROTAS AUTENTICADAS (auth obrigatório)
+////////////////////////////////////////
+Route::middleware('auth')->group(function () {
+    // DASHBOARD
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // LOGOUT
+    Route::post('/auth/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // EMPRESAS
+    Route::prefix('empresas')->group(function () {
+        Route::get('cadastrar', [EmpresaController::class, 'create'])->name('empresas.create');
+        Route::post('cadastrar', [EmpresaController::class, 'store'])->name('empresas.store');
+        Route::get('listar', [EmpresaController::class, 'index'])->name('empresas.index');
+    });
+
+    // FUNCIONÁRIOS
+    Route::prefix('funcionarios')->group(function () {
+        Route::get('cadastrar', [FuncionarioController::class, 'create'])->name('funcionarios.create');
+        Route::post('cadastrar', [FuncionarioController::class, 'store'])->name('funcionarios.store');
+        Route::get('listar', [FuncionarioController::class, 'index'])->name('funcionarios.index');
+    });
+
+    // CARGOS
+    Route::prefix('cargos')->group(function () {
+        Route::get('cadastrar', [CargoController::class, 'create'])->name('cargos.create');
+        Route::post('cadastrar', [CargoController::class, 'store'])->name('cargos.store');
+        Route::get('listar', [CargoController::class, 'index'])->name('cargos.index');
+    });
+
+    // TIPOS DE RISCO
+    Route::prefix('tipos-de-risco')->group(function () {
+        Route::get('cadastrar', [TipoDeRiscoController::class, 'create'])->name('tipos_risco.create');
+        Route::post('cadastrar', [TipoDeRiscoController::class, 'store'])->name('tipos_risco.store');
+        Route::get('listar', [TipoDeRiscoController::class, 'index'])->name('tipos_risco.index');
+    });
+
+    // RISCOS
+    Route::prefix('riscos')->group(function () {
+        Route::get('cadastrar', [RiscoController::class, 'create'])->name('riscos.create');
+        Route::post('cadastrar', [RiscoController::class, 'store'])->name('riscos.store');
+        Route::get('listar', [RiscoController::class, 'index'])->name('riscos.index');
+    });
+
+    // FORMULÁRIOS EXTRAS (se desejar manter)
+    Route::prefix('forms')->group(function(){
+        Route::get('cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
+        Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
+        Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
+        Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
+    });
+
+    // GRÁFICOS EXEMPLOS
+    Route::prefix('charts')->group(function () {
+        Route::get('apex', fn() => view('pages.charts.apex'));
+        Route::get('chartjs', fn() => view('pages.charts.chartjs'));
+    });
+
+    // (adicione aqui outras rotas protegidas se quiser)
+});
+
+/*
 Route::get('/', function () {
     return view('dashboard');
 });
@@ -86,6 +164,7 @@ Route::get('/', [DashboardController::class, 'index']);
 
 
 
+*/
 
 
 
@@ -94,29 +173,21 @@ Route::get('/', [DashboardController::class, 'index']);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////
+// ROTAS DE ERRO E UTILITÁRIAS
+////////////////////////////////////////
 Route::group(['prefix' => 'error'], function(){
-    Route::get('404', function () { return view('pages.error.404'); });
-    Route::get('500', function () { return view('pages.error.500'); });
+    Route::get('404', fn() => view('pages.error.404'));
+    Route::get('500', fn() => view('pages.error.500'));
 });
 
+// LIMPAR CACHE VIA WEB (use com cuidado)
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
     return "Cache is cleared";
 });
 
-// 404 for undefined routes
+// CATCH-ALL → Página 404 para rotas inválidas
 Route::any('/{page?}',function(){
     return View::make('pages.error.404');
 })->where('page','.*');

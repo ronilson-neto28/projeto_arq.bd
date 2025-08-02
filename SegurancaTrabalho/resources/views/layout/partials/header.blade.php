@@ -101,10 +101,13 @@
                   </a>
                 </li>
                 <li>
-                  <a href="{{ url('/auth/login') }}" class="dropdown-item py-2 text-body ms-0">
-                    <i class="me-2 icon-md" data-lucide="log-out"></i>
-                    <span>Sair</span>
-                  </a>
+                  <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item py-2 text-body ms-0 w-100 text-start" style="background: none; border: none;">
+                      <i class="me-2 icon-md" data-lucide="log-out"></i>
+                      <span>Sair</span>
+                    </button>
+                  </form>
                 </li>
               </ul>
             </div>
