@@ -48,7 +48,8 @@
             </div>
             <div class="row">
               <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">3,897</h3>
+                <h3 class="mb-2">{{ number_format($totalEmpresas, 0, ',', '.') }}</h3>
+                <!--<h3 class="mb-2">3,897</h3>-->
                 <div class="d-flex align-items-baseline">
                   <p class="text-success">
                     <span>+3.3%</span>
@@ -56,8 +57,9 @@
                   </p>
                 </div>
               </div>
-              <div class="col-6 col-md-12 col-xl-7">
-                <div id="customersChart" class="mt-md-3 mt-xl-0"></div>
+              <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-center align-items-center">
+                <i data-lucide="home" style="width: 40px; height: 40px;"></i>
+                <!--<div id="customersChart" class="mt-md-3 mt-xl-0"></div>-->
               </div>
             </div>
           </div>
@@ -83,7 +85,7 @@
             </div>
             <div class="row">
               <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">35,084</h3>
+                <h3 class="mb-2">{{ number_format($totalFuncionarios, 0, ',', '.') }}</h3>
                 <div class="d-flex align-items-baseline">
                   <p class="text-danger">
                     <span>-2.8%</span>
@@ -390,68 +392,28 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>NobleUI jQuery</td>
-                <td>01/01/2025</td>
-                <td>26/04/2025</td>
-                <td><span class="badge bg-danger">Vencido</span></td>
-                <td>Leonardo Payne</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              <tr>
-                <td>2</td>
-                <td>NobleUI Angular</td>
-                <td>01/01/2025</td>
-                <td>26/04/2025</td>
-                <td><span class="badge bg-success">No Prazo</span></td>
-                <td>Carl Henson</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>NobleUI ReactJs</td>
-                <td>01/05/2025</td>
-                <td>10/09/2025</td>
-                <td><span class="badge bg-info"></span></td>
-                <td>Jensen Combs</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>NobleUI VueJs</td>
-                <td>01/01/2025</td>
-                <td>31/11/2025</td>
-                <td><span class="badge bg-warning">Work in Progress</span></td>
-                <td>Amiah Burton</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>NobleUI Laravel</td>
-                <td>01/01/2025</td>
-                <td>31/12/2025</td>
-                <td><span class="badge bg-danger">Coming soon</span></td>
-                <td>Yaretzi Mayo</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>NobleUI NodeJs</td>
-                <td>01/01/2025</td>
-                <td>31/12/2025</td>
-                <td><span class="badge bg-primary">Coming soon</span></td>
-                <td>Carl Henson</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
-              <tr>
-                <td class="border-bottom">3</td>
-                <td class="border-bottom">NobleUI EmberJs</td>
-                <td class="border-bottom">01/05/2025</td>
-                <td class="border-bottom">10/11/2025</td>
-                <td class="border-bottom"><span class="badge bg-info">Pending</span></td>
-                <td class="border-bottom">Jensen Combs</td>
-                <td> <button class="btn btn-primary">Gerar Exame</button> <td>
-              </tr>
+              @foreach ($funcionarios as $funcionario)
+                <tr>
+                  <td>{{ $funcionario->id }}</td>
+                  <td>{{ $funcionario->nome }}</td>
+                  <td></td> <!-- Data Inicial -->
+                  <td></td> <!-- Data Final -->
+                  <td>
+                    @php
+                      $status = collect([
+                        ['label' => 'Vencido', 'class' => 'bg-danger'],
+                        ['label' => 'No Prazo', 'class' => 'bg-success'],
+                        ['label' => 'Work in Progress', 'class' => 'bg-warning'],
+                        ['label' => 'Coming soon', 'class' => 'bg-primary'],
+                        ['label' => 'Pending', 'class' => 'bg-info'],
+                      ])->random();
+                    @endphp
+                    <span class="badge {{ $status['class'] }}">{{ $status['label'] }}</span>
+                  </td>
+                  <td>{{ $funcionario->empresa->nome ?? '—' }}</td>
+                  <td><button class="btn btn-primary">Gerar Exame</button></td>
+                </tr>
+              @endforeach
             </tbody>
           </table>
         </div>

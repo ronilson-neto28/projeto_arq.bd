@@ -280,24 +280,6 @@
             <span class="menu-title">Pagina Inicial</span>
           </a>
         </li>
-        <!--<li class="nav-item {{ active_class(['email/*', 'apps/*']) }}">
-          <a href="#" class="nav-link">
-            <i class="link-icon" data-lucide="mail"></i>
-            <span class="menu-title">Apps</span>
-            <i class="link-arrow"></i>
-          </a>
-          <div class="submenu">
-            <ul class="submenu-item">
-              <li class="category-heading">Email</li>
-              <li class="nav-item"><a class="nav-link {{ active_class(['email/inbox']) }}" href="{{ url('/email/inbox') }}">Inbox</a></li>
-              <li class="nav-item"><a class="nav-link {{ active_class(['email/read']) }}" href="{{ url('/email/read') }}">Read</a></li>
-              <li class="nav-item"><a class="nav-link {{ active_class(['email/compose']) }}" href="{{ url('/email/compose') }}">Compose</a></li>
-              <li class="category-heading">Other<li>
-              <li class="nav-item"><a class="nav-link {{ active_class(['apps/chat']) }}" href="{{ url('/apps/chat') }}">Chat</a></li>
-              <li class="nav-item"><a class="nav-link {{ active_class(['apps/calendar']) }}" href="{{ url('/apps/calendar') }}">Calendar</a></li>
-            </ul>
-          </div>
-        </li>-->
         <!--<li class="nav-item mega-menu {{ active_class(['ui-components/*', 'advanced-ui/*']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="feather"></i>
@@ -376,7 +358,7 @@
             </div>
           </div>
         </li>-->
-        <li class="nav-item {{ active_class(['forms/*']) }}">
+        <li class="nav-item {{ active_class(['forms/cadastrar-funcionario']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="user"></i>
             <span class="menu-title">Funcionários</span>
@@ -389,7 +371,7 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item {{ active_class(['forms/*']) }}">
+        <li class="nav-item {{ active_class(['forms/cadastrar-empresa']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="briefcase"></i>
             <span class="menu-title">Empresas</span>
@@ -430,7 +412,7 @@
             </div>
           </div>
         </li>-->
-        <!--<li class="nav-item {{ active_class(['icons/*']) }}">
+        <li class="nav-item {{ active_class(['icons/*']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="smile"></i>
             <span class="menu-title">Icons</span>
@@ -443,7 +425,7 @@
               <li class="nav-item"><a href="{{ url('/icons/mdi-icons') }}" class="nav-link {{ active_class(['icons/mdi-icons']) }}">Mdi Icons</a></li>
             </ul>
           </div>
-        </li>-->
+        </li>
         <!--<li class="nav-item mega-menu {{ active_class(['general/*', 'error/*', 'auth/*']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="book"></i>
