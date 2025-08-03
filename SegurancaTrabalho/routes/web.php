@@ -14,8 +14,6 @@ use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
 
 
-
-
 ////////////////////////////////////////
 // ROTAS PARA NÃO AUTENTICADOS (guest)
 ////////////////////////////////////////
