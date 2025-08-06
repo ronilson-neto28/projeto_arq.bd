@@ -363,7 +363,9 @@
                     <span class="badge {{ $status['class'] }}">{{ $status['label'] }}</span>
                   </td>
                   <td>{{ $funcionario->empresa->nome ?? '—' }}</td>
-                  <td><button class="btn btn-primary">Gerar Exame</button></td>
+                  <td>
+                    <a href="{{ url('/forms/gerar-exame') }}" class="btn btn-primary">Gerar Exame</a>
+                  </td>
                 </tr>
               @endforeach
             </tbody>

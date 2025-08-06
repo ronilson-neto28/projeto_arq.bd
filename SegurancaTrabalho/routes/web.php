@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
         Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
         Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
+        Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
     });
 
     // GRÁFICOS EXEMPLOS
