@@ -13,7 +13,7 @@
         </div>
         <div class="col-md-8 ps-md-0">
           <div class="auth-form-wrapper px-4 py-5">
-            <a href="#" class="nobleui-logo d-block mb-2">Noble<span>UI</span></a>
+            <a href="#" class="nobleui-logo d-block mb-2">PRO<span>ATIVA</span></a>
             <h5 class="text-secondary fw-normal mb-4">Bem-vindo de volta! Entre na sua conta.</h5>
             <form method="POST" action="{{ route('login.post') }}">
               @csrf
@@ -31,18 +31,14 @@
                   </span>
                 </div>
               </div>
-              
-
-
-
-
-
-
-
-
-              <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                <label class="form-check-label" for="remember">Lembre-se de Mim</label>
+              <div class="form-check mb-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                  <label class="form-check-label" for="remember">Lembre-se de Mim</label>
+                </div>
+                <div>
+                  <a href="{{ route('password.request') }}" class="text-decoration-none">Esqueci minha senha</a>
+                </div>
               </div>
               <div>
                 <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0">Login</button>

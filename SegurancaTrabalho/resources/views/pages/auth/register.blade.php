@@ -11,7 +11,7 @@
         </div>
         <div class="col-md-8 ps-md-0">
           <div class="auth-form-wrapper px-4 py-5">
-            <a href="#" class="nobleui-logo d-block mb-2">Noble<span>UI</span></a>
+            <a href="#" class="nobleui-logo d-block mb-2">PRO<span>ATIVA</span></a>
             <h5 class="text-secondary fw-normal mb-4">Crie uma conta gratuita.</h5>
             <!--{{-- MENSAGEM DE SUCESSO --}}-->
             @if (session('success'))

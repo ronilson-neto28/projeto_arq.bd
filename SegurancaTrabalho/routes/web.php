@@ -6,12 +6,15 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\CodeConfirmationController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\TipoDeRiscoController;
 use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
+
 
 
 ////////////////////////////////////////
@@ -23,6 +26,13 @@ Route::middleware('guest')->prefix('auth')->group(function () {
 
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register'])->name('register.post');
+
+    Route::get('forgot-senha', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+    Route::post('forgot-senha/send', [PasswordResetController::class, 'sendCode'])->name('password.code.send');
+
+    Route::get('confirm-codigo', [CodeConfirmationController::class, 'showConfirmForm'])->name('password.confirm');
+    Route::post('confirm-codigo', [CodeConfirmationController::class, 'resetPassword'])->name('password.confirm.code');
+    
 });
 
 ////////////////////////////////////////
