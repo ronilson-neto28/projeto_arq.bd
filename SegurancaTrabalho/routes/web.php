@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\ForgotSenhaController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\CodeConfirmationController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\FuncionarioController;
@@ -20,6 +22,15 @@ use App\Http\Controllers\DashboardController;
 ////////////////////////////////////////
 // ROTAS PARA NÃO AUTENTICADOS (guest)
 ////////////////////////////////////////
+
+Route::get('/test-mail', function () {
+    Mail::raw('Teste de e-mail via Mailpit 🚀', function ($m) {
+        $m->to('teste@exemplo.local')->subject('Mailpit OK');
+    });
+    return 'OK';
+});
+
+
 Route::middleware('guest')->prefix('auth')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login'])->name('login.post');
@@ -27,11 +38,22 @@ Route::middleware('guest')->prefix('auth')->group(function () {
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register'])->name('register.post');
 
-    Route::get('forgot-senha', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
-    Route::post('forgot-senha/send', [PasswordResetController::class, 'sendCode'])->name('password.code.send');
+    // Exibe o formulário de esqueci a senha
+    Route::get('/forgot-password', [ForgotSenhaController::class, 'showLinkRequestForm'])
+        ->name('password.request');
 
-    Route::get('confirm-codigo', [CodeConfirmationController::class, 'showConfirmForm'])->name('password.confirm');
-    Route::post('confirm-codigo', [CodeConfirmationController::class, 'resetPassword'])->name('password.confirm.code');
+    // Envia o e-mail com o link de redefinição
+    Route::post('/forgot-password', [ForgotSenhaController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
+
+    // Link de redefinição recebido por e-mail (Laravel exige esse name: password.reset)
+    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+    // Submete nova senha
+    Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+    Route::get('CodigoRecuperacaoEmail', [CodeConfirmationController::class, 'index'])->name('codigoRecuperação.index');
+    Route::post('CodigoRecuperacaoEmail', [CodeConfirmationController::class, 'store'])->name('codigoRecuperação.store');
     
 });
 
@@ -123,6 +145,15 @@ Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
     return "Cache is cleared";
 });
+
+// ROTA DE TESTE SMTP (remover em produção)
+/*Route::get('/teste-smtp', function () {
+    \Illuminate\Support\Facades\Mail::raw('Teste SMTP MailerSend', function ($m) {
+        $m->to(env('MAIL_ADMIN', config('mail.from.address')))
+          ->subject('Teste SMTP');
+    });
+    return 'Email de teste enviado!';
+});*/
 
 // CATCH-ALL → Página 404 para rotas inválidas
 Route::any('/{page?}',function(){

@@ -2,32 +2,37 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use MailerSend\LaravelDriver\MailerSendTrait;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
 
 class CodigoRecuperacaoEmail extends Mailable
 {
-    use Queueable, SerializesModels, MailerSendTrait;
+    public int $code;
 
-    public $codigo;
-
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($codigo)
+    public function __construct(int $code)
     {
-        $this->codigo = $codigo;
+        $this->code = $code;
     }
 
-    /**
-     * Build the message.
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->subject('Código de Recuperação de Senha')
-                    ->view('pages.emails.codigo_recuperacao');
+        return new Envelope(subject: 'Código de Recuperação de Senha');
     }
+
+    public function content(): Content
+{
+    return new Content(
+            view: 'pages.emails.codigo_recuperacao', // <- caminho da sua view
+            with: ['codigo' => $this->code]
+        );
+    }
+    /*public function content(): Content
+    {
+        return new Content(view: 'pages.emails.codigo_recuperacao', with: ['code' => $this->code]);
+        /*return new Content(
+            markdown: 'emails.codigo-recuperacao', // gerado pelo --markdown
+            with: ['code' => $this->code]
+        );
+    }*/
 }
