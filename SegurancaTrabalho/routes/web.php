@@ -1,5 +1,7 @@
 <?php
 
+
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +18,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\TipoDeRiscoController;
 use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\ListarExamesController;
 
 
 ////////////////////////////////////////
@@ -104,11 +106,24 @@ Route::middleware('auth')->group(function () {
 
     // FORMULÁRIOS EXTRAS (se desejar manter)
     Route::prefix('forms')->group(function(){
-        Route::get('cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
-        Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
-        Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
-        Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
-        Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
+        //Route::get('cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
+        //Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
+        //Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
+        //Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
+        //Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
+        // EMPRESAS
+        Route::get('listar-empresa',   [EmpresaController::class, 'index'])->name('empresas.index');
+        Route::get('cadastrar-empresa',[EmpresaController::class, 'create'])->name('empresas.create');
+        Route::post('cadastrar-empresa',[EmpresaController::class, 'store'])->name('empresas.store');
+
+        // FUNCIONÁRIOS
+        Route::get('listar-funcionario',   [FuncionarioController::class, 'index'])->name('funcionarios.index');
+        Route::get('cadastrar-funcionario',[FuncionarioController::class, 'create'])->name('funcionarios.create');
+        Route::post('cadastrar-funcionario',[FuncionarioController::class, 'store'])->name('funcionarios.store');
+        
+        // agora usando controller (clean & testável)
+        Route::get('listar-exames', [ListarExamesController::class, 'index'])
+            ->name('forms.exames.index');
     });
 
     // GRÁFICOS EXEMPLOS

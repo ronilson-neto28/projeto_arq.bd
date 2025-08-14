@@ -1,430 +1,237 @@
 @extends('layout.master')
 
 @section('content')
-<nav class="page-breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#">Forms</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Basic Elements</li>
-  </ol>
-</nav>
-
-<div class="row">
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-
-        <h6 class="card-title">Basic Form</h6>
-
-        <form class="forms-sample">
-          <div class="mb-3">
-            <label for="exampleInputUsername1" class="form-label">Username</label>
-            <input type="text" class="form-control" id="exampleInputUsername1" autocomplete="off" placeholder="Username">
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" autocomplete="off" placeholder="Password">
-          </div>
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">
-              Remember me
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary me-2">Submit</button>
-          <button class="btn btn-secondary">Cancel</button>
-        </form>
-
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-
-        <h6 class="card-title">Horizontal Form</h6>
-
-        <form class="forms-sample">
-          <div class="row mb-3">
-            <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Username</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Email">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Email</label>
-            <div class="col-sm-9">
-              <input type="email" class="form-control" id="exampleInputEmail2" autocomplete="off" placeholder="Email">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label for="exampleInputMobile" class="col-sm-3 col-form-label">Mobile</label>
-            <div class="col-sm-9">
-              <input type="number" class="form-control" id="exampleInputMobile" placeholder="Mobile number">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Password</label>
-            <div class="col-sm-9">
-              <input type="password" class="form-control" id="exampleInputPassword2" autocomplete="off" placeholder="Password">
-            </div>
-          </div>
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">
-              Remember me
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary me-2">Submit</button>
-          <button class="btn btn-secondary">Cancel</button>
-        </form>
-
-      </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+  <div>
+    <h4 class="mb-3 mb-md-0">Funcionários</h4>
+    <p class="text-muted m-0">Listagem com filtros por Empresa e busca geral.</p>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-12 grid-margin stretch-card">
-    <div class="card">
+  <div class="col-12">
+    <div class="card shadow-sm rounded-3">
       <div class="card-body">
-        <h6 class="card-title">Inputs</h6>
-        <form>
-
-          <div class="mb-3">
-            <label for="exampleInputText1" class="form-label">Text Input</label>
-            <input type="text" class="form-control" id="exampleInputText1" value="Amiah Burton" placeholder="Enter Name">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputEmail3" class="form-label">Email Input</label>
-            <input type="email" class="form-control" id="exampleInputEmail3" value="amiahburton@gmail.com" placeholder="Enter Email">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputNumber1" class="form-label">Number Input</label>
-            <input type="number" class="form-control" id="exampleInputNumber1" value="6473786">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputPassword3" class="form-label">Password Input</label>
-            <input type="password" class="form-control" id="exampleInputPassword3" value="amiahburton" placeholder="Enter Password">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputDisabled1" class="form-label">Disabled Input</label>
-            <input type="text" class="form-control" id="exampleInputDisabled1" disabled value="Amiah Burton">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputPlaceholder" class="form-label">Placeholder</label>
-            <input type="text" class="form-control" id="exampleInputPlaceholder" placeholder="Enter Your Name">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleInputReadonly" class="form-label">Readonly</label>
-            <input type="text" class="form-control" id="exampleInputReadonly" readonly value="Amiah Burton">
-          </div>
-
-          <div class="mb-3">
-            <label for="exampleFormControlSelect1" class="form-label">Select Input</label>
-            <select class="form-select" id="exampleFormControlSelect1">
-              <option selected disabled>Select your age</option>
-              <option>12-18</option>
-              <option>18-22</option>
-              <option>22-30</option>
-              <option>30-60</option>
-              <option>Above 60</option>
+        <form id="formFiltroFuncs" class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label">Empresa</label>
+            <select id="filtroEmpresaFunc" class="form-select">
+              <option value="">Todas</option>
+              {{-- opções serão preenchidas via JS a partir das linhas --}}
             </select>
           </div>
-
-          <div class="mb-3">
-            <label for="exampleFormControlSelect2" class="form-label">Example multiple select</label>
-            <select multiple class="form-select" id="exampleFormControlSelect2">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
+          <div class="col-md-3">
+            <label class="form-label">Cargo</label>
+            <select id="filtroCargoFunc" class="form-select">
+              <option value="">Todos</option>
+              {{-- opções via JS (se houver cargo na linha) --}}
             </select>
           </div>
-
-          <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+          <div class="col-md-4">
+            <label class="form-label">Busca</label>
+            <input type="text" id="buscaFunc" class="form-control" placeholder="Nome, e-mail...">
           </div>
-
-          <div class="mb-3">
-            <label for="customRange1" class="form-label">Range Input</label>
-            <input type="range" class="form-range" id="formRange1">
-          </div>
-
-          <div class="mb-4">
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="checkDefault">
-              <label class="form-check-label" for="checkDefault">
-                Default checkbox
-              </label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="checkChecked" checked>
-              <label class="form-check-label" for="checkChecked">
-                Checked
-              </label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="checkDisabled" disabled>
-              <label class="form-check-label" for="checkDisabled">
-                Disabled checkbox
-              </label>
-            </div>
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="checkCheckedDisabled" disabled checked>
-              <label class="form-check-label" for="checkCheckedDisabled">
-                Disabled checked
-              </label>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input" id="checkInline">
-              <label class="form-check-label" for="checkInline">
-                Inline checkbox
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input" id="checkInlineChecked" checked>
-              <label class="form-check-label" for="checkInlineChecked">
-                Checked
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input" id="checkInlineDisabled" disabled>
-              <label class="form-check-label" for="checkInlineDisabled">
-                Inline disabled checkbox
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input" id="checkInlineCheckedDisabled" disabled checked>
-              <label class="form-check-label" for="checkInlineCheckedDisabled">
-                Disabled checked
-              </label>
-            </div>
-          </div>
-          <div class="mb-4">
-            <div class="form-check mb-2">
-              <input type="radio" class="form-check-input" name="radioDefault" id="radioDefault">
-              <label class="form-check-label" for="radioDefault">
-                Default
-              </label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="radio" class="form-check-input" name="radioDefault" id="radioDefault1">
-              <label class="form-check-label" for="radioDefault1">
-                Default
-              </label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="radio" class="form-check-input" name="radioSelected" id="radioSelected" checked>
-              <label class="form-check-label" for="radioSelected">
-                Selected
-              </label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="radio" class="form-check-input" name="radioDisabled" id="radioDisabled" disabled>
-              <label class="form-check-label" for="radioDisabled">
-                Disabled
-              </label>
-            </div>
-            <div class="form-check">
-              <input type="radio" class="form-check-input" name="radioSelectedDisabled" id="radioSelectedDisabled" disabled checked>
-              <label class="form-check-label" for="radioSelectedDisabled">
-                Selected and disabled
-              </label>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" name="radioInline" id="radioInline">
-              <label class="form-check-label" for="radioInline">
-                Default
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" name="radioInline" id="radioInline1">
-              <label class="form-check-label" for="radioInline1">
-                Default
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" name="radioInlineSelected" id="radioInlineSelected" checked>
-              <label class="form-check-label" for="radioInlineSelected">
-                Selected
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" name="radioInlineDisabled" id="radioInlineDisabled" disabled>
-              <label class="form-check-label" for="radioInlineDisabled">
-                Disabled
-              </label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" name="radioInlineSelectedDisabled" id="radioInlineSelectedDisabled" disabled checked>
-              <label class="form-check-label" for="radioInlineSelectedDisabled">
-                Selected and disabled
-              </label>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <div class="form-check form-switch mb-2">
-              <input type="checkbox" class="form-check-input" id="formSwitch1">
-              <label class="form-check-label" for="formSwitch1">Toggle this switch element</label>
-            </div>
-            <div class="form-check form-switch">
-              <input type="checkbox" class="form-check-input" disabled id="formSwitch2">
-              <label class="form-check-label" for="formSwitch2">Disabled switch element</label>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="formFile">File upload</label>
-            <input class="form-control" type="file" id="formFile">
-          </div>
-
-          <button class="btn btn-primary" type="submit">Submit form</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Input Size</h6>
-        <p class="mb-3">Use class <code>.form-control-lg</code> or <code>.form-control-sm</code></p>								
-        <form>
-          <div class="mb-3">
-            <label for="colFormLabelSm" class="form-label">Small</label>
-            <input type="email" class="form-control form-control-sm" id="colFormLabelSm" placeholder="form-control-sm">
-          </div>
-          <div class="mb-3">
-            <label for="colFormLabel" class="form-label">Default</label>
-            <input type="email" class="form-control" id="colFormLabel" placeholder="form-control">
-          </div>
-          <div>
-            <label for="colFormLabelLg" class="form-label">Large</label>
-            <input type="email" class="form-control form-control-lg" id="colFormLabelLg" placeholder="form-control-lg">
+          <div class="col-md-2 d-flex gap-2">
+            <button type="button" id="btnAplicarFunc" class="btn btn-primary w-100">Aplicar</button>
+            <button type="button" id="btnLimparFunc" class="btn btn-outline-secondary w-100">Limpar</button>
           </div>
         </form>
       </div>
     </div>
   </div>
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
+
+  <div class="col-12">
+    <div class="card shadow-sm rounded-3">
       <div class="card-body">
-        <h6 class="card-title">Select Size</h6>
-        <p class="mb-3">Use class <code>.form-select-lg</code> or <code>.form-select-sm</code></p>
-        <div class="mb-3">
-          <label class="form-label">Small</label>
-          <select class="form-select form-select-sm mb-3">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle" id="tabelaFuncionarios">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Funcionário</th>
+                <th>Empresa</th>
+                <th>Cargo</th>
+                <th>E-mail</th>
+                <th>Gênero</th>
+                <th>Nascimento</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse(($funcionarios ?? []) as $f)
+                @php
+                  $empresaNome = $f->empresa->nome ?? ($f->empresa_nome ?? '');
+                  $cargoNome   = $f->cargo->nome ?? ($f->cargo_nome ?? '');
+                  $nascFmt     = !empty($f->data_nascimento) ? \Carbon\Carbon::parse($f->data_nascimento)->format('d/m/Y') : '-';
+                  $createdFmt  = optional($f->created_at)->format('d/m/Y') ?? '-';
+                  $updatedFmt  = optional($f->updated_at)->format('d/m/Y') ?? '-';
+                @endphp
+                <tr
+                  data-empresa-id="{{ $f->empresa_id ?? '' }}"
+                  data-empresa-nome="{{ $empresaNome }}"
+                  data-cargo-nome="{{ $cargoNome }}"
+                  data-nome="{{ $f->nome ?? '' }}"
+                  data-email="{{ $f->email ?? '' }}"
+                >
+                  <td>{{ $f->id }}</td>
+                  <td>{{ $f->nome ?? '-' }}</td>
+                  <td>{{ $empresaNome ?: '-' }}</td>
+                  <td>{{ $cargoNome ?: '-' }}</td>
+                  <td>{{ $f->email ?? '-' }}</td>
+                  <td class="text-capitalize">{{ $f->genero ?? '-' }}</td>
+                  <td>{{ $nascFmt }}</td>
+                  <td class="text-end">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalFuncionario"
+                      data-id="{{ $f->id }}"
+                      data-nome="{{ $f->nome ?? '-' }}"
+                      data-email="{{ $f->email ?? '-' }}"
+                      data-empresa="{{ $empresaNome ?: '-' }}"
+                      data-cargo="{{ $cargoNome ?: '-' }}"
+                      data-genero="{{ $f->genero ?? '-' }}"
+                      data-nascimento="{{ $nascFmt }}"
+                      data-created="{{ $createdFmt }}"
+                      data-updated="{{ $updatedFmt }}"
+                    >
+                      Detalhes
+                    </button>
+                  </td>
+                </tr>
+              @empty
+                <tr><td colspan="8" class="text-center text-muted py-4">Nenhum funcionário encontrado.</td></tr>
+              @endforelse
+            </tbody>
+          </table>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Default</label>
-          <select class="form-select mb-3">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Large</label>
-          <select class="form-select form-select-lg">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-        </div>
+        <small class="text-muted">Os filtros de Empresa e Cargo são preenchidos automaticamente a partir da listagem.</small>
       </div>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12 stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Form Grid</h6>
-          <form>
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="mb-3">
-                  <label class="form-label">First Name</label>
-                  <input type="text" class="form-control" placeholder="Enter first name">
-                </div>
-              </div><!-- Col -->
-              <div class="col-sm-6">
-                <div class="mb-3">
-                  <label class="form-label">Last Name</label>
-                  <input type="text" class="form-control" placeholder="Enter last name">
-                </div>
-              </div><!-- Col -->
-            </div><!-- Row -->
-            <div class="row">
-              <div class="col-sm-4">
-                <div class="mb-3">
-                  <label class="form-label">City</label>
-                  <input type="text" class="form-control" placeholder="Enter city">
-                </div>
-              </div><!-- Col -->
-              <div class="col-sm-4">
-                <div class="mb-3">
-                  <label class="form-label">State</label>
-                  <input type="text" class="form-control" placeholder="Enter state">
-                </div>
-              </div><!-- Col -->
-              <div class="col-sm-4">
-                <div class="mb-3">
-                  <label class="form-label">Zip</label>
-                  <input type="text" class="form-control" placeholder="Enter zip code">
-                </div>
-              </div><!-- Col -->
-            </div><!-- Row -->
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="mb-3">
-                  <label class="form-label">Email address</label>
-                  <input type="email" class="form-control" placeholder="Enter email">
-                </div>
-              </div><!-- Col -->
-              <div class="col-sm-6">
-                <div class="mb-3">
-                  <label class="form-label">Password</label>
-                  <input type="password" class="form-control" autocomplete="off" placeholder="Password">
-                </div>
-              </div><!-- Col -->
-            </div><!-- Row -->
-          </form>
-          <button type="button" class="btn btn-primary submit">Submit form</button>
+{{-- Modal --}}
+<div class="modal fade" id="modalFuncionario" tabindex="-1" aria-labelledby="modalFuncionarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content rounded-3">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFuncionarioLabel">Detalhes do Funcionário</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row mb-0" id="dlFuncionario"></dl>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
 </div>
 @endsection
+
+@push('custom-scripts')
+<script>
+(function(){
+  const q = (s)=>document.querySelector(s);
+  const qa = (s)=>Array.from(document.querySelectorAll(s));
+  const selEmp = q('#filtroEmpresaFunc');
+  const selCargo = q('#filtroCargoFunc');
+  const busca = q('#buscaFunc');
+  const btnA = q('#btnAplicarFunc');
+  const btnL = q('#btnLimparFunc');
+  const linhas = qa('#tabelaFuncionarios tbody tr');
+
+  function normaliza(t){ return (t||'').toString().toLowerCase().trim(); }
+
+  // Preenche selects a partir das linhas
+  const empresasSet = new Set(), cargosSet = new Set();
+  linhas.forEach(tr=>{
+    const en = tr.getAttribute('data-empresa-nome') || '';
+    const cn = tr.getAttribute('data-cargo-nome') || '';
+    if (en) empresasSet.add(en);
+    if (cn) cargosSet.add(cn);
+  });
+  [...empresasSet].sort().forEach(n=>{
+    const opt = document.createElement('option'); opt.value = n; opt.textContent = n; selEmp?.appendChild(opt);
+  });
+  [...cargosSet].sort().forEach(n=>{
+    const opt = document.createElement('option'); opt.value = n; opt.textContent = n; selCargo?.appendChild(opt);
+  });
+
+  function aplica(){
+    const emp = normaliza(selEmp.value);
+    const cargo = normaliza(selCargo.value);
+    const txt = normaliza(busca.value);
+
+    linhas.forEach(tr=>{
+      const trEmp = normaliza(tr.getAttribute('data-empresa-nome'));
+      const trCar = normaliza(tr.getAttribute('data-cargo-nome'));
+      const cols = [
+        tr.getAttribute('data-nome'),
+        tr.getAttribute('data-email'),
+        trEmp, trCar
+      ].map(normaliza).join(' ');
+      const okEmp = !emp || trEmp === emp;
+      const okCargo = !cargo || trCar === cargo;
+      const okTxt = !txt || cols.includes(txt);
+      tr.style.display = (okEmp && okCargo && okTxt) ? '' : 'none';
+    });
+  }
+
+  btnA?.addEventListener('click', aplica);
+  [selEmp, selCargo].forEach(el => el?.addEventListener('change', aplica));
+  busca?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); aplica(); } });
+
+  btnL?.addEventListener('click', ()=>{
+    selEmp.value=''; selCargo.value=''; busca.value='';
+    linhas.forEach(tr=> tr.style.display='');
+  });
+
+  // ===== Modal seguro (sem JSON.parse; usa data-* + textContent) =====
+  function addRow(dl, label, value) {
+    const dt = document.createElement('dt');
+    dt.className = 'col-sm-4 text-muted';
+    dt.textContent = label;
+
+    const dd = document.createElement('dd');
+    dd.className = 'col-sm-8';
+    dd.textContent = value ?? '-';
+
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  }
+
+  const modal = document.getElementById('modalFuncionario');
+  modal?.addEventListener('show.bs.modal', function (event) {
+    const btn = event.relatedTarget;
+
+    const d = {
+      id: btn.getAttribute('data-id'),
+      nome: btn.getAttribute('data-nome'),
+      email: btn.getAttribute('data-email'),
+      empresa: btn.getAttribute('data-empresa'),
+      cargo: btn.getAttribute('data-cargo'),
+      genero: btn.getAttribute('data-genero'),
+      data_nascimento: btn.getAttribute('data-nascimento'),
+      created_at: btn.getAttribute('data-created'),
+      updated_at: btn.getAttribute('data-updated'),
+    };
+
+    const dl = document.getElementById('dlFuncionario');
+    dl.innerHTML = '';
+
+    addRow(dl, 'ID', d.id);
+    addRow(dl, 'Nome', d.nome);
+    addRow(dl, 'E-mail', d.email);
+    addRow(dl, 'Empresa', d.empresa);
+    addRow(dl, 'Cargo', d.cargo);
+    addRow(dl, 'Gênero', d.genero);
+    addRow(dl, 'Nascimento', d.data_nascimento);
+    addRow(dl, 'Criado em', d.created_at);
+    addRow(dl, 'Atualizado em', d.updated_at);
+  });
+})();
+</script>
+@endpush

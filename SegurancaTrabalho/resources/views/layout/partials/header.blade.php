@@ -161,6 +161,20 @@
             </ul>
           </div>
         </li>
+
+        <li class="nav-item {{ active_class(['forms/listar-exames']) }}">
+          <a href="#" class="nav-link">
+            <i class="link-icon" data-lucide="file-text"></i>
+            <span class="menu-title">Exames</span>
+            <i class="link-arrow"></i>
+          </a>
+          <div class="submenu">
+            <ul class="submenu-item">
+              <li class="nav-item"><a href="{{ url('/forms/listar-exames') }}" class="nav-link {{ active_class(['forms/listar-exames']) }}">Listar Exames</a></li>
+              <li class="nav-item"><a href="{{ url('/forms/gerar-exame') }}" class="nav-link {{ active_class(['forms/gerar-exame']) }}">Agendar Exame</a></li>
+            </ul>
+          </div>
+        </li>
         
         <li class="nav-item {{ active_class(['icons/*']) }}">
           <a href="#" class="nav-link">
