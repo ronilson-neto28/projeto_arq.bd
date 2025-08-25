@@ -3,6 +3,14 @@
 
 'use strict';
 
+// Importar jQuery e atribuir ao escopo global
+import $ from 'jquery';
+window.$ = $;
+window.jQuery = $;
+
+// Importar o plugin select2
+import 'select2';
+
 (function () {
 
   if ($(".js-example-basic-single").length) {

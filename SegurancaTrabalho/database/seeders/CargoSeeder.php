@@ -2,20 +2,77 @@
 
 namespace Database\Seeders;
 
-use App\Models\Cargo;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CargoSeeder extends Seeder
 {
     public function run(): void
     {
-        $cargos = [
-            'Analista', 'Gerente', 'Estagiário', 'Coordenador', 'Técnico',
-            'Auxiliar', 'Diretor', 'Supervisor', 'Engenheiro', 'Consultor',
+        // Empresas mapeadas por CNPJ (sem máscara)
+        $empresasByCnpj = DB::table('empresas')
+            ->select('id', 'cnpj')
+            ->get()
+            ->keyBy('cnpj');
+
+        if ($empresasByCnpj->isEmpty()) {
+            $this->command?->error('Nenhuma empresa encontrada. Rode primeiro o EmpresaSeeder.');
+            return;
+        }
+
+        // Ajuste conforme sua necessidade
+        $cargosPorEmpresa = [
+            '26719860000173' => [
+                'Gerente Industrial',
+                'Supervisor Administrativo',
+                'Encarregado de Estoque',
+                'Fiscal de Produção',
+                'Gerente de Produção',
+                'Vendedor Externo',
+                'Operador de Máquinas Beneficiamento',
+                'Conferente',
+                'Motorista',
+                'Cozinheira',
+                'Soldador',
+                'Zootecnista',
+                'Auxiliar de Serviços Gerais',
+                'Operador de Empilhadeira',
+                'Mecânico',
+            ],
+            '54446193000150' => [
+                'Analista',
+                'Assistente Administrativo',
+            ],
         ];
 
-        foreach ($cargos as $cargo) {
-            Cargo::create(['nome' => $cargo]);
+        // Quais colunas existem?
+        $allowed = Schema::getColumnListing('cargos');
+        $nameCol = in_array('nome', $allowed) ? 'nome' : (in_array('descricao', $allowed) ? 'descricao' : null);
+
+        if (!$nameCol) {
+            $this->command?->error("A tabela 'cargos' precisa ter a coluna 'nome' ou 'descricao'.");
+            return;
         }
+
+        foreach ($cargosPorEmpresa as $cnpj => $lista) {
+            $empresa = $empresasByCnpj->get($cnpj);
+            if (!$empresa) {
+                $this->command?->warn("CNPJ {$cnpj} não encontrado em 'empresas'. Pulando…");
+                continue;
+            }
+
+            foreach ($lista as $cargoNome) {
+                $where = ['empresa_id' => $empresa->id, $nameCol => $cargoNome];
+                $values = ['updated_at' => now(), 'created_at' => now()];
+
+                // Garante que só inserimos colunas que existem na tabela
+                $values = array_intersect_key($values, array_flip($allowed));
+
+                DB::table('cargos')->updateOrInsert($where, $values);
+            }
+        }
+
+        $this->command?->info('Cargos importados/atualizados com sucesso.');
     }
 }

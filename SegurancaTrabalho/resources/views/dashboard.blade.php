@@ -230,16 +230,16 @@
 </div> <!-- row -->
 
 <div class="row">
-  <div class="col-lg-5 col-xl-4 grid-margin grid-margin-lg-0 stretch-card">
+  <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <div class="d-flex justify-content-between align-items-baseline mb-2">
-          <h6 class="card-title mb-0">Notificações</h6>
+        <div class="d-flex justify-content-between align-items-baseline">
+          <h6 class="card-title mb-0">Exames</h6>
           <div class="dropdown mb-2">
-            <a type="button" id="dropdownMenuButton6" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a type="button" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
             </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton6">
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
               <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
               <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
               <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
@@ -248,68 +248,24 @@
             </div>
           </div>
         </div>
-        <div class="d-flex flex-column">
-          <a href="javascript:;" class="d-flex align-items-center border-bottom pb-3">
-            <div class="me-3">
-              <img src="{{ url('https://placehold.co/35x35') }}" class="rounded-circle w-35px" alt="user">
+        <div id="storageChart2"></div>
+        <div class="row mb-3">
+          <div class="col-6 d-flex justify-content-end">
+            <div>
+              <label class="d-flex align-items-center justify-content-end fs-10px text-uppercase fw-bolder">Exames Concluidos <span class="p-1 ms-1 rounded-circle bg-secondary"></span></label>
+              <!--<h5 class="fw-bolder mb-0 text-end">test</h5>-->
             </div>
-            <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <h6 class="text-body mb-2">Leonardo Payne</h6>
-                <p class="text-secondary fs-12px">12.30 PM</p>
-              </div>
-              <p class="text-secondary fs-13px">Hey! there I'm available...</p>
+          </div>
+          <div class="col-6">
+            <div>
+              <label class="d-flex align-items-center fs-10px text-uppercase fw-bolder"><span class="p-1 me-1 rounded-circle bg-primary"></span> Exames Pendentes</label>
+              <!--<h5 class="fw-bolder mb-0">~5TB</h5>-->
             </div>
-          </a>
-          <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
-            <div class="me-3">
-              <img src="{{ url('https://placehold.co/35x35') }}" class="rounded-circle w-35px" alt="user">
-            </div>
-            <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <h6 class="text-body mb-2">Carl Henson</h6>
-                <p class="text-secondary fs-12px">02.14 AM</p>
-              </div>
-              <p class="text-secondary fs-13px">I've finished it! See you so..</p>
-            </div>
-          </a>
-          <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
-            <div class="me-3">
-              <img src="{{ url('https://placehold.co/35x35') }}" class="rounded-circle w-35px" alt="user">
-            </div>
-            <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <h6 class="text-body mb-2">Jensen Combs</h6>
-                <p class="text-secondary fs-12px">08.22 PM</p>
-              </div>
-              <p class="text-secondary fs-13px">This template is awesome!</p>
-            </div>
-          </a>
-          <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
-            <div class="me-3">
-              <img src="{{ url('https://placehold.co/35x35') }}" class="rounded-circle w-35px" alt="user">
-            </div>
-            <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <h6 class="text-body mb-2">Amiah Burton</h6>
-                <p class="text-secondary fs-12px">05.49 AM</p>
-              </div>
-              <p class="text-secondary fs-13px">Nice to meet you</p>
-            </div>
-          </a>
-          <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
-            <div class="me-3">
-              <img src="{{ url('https://placehold.co/35x35') }}" class="rounded-circle w-35px" alt="user">
-            </div>
-            <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <h6 class="text-body mb-2">Yaretzi Mayo</h6>
-                <p class="text-secondary fs-12px">01.19 AM</p>
-              </div>
-              <p class="text-secondary fs-13px">Hey! there I'm available...</p>
-            </div>
-          </a>
+          </div>
         </div>
+        <!--<div class="d-grid">
+          <button class="btn btn-primary">Upgrade storage</button>
+        </div>-->
       </div>
     </div>
   </div>
@@ -323,14 +279,15 @@
               <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>View</span></a>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span>Edit</span></a>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span>Delete</span></a>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span>Print</span></a>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Download</span></a>
             </div>
           </div>
         </div>
+
         <div class="table-responsive">
           <table class="table table-hover mb-0">
             <thead>
@@ -341,11 +298,12 @@
                 <th class="pt-0">Data Final</th>
                 <th class="pt-0">Status</th>
                 <th class="pt-0">Empresa</th>
+                <th class="pt-0"></th> {{-- coluna do botão --}}
               </tr>
             </thead>
-            <tbody>
+            <tbody id="listaExamesTbody">
               @foreach ($funcionarios as $funcionario)
-                <tr>
+                <tr class="exame-row">
                   <td>{{ $funcionario->id }}</td>
                   <td>{{ $funcionario->nome }}</td>
                   <td></td> <!-- Data Inicial -->
@@ -371,9 +329,64 @@
             </tbody>
           </table>
         </div>
-      </div> 
+
+        {{-- Botão Mostrar mais/menos --}}
+        @if($funcionarios->count() > 5)
+          <div class="d-flex justify-content-center mt-3">
+            <button
+              type="button"
+              id="btnMostrarMaisExames"
+              class="btn btn-outline-secondary btn-sm"
+              aria-expanded="false"
+            >
+              Mostrar mais
+            </button>
+          </div>
+        @endif
+      </div>
     </div>
   </div>
+
+@push('custom-scripts')
+<script>
+(function() {
+  const LIMIT = 5;
+  const tbody = document.getElementById('listaExamesTbody');
+  if (!tbody) return;
+
+  const rows = Array.from(tbody.querySelectorAll('.exame-row'));
+  const btn   = document.getElementById('btnMostrarMaisExames');
+
+  // Aplica limite inicial
+  function applyLimit() {
+    rows.forEach((tr, i) => { tr.style.display = (i < LIMIT) ? '' : 'none'; });
+  }
+
+  // Se não há mais que LIMIT, oculta botão e sai
+  if (rows.length <= LIMIT) {
+    if (btn) btn.classList.add('d-none');
+    return;
+  }
+
+  applyLimit();
+
+  // Toggle mostrar mais/menos
+  btn?.addEventListener('click', function() {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      applyLimit();
+      this.textContent = 'Mostrar mais';
+      this.setAttribute('aria-expanded', 'false');
+    } else {
+      rows.forEach(tr => tr.style.display = '');
+      this.textContent = 'Mostrar menos';
+      this.setAttribute('aria-expanded', 'true');
+    }
+  });
+})();
+</script>
+@endpush
+
 </div> <!-- row -->
 @endsection
 

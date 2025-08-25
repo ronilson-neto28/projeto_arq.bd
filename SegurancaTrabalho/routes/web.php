@@ -19,6 +19,7 @@ use App\Http\Controllers\TipoDeRiscoController;
 use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListarExamesController;
+use App\Http\Controllers\EncaminhamentoController;
 
 
 ////////////////////////////////////////
@@ -104,13 +105,16 @@ Route::middleware('auth')->group(function () {
         Route::get('listar', [RiscoController::class, 'index'])->name('riscos.index');
     });
 
+    // ===== Encaminhamentos (CRUD REST) =====
+    Route::resource('encaminhamentos', EncaminhamentoController::class);
+
     // FORMULÁRIOS EXTRAS (se desejar manter)
     Route::prefix('forms')->group(function(){
         //Route::get('cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
         //Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
         //Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
         //Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
-        //Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
+        Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
         // EMPRESAS
         Route::get('listar-empresa',   [EmpresaController::class, 'index'])->name('empresas.index');
         Route::get('cadastrar-empresa',[EmpresaController::class, 'create'])->name('empresas.create');
@@ -121,7 +125,18 @@ Route::middleware('auth')->group(function () {
         Route::get('cadastrar-funcionario',[FuncionarioController::class, 'create'])->name('funcionarios.create');
         Route::post('cadastrar-funcionario',[FuncionarioController::class, 'store'])->name('funcionarios.store');
         
+
         // agora usando controller (clean & testável)
+        Route::get('listar-exames', [ListarExamesController::class, 'index'])
+            ->name('forms.exames.index');
+        
+        //Route::get('gerar-exame',[FuncionarioController::class, 'create'])->name('gerar-exame.create');
+
+        // **Gerar Exame**: usa o create do EncaminhamentoController
+        Route::get('gerar-exame', [EncaminhamentoController::class, 'create'])
+            ->name('encaminhamentos.create');
+
+        // Listagem/relatório de exames (mantido)
         Route::get('listar-exames', [ListarExamesController::class, 'index'])
             ->name('forms.exames.index');
     });

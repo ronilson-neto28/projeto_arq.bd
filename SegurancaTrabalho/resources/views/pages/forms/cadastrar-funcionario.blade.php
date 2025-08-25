@@ -2,10 +2,6 @@
 
 @push('plugin-styles')
   <link href="{{ asset('build/plugins/select2/select2.min.css') }}" rel="stylesheet" />
-  <link href="{{ asset('build/plugins/jquery-tags-input/jquery.tagsinput.min.css') }}" rel="stylesheet" />
-  <link href="{{ asset('build/plugins/dropzone/dropzone.css') }}" rel="stylesheet" />
-  <link href="{{ asset('build/plugins/dropify/css/dropify.min.css') }}" rel="stylesheet" />
-  <link href="{{ asset('build/plugins/pickr/themes/classic.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('build/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" />
 @endpush
 
@@ -13,379 +9,140 @@
 <nav class="page-breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="#">Formulário</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Cadastrar Funcionarios</li>
+    <li class="breadcrumb-item active" aria-current="page">Cadastrar Funcionário</li>
   </ol>
 </nav>
 
-
 <div class="row">
-  <div class="col-lg-6 grid-margin stretch-card">
+  <div class="col-lg-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Cadastro de Funcionarios</h4>
-        <!--<p class="text-secondary mb-3">Read the <a href="https://jqueryvalidation.org/" target="_blank"> Official jQuery Validation Documentation </a>for a full list of instructions and other options.</p>-->
-        <form id="signupForm">
-          <div class="mb-3">
-            <label for="name" class="form-label">Nome</label>
-            <input id="name" class="form-control" name="name" type="text" placeholder="Nome">
+        <h4 class="card-title mb-3">Cadastro de Funcionário</h4>
+
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
           </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input id="email" class="form-control" name="email" type="email" placeholder="E-mail">
-          </div>
-          <div class="mb-3">
-            <label for="ageSelect" class="form-label">Empresa</label>
-            <select class="form-select" name="age_select" id="ageSelect">
-              <option selected disabled>Selecione a Empresa</option>
-              <option>Ccs Boaventura Vanucci</option>
-              <option>Ana Karla Atacadista</option>
-              <option>Grupo OGP Farias</option>
-              <option>Programador</option>
-              <option>Faxineiro</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="ageSelect" class="form-label">Cargo</label>
-            <select class="form-select" name="age_select" id="ageSelect">
-              <option selected disabled>Selecione o cargo</option>
-              <option>Vendedor</option>
-              <option>Motorista</option>
-              <option>Cobrador</option>
-              <option>Programador</option>
-              <option>Faxineiro</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Gênero</label>
-            <div>
-              <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input border border-dark" name="gender_radio" id="gender1">
-                <label class="form-check-label" for="gender1">
-                  Masculino
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input border border-dark" name="gender_radio" id="gender2">
-                <label class="form-check-label" for="gender2">
-                  Feminino
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input border border-dark" name="gender_radio" id="gender3" >
-                <label class="form-check-label" for="gender3">
-                  Outro
-                </label>
+        @endif
+
+        <form method="POST" action="{{ route('funcionarios.store') }}" novalidate>
+          @csrf
+
+          {{-- Dados pessoais --}}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+              <input type="text" id="nome" name="nome" class="form-control" value="{{ old('nome') }}" required>
+            </div>
+            <div class="col-md-3">
+              <label for="cpf" class="form-label">CPF <span class="text-danger">*</span></label>
+              <input type="text" id="cpf" name="cpf" class="form-control" value="{{ old('cpf') }}" placeholder="000.000.000-00" required>
+            </div>
+            <div class="col-md-3">
+              <label for="rg" class="form-label">RG</label>
+              <input type="text" id="rg" name="rg" class="form-control" value="{{ old('rg') }}">
+            </div>
+
+            <div class="col-md-3">
+              <label for="data_nascimento" class="form-label">Nascimento</label>
+              <input type="text" id="data_nascimento" name="data_nascimento" class="form-control js-date" value="{{ old('data_nascimento') }}" placeholder="dd/mm/aaaa">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label d-block">Gênero</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="generoM" value="M" @checked(old('genero')=='M')>
+                  <label class="form-check-label" for="generoM">Masculino</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="generoF" value="F" @checked(old('genero')=='F')>
+                  <label class="form-check-label" for="generoF">Feminino</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="generoO" value="O" @checked(old('genero')=='O')>
+                  <label class="form-check-label" for="generoO">Outro</label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Tipos de riscos</label>
-            <div>
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="skill_check" class="form-check-input border border-dark" id="checkInline1">
-                <label class="form-check-label" for="checkInline1">
-                  Físico
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="skill_check" class="form-check-input border border-dark" id="checkInline2">
-                <label class="form-check-label" for="checkInline2">
-                  Químico
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="skill_check" class="form-check-input border border-dark" id="checkInline3">
-                <label class="form-check-label" for="checkInline3">
-                  Biológico
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="skill_check" class="form-check-input border border-dark" id="checkInline3">
-                <label class="form-check-label" for="checkInline3">
-                  Ergonômico
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="skill_check" class="form-check-input border border-dark" id="checkInline3">
-                <label class="form-check-label" for="checkInline3">
-                  Acidente
-                </label>
-              </div>
+            <div class="col-md-3">
+              <label for="estado_civil" class="form-label">Estado Civil</label>
+              <select id="estado_civil" name="estado_civil" class="form-select">
+                <option value="">Selecione...</option>
+                @foreach(['solteiro(a)','casado(a)','divorciado(a)','viúvo(a)'] as $ec)
+                  <option value="{{ $ec }}" @selected(old('estado_civil')===$ec)>{{ $ec }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="telefone" class="form-label">Telefone</label>
+              <input type="text" id="telefone" name="telefone" class="form-control" value="{{ old('telefone') }}" placeholder="(00) 00000-0000">
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">E-mail</label>
+              <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="email@dominio.com.br">
             </div>
           </div>
-          <div class="row mb-3">
-            <div class="col">
-              <label class="form-label">Data  </label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'alias': 'datetime'" data-inputmask-inputformat="dd/mm/yyyy"/>
+
+          <hr class="my-4">
+
+          {{-- Vínculo / Lotação --}}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="empresa_id" class="form-label">Empresa <span class="text-danger">*</span></label>
+              <select id="empresa_id" name="empresa_id" class="form-select js-select2" data-width="100%" data-placeholder="Selecione a empresa" required>
+                <option></option>
+                @isset($empresas)
+                  @foreach($empresas as $empresa)
+                    <option value="{{ $empresa->id }}" @selected(old('empresa_id') == $empresa->id)>{{ $empresa->razao_social }}</option>
+                  @endforeach
+                @endisset
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="cargo_id" class="form-label">Cargo</label>
+              <select id="cargo_id" name="cargo_id" class="form-select js-select2" data-width="100%" data-placeholder="Selecione o cargo">
+                <option></option>
+                @isset($cargos)
+                  @foreach($cargos as $cargo)
+                    <option value="{{ $cargo->id }}" data-empresa="{{ $cargo->empresa_id }}" @selected(old('cargo_id') == $cargo->id)>
+                      {{ $cargo->descricao }} — {{ $cargo->empresa->razao_social ?? 'Empresa' }}
+                    </option>
+                  @endforeach
+                @endisset
+              </select>
+              <small class="text-muted">Após escolher a empresa, o combo filtra os cargos dela.</small>
+            </div>
+
+            <div class="col-md-3">
+              <label for="data_admissao" class="form-label">Data de Admissão</label>
+              <input type="text" id="data_admissao" name="data_admissao" class="form-control js-date" value="{{ old('data_admissao') }}" placeholder="dd/mm/aaaa">
+            </div>
+            <div class="col-md-5">
+              <label for="setor" class="form-label">Setor / Lotação</label>
+              <input type="text" id="setor" name="setor" class="form-control" value="{{ old('setor') }}">
+            </div>
+            <div class="col-md-4">
+              <label for="turno" class="form-label">Turno</label>
+              <select id="turno" name="turno" class="form-select">
+                <option value="">Selecione...</option>
+                @foreach(['Diurno','Noturno','Misto','Revezamento'] as $t)
+                  <option value="{{ $t }}" @selected(old('turno')===$t)>{{ $t }}</option>
+                @endforeach
+              </select>
             </div>
           </div>
-          <div class="row mb-3">
-            <div class="col">
-              <label class="form-label">Telefone:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'mask': '(99) 99999-9999'" inputmode="numeric"/>
-            </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <a href="{{ route('funcionarios.index') }}" class="btn btn-outline-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
           </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">Senha</label>
-            <input id="password" class="form-control" name="password" type="password">
-          </div>
-          <div class="mb-3">
-            <label for="confirm_password" class="form-label">Confirme Sua Senha</label>
-            <input id="confirm_password" class="form-control" name="confirm_password" type="password">
-          </div>
-          <div class="mb-3">
-            <div class="form-check">
-              <label class="form-check-label" for="termsCheck">
-                Agree to <a href="#"> terms and conditions </a>
-              </label>
-              <input type="checkbox" class="form-check-input" name="terms_agree" id="termsCheck">
-            </div>
-          </div>
-          <input class="btn btn-primary" type="submit" value="Cadastrar">
+
         </form>
-      </div>
-    </div>
-  </div>
-  <!--<div class="col-lg-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Bootstrap MaxLength</h4>
-        <p class="text-secondary mb-3">Read the <a href="https://github.com/mimo84/bootstrap-maxlength" target="_blank"> Official Bootstrap MaxLength Documentation </a>for a full list of instructions and other options.</p>
-        <div class="row mb-3">
-          <div class="col-lg-3">
-            <label for="defaultconfig" class="col-form-label">Default usage</label>
-          </div>
-          <div class="col-lg-8">
-            <input class="form-control" maxlength="25" name="defaultconfig" id="defaultconfig" type="text" placeholder="Type Something..">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-lg-3">
-            <label for="defaultconfig-2" class="col-form-label">Few options</label>
-          </div>
-          <div class="col-lg-8">
-            <input class="form-control" maxlength="20" name="defaultconfig-2" id="defaultconfig-2" type="text" placeholder="Type Something..">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-lg-3">
-            <label for="defaultconfig-3" class="col-form-label">All the options</label>
-          </div>
-          <div class="col-lg-8">
-            <input class="form-control" maxlength="10" name="defaultconfig-3" id="defaultconfig-3" type="text" placeholder="Type Something..">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-3">
-            <label for="defaultconfig-4" class="col-form-label">Text Area</label>
-          </div>
-          <div class="col-lg-8">
-            <textarea id="maxlength-textarea" class="form-control" id="defaultconfig-4" maxlength="100" rows="8" placeholder="This textarea has a limit of 100 chars."></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>-->
-
-<div class="row">
-  <div class="col-md-12 grid-margin">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Input Mask</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://github.com/RobinHerbots/Inputmask" target="_blank"> Official Inputmask Documentation </a>for a full list of instructions and other options.</p>
-        <form class="forms-sample">
-          <div class="row mb-3">
-            <div class="col">
-              <label class="form-label">Date:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'alias': 'datetime'" data-inputmask-inputformat="dd/mm/yyyy"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Time (12 hour):</label>
-              <input class="form-control" data-inputmask="'alias': 'datetime'" data-inputmask-inputformat="hh:mm tt" />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Date time:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'alias': 'datetime'" data-inputmask-inputformat="dd/mm/yyyy HH:MM:ss" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Date with custom placeholder:</label>
-              <input class="form-control" data-inputmask="'alias': 'datetime'" data-inputmask-placeholder="*" data-inputmask-inputformat="dd/mm/yyyy" />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Phone:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask-alias="(+99) 9999-9999"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Credit card:</label>
-              <input class="form-control" data-inputmask-alias="9999-9999-9999-9999"/>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Currency:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'alias': 'currency', 'prefix':'$'"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Serial key:</label>
-              <input class="form-control" data-inputmask-alias="****-****-****-****"/>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Email:</label>
-              <input class="form-control mb-4 mb-md-0" data-inputmask="'alias': 'email'"/>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Ip address:</label>
-              <input class="form-control" data-inputmask="'alias': 'ip'"/>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Select 2</h4>
-        <p class="text-secondary mb-3">Read the <a href="https://select2.org/" target="_blank"> Official Select2 Documentation </a>for a full list of instructions and other options.</p>
-        <div class="mb-3">
-          <label class="form-label">Single select box using select 2</label>
-          <select class="js-example-basic-single form-select" data-width="100%">
-            <option value="TX">Texas</option>
-            <option value="NY">New York</option>
-            <option value="FL">Florida</option>
-            <option value="KN">Kansas</option>
-            <option value="HW">Hawaii</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Multiple select using select 2</label>
-          <select class="js-example-basic-multiple form-select" multiple="multiple" data-width="100%">
-            <option value="TX">Texas</option>
-            <option value="WY">Wyoming</option>
-            <option value="NY">New York</option>
-            <option value="FL">Florida</option>
-            <option value="KN">Kansas</option>
-            <option value="HW">Hawaii</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Typeahead</h4>
-        <p class="text-secondary mb-3">Read the <a href="https://github.com/twitter/typeahead.js" target="_blank"> Official Typeahead.js Documentation </a>for a full list of instructions and other options.</p>
-        <div class="row">
-          <div class="col">
-            <label class="form-label">Basic</label>
-            <div id="the-basics">
-              <input class="typeahead" autocomplete="off" type="text" placeholder="States of USA">
-            </div>
-          </div>
-          <div class="col">
-            <label class="form-label">Bloodhound</label>
-            <div id="bloodhound">
-              <input class="typeahead" type="text" placeholder="States of USA">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Tags input</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://www.npmjs.com/package/jquery-tags-input" target="_blank"> Official jQuery-tags-input Documentation </a>for a full list of instructions and other options.</p>
-        <p class="mb-2">Type something to add a new tag</p>
-        <div>
-          <input name="tags" id="tags" value="New York,Texas,Florida,New Mexico" />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Color picker</h6>
-        <p class="text-secondary mb-3">Flat, simple, and responsive Color-Picker library. Read the <a href="https://github.com/Simonwep/pickr" target="_blank"> Official @simonwep/pickr Documentation </a>for a full list of instructions and other options.</p>
-        <p class="mb-2">Click the color square to activate the Color Picker</p>
-        <div class="d-flex">
-          <div class="me-2">
-            <!-- Example 1 -->
-            <div id="pickr_1"></div>
-          </div>
-          <div class="me-2">
-            <!-- Example 2 -->
-            <div id="pickr_2"></div>
-          </div>
-          <div class="me-2">
-            <!-- Example 3 -->
-            <div id="pickr_3"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Date picker</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://flatpickr.js.org/" target="_blank"> Official Flatpickr Documentation </a>for a full list of instructions and other options.</p>
-        <div class="input-group flatpickr" id="flatpickr-date">
-          <input type="text" class="form-control" placeholder="Select date" data-input>
-          <span class="input-group-text input-group-addon" data-toggle><i data-lucide="calendar"></i></span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Time picker</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://flatpickr.js.org/" target="_blank"> Official Flatpickr Documentation </a>for a full list of instructions and other options.</p>
-        <div class="input-group flatpickr" id="flatpickr-time">
-          <input type="text" class="form-control" placeholder="Select time" data-input>
-          <span class="input-group-text input-group-addon" data-toggle><i data-lucide="clock"></i></span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 stretch-card grid-margin grid-margin-md-0">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Dropzone</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://www.dropzonejs.com/" target="_blank"> Official Dropzone.js Documentation </a>for a full list of instructions and other options.</p>
-        <form action="/file-upload" class="dropzone" id="exampleDropzone"></form>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Dropify</h6>
-        <p class="text-secondary mb-3">Read the <a href="https://github.com/JeremyFagis/dropify" target="_blank"> Official Dropify Documentation </a>for a full list of instructions and other options.</p>
-        <input type="file" id="myDropify"/>
       </div>
     </div>
   </div>
@@ -393,29 +150,35 @@
 @endsection
 
 @push('plugin-scripts')
-  <script src="{{ asset('build/plugins/jquery/jquery.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
   <script src="{{ asset('build/plugins/select2/select2.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/typeahead-js/typeahead.bundle.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/jquery-tags-input/jquery.tagsinput.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/dropzone/dropzone-min.js') }}"></script>
-  <script src="{{ asset('build/plugins/dropify/js/dropify.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/pickr/pickr.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/moment/moment.min.js') }}"></script>
   <script src="{{ asset('build/plugins/flatpickr/flatpickr.min.js') }}"></script>
 @endpush
 
 @push('custom-scripts')
-  @vite(['resources/js/pages/form-validation.js'])
-  @vite(['resources/js/pages/bootstrap-maxlength.js'])
-  @vite(['resources/js/pages/inputmask.js'])
-  @vite(['resources/js/pages/select2.js'])
-  @vite(['resources/js/pages/typeahead.js'])
-  @vite(['resources/js/pages/tags-input.js'])
-  @vite(['resources/js/pages/dropzone.js'])
-  @vite(['resources/js/pages/dropify.js'])
-  @vite(['resources/js/pages/pickr.js'])
-  @vite(['resources/js/pages/flatpickr.js'])
+@vite(['resources/js/pages/inputmask.js', 'resources/js/pages/select2.js'])
+<script>
+(function($){
+  $('.js-select2').select2({ allowClear:true, placeholder: function(){ return $(this).data('placeholder') || 'Selecione...'; } });
+  $('.js-date').flatpickr({ dateFormat: 'd/m/Y', allowInput:true });
+
+  function filtrarCargos() {
+    const empId = $('#empresa_id').val();
+    $('#cargo_id option').each(function(){
+      const optEmp = $(this).data('empresa');
+      if (!$(this).val()) return;
+      $(this).toggle(!empId || String(optEmp) === String(empId));
+    });
+    const sel = $('#cargo_id').val();
+    if (sel) {
+      const belongs = $('#cargo_id option:selected').data('empresa');
+      if (String(belongs) !== String(empId)) {
+        $('#cargo_id').val(null).trigger('change');
+      }
+    }
+  }
+
+  $('#empresa_id').on('change', filtrarCargos);
+  filtrarCargos();
+})(jQuery);
+</script>
 @endpush

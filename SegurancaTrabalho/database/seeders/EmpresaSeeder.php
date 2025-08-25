@@ -2,23 +2,73 @@
 
 namespace Database\Seeders;
 
-use App\Models\Empresa;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaSeeder extends Seeder
 {
+    private function onlyDigits(?string $v): ?string
+    {
+        if ($v === null) return null;
+        return preg_replace('/\D+/', '', $v);
+    }
+
+    private function fitToTable(array $row, array $allowed): array
+    {
+        return array_intersect_key($row, array_flip($allowed));
+    }
+
     public function run(): void
     {
-        $empresas = [
-            ['nome' => 'ic store',     'cnpj' => '54.446.193/0001-50'],
-            ['nome' => 'anna karla',   'cnpj' => '93.404.020/0001-67'],
-            ['nome' => 'pasquarelli',  'cnpj' => '63.637.755/0001-99'],
-            ['nome' => 'ibm',          'cnpj' => '31.794.149/0001-02'],
-            ['nome' => 'netflix',      'cnpj' => '67.374.658/0001-01'],
+        // Colunas reais da tabela (para evitar erro se sua migration for diferente)
+        $allowed = Schema::getColumnListing('empresas');
+
+        $baseRows = [
+            [
+                'razao_social'  => 'OPÇÕES INDÚSTRIA E COMERCIO EIRELI',
+                'nome_fantasia' => 'OPÇÕES CEREAIS',
+                'cnpj'          => $this->onlyDigits('26.719.860/0001-73'),
+                'endereco'      => 'AV CURUA UMA, S/N. KM 10. JUTAÍ',
+                'cep'           => $this->onlyDigits('68.045-000'),
+                'bairro'        => null,
+                'cidade'        => 'Santarém',
+                'uf'            => 'PA', // sua migration usa 'uf' (não 'estado')
+                'email'         => null,
+                'telefone'      => $this->onlyDigits('(93) 9136-1313'),
+                'grau_risco'    => 2,
+                'cnae_id'       => null, // ajuste aqui se já tiver o ID do CNAE
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ],
+            [
+                'razao_social'  => 'IC STORE LTDA',
+                'nome_fantasia' => 'IC STORE',
+                'cnpj'          => $this->onlyDigits('54.446.193/0001-50'),
+                'endereco'      => 'Rua Exemplo, 123',
+                'cep'           => $this->onlyDigits('68.000-000'),
+                'bairro'        => null,
+                'cidade'        => 'Santarém',
+                'uf'            => 'PA',
+                'email'         => null,
+                'telefone'      => $this->onlyDigits('(93) 99999-9999'),
+                'grau_risco'    => 2,
+                'cnae_id'       => null,
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ],
         ];
 
-        foreach ($empresas as $empresa) {
-            Empresa::create($empresa);
-        }
+        // Mantém apenas as colunas que existem na tabela
+        $rows = array_map(fn($r) => $this->fitToTable($r, $allowed), $baseRows);
+
+        // Cria/atualiza por CNPJ (sem duplicar)
+        DB::table('empresas')->upsert(
+            $rows,
+            ['cnpj'],                                             // uniqueBy
+            array_diff(array_keys($rows[0]), ['cnpj', 'created_at']) // colunas a atualizar
+        );
+
+        $this->command?->info('Empresas importadas/atualizadas com sucesso.');
     }
 }
