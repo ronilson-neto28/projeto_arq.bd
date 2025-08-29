@@ -13,6 +13,7 @@ class Cargo extends Model
     protected $fillable = [
         'empresa_id',
         'descricao',
+        'nome',
     ];
 
     /** Empresa dona do cargo */

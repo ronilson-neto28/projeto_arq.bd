@@ -61,6 +61,9 @@ class EncaminhamentoController extends Controller
             'data_atendimento'  => ['nullable','string','max:20'],
             'hora_atendimento'  => ['nullable','string','max:10'],
             'previsao_retorno'  => ['nullable','string','max:20'],
+            'status'            => ['required','string','in:agendado,realizado,faltou,cancelado'],
+            'local_clinica_id'  => ['nullable','string','max:255'],
+            'medico_responsavel_id' => ['nullable','string','max:255'],
 
             'observacoes'       => ['nullable','string','max:2000'],
 
@@ -112,6 +115,9 @@ class EncaminhamentoController extends Controller
                 'data_atendimento'   => $data['data_atendimento'] ?? null,
                 'hora_atendimento'   => $data['hora_atendimento'] ?? null,
                 'previsao_retorno'   => $data['previsao_retorno'] ?? null,
+                'status'             => $data['status'],
+                'local_clinica_id'   => $data['local_clinica_id'] ?? null,
+                'medico_responsavel_id' => $data['medico_responsavel_id'] ?? null,
 
                 'observacoes'        => $data['observacoes'] ?? null,
             ];

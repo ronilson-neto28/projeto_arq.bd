@@ -15,10 +15,14 @@ class Funcionario extends Model
         'cargo_id',
         'nome',
         'cpf',
+        'rg',
         'data_nascimento',
         'genero',     // M|F|O
-        'telefone',
         'email',
+        'estado_civil',
+        'data_admissao',
+        'setor',
+        'turno',
     ];
 
     protected $casts = [

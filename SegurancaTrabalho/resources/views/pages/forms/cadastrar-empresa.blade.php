@@ -158,12 +158,15 @@
 
 @push('custom-scripts')
   @vite(['resources/js/pages/inputmask.js', 'resources/js/pages/select2.js'])
+  <script src="{{ asset('js/cnae-grau-risco.js') }}"></script>
   <script>
-    (function($){
-      $('.js-select2').select2({ allowClear:true, placeholder: function(){ return $(this).data('placeholder') || 'Selecione...'; } });
-      $('#cnae_id').on('change', function(){
-        const grau = $(this).find('option:selected').data('grau');
-        if (grau) $('#grau_risco').val(grau);
+    (function($) {
+      // Inicializar Select2
+      $('.js-select2').select2({
+        allowClear: true,
+        placeholder: function() {
+          return $(this).data('placeholder') || 'Selecione...';
+        }
       });
     })(jQuery);
   </script>

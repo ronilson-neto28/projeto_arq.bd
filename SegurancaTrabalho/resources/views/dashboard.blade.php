@@ -129,7 +129,7 @@
         <div class="card">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0">Total de Exames Gerados</h6>
+              <h6 class="card-title mb-0">Total de Exames</h6>
               <div class="dropdown mb-2">
                 <a type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
@@ -145,16 +145,15 @@
             </div>
             <div class="row">
               <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">89.87%</h3>
+                <h3 class="mb-2">{{ number_format($totalExames, 0, ',', '.') }}</h3>
                 <div class="d-flex align-items-baseline">
                   <p class="text-success">
-                    <span>+2.8%</span>
-                    <i data-lucide="arrow-up" class="icon-sm mb-1"></i>
+                    <span>Cadastrados</span>
                   </p>
                 </div>
               </div>
-              <div class="col-6 col-md-12 col-xl-7">
-                <div id="growthChart" class="mt-md-3 mt-xl-0"></div>
+              <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-center align-items-center">
+                <i data-lucide="file-text" style="width: 40px; height: 40px;"></i>
               </div>
             </div>
           </div>
@@ -192,7 +191,7 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-baseline">
-          <h6 class="card-title mb-0">Exames</h6>
+          <h6 class="card-title mb-0">Exames por Tipo</h6>
           <div class="dropdown mb-2">
             <a type="button" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
@@ -206,24 +205,20 @@
             </div>
           </div>
         </div>
-        <div id="storageChart"></div>
+        <div id="examesPieChart"></div>
         <div class="row mb-3">
-          <div class="col-6 d-flex justify-content-end">
-            <div>
-              <label class="d-flex align-items-center justify-content-end fs-10px text-uppercase fw-bolder">Exames Concluidos <span class="p-1 ms-1 rounded-circle bg-secondary"></span></label>
-              <!--<h5 class="fw-bolder mb-0 text-end">test</h5>-->
+          @foreach($examesPorTipo as $exame)
+          <div class="col-12 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <label class="d-flex align-items-center fs-10px text-uppercase fw-bolder">
+                <span class="p-1 me-2 rounded-circle" style="background-color: {{ ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'][$loop->index % 5] }}"></span>
+                {{ ucfirst(str_replace('_', ' ', $exame->tipo)) }}
+              </label>
+              <span class="fw-bold">{{ $exame->total }}</span>
             </div>
           </div>
-          <div class="col-6">
-            <div>
-              <label class="d-flex align-items-center fs-10px text-uppercase fw-bolder"><span class="p-1 me-1 rounded-circle bg-primary"></span> Exames Pendentes</label>
-              <!--<h5 class="fw-bolder mb-0">~5TB</h5>-->
-            </div>
-          </div>
+          @endforeach
         </div>
-        <!--<div class="d-grid">
-          <button class="btn btn-primary">Upgrade storage</button>
-        </div>-->
       </div>
     </div>
   </div>
@@ -397,4 +392,60 @@
 
 @push('custom-scripts')
   @vite(['resources/js/pages/dashboard.js'])
+  <script>
+    // Gráfico de Pizza dos Exames por Tipo
+    document.addEventListener('DOMContentLoaded', function() {
+      const examesPieChartElement = document.querySelector('#examesPieChart');
+      if (examesPieChartElement) {
+        const examesData = @json($examesPorTipo);
+        
+        const series = examesData.map(item => item.total);
+        const labels = examesData.map(item => {
+          return item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).replace('_', ' ');
+        });
+        
+        const colors = ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'];
+        
+        const examesPieChartOptions = {
+          chart: {
+            height: 300,
+            type: 'pie'
+          },
+          series: series,
+          labels: labels,
+          colors: colors,
+          legend: {
+            show: false
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (val, opts) {
+              return opts.w.config.series[opts.seriesIndex];
+            }
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: '0%'
+              }
+            }
+          },
+          responsive: [{
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200
+              },
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }]
+        };
+        
+        const examesPieChart = new ApexCharts(examesPieChartElement, examesPieChartOptions);
+        examesPieChart.render();
+      }
+    });
+  </script>
 @endpush

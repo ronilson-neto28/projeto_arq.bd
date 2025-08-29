@@ -48,10 +48,11 @@ class CargoSeeder extends Seeder
 
         // Quais colunas existem?
         $allowed = Schema::getColumnListing('cargos');
-        $nameCol = in_array('nome', $allowed) ? 'nome' : (in_array('descricao', $allowed) ? 'descricao' : null);
+        // Forçar o uso da coluna 'descricao' que é a que existe na tabela
+        $nameCol = 'descricao';
 
-        if (!$nameCol) {
-            $this->command?->error("A tabela 'cargos' precisa ter a coluna 'nome' ou 'descricao'.");
+        if (!in_array($nameCol, $allowed)) {
+            $this->command?->error("A tabela 'cargos' precisa ter a coluna 'descricao'.");
             return;
         }
 
@@ -63,8 +64,12 @@ class CargoSeeder extends Seeder
             }
 
             foreach ($lista as $cargoNome) {
-                $where = ['empresa_id' => $empresa->id, $nameCol => $cargoNome];
-                $values = ['updated_at' => now(), 'created_at' => now()];
+                $where = ['empresa_id' => $empresa->id, 'nome' => $cargoNome];
+                $values = [
+                    'descricao' => $cargoNome, // Usar o mesmo valor para nome e descricao
+                    'updated_at' => now(), 
+                    'created_at' => now()
+                ];
 
                 // Garante que só inserimos colunas que existem na tabela
                 $values = array_intersect_key($values, array_flip($allowed));

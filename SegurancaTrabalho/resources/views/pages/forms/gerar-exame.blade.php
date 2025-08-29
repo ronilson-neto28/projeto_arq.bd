@@ -125,6 +125,27 @@
         </div>
       </div>
 
+      {{-- Status / Local / Médico Responsável --}}
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <label for="status" class="form-label fw-medium">Status</label>
+          <select id="status" name="status" class="form-control select2-single" required>
+            @php $statusOptions = ['agendado','realizado','faltou','cancelado']; @endphp
+            @foreach($statusOptions as $s)
+              <option value="{{ $s }}" @selected(old('status', 'agendado') === $s)>{{ ucfirst($s) }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="local_clinica_id" class="form-label fw-medium">Local/Clínica (Opcional)</label>
+          <input type="text" id="local_clinica_id" name="local_clinica_id" class="form-control" value="{{ old('local_clinica_id') }}" placeholder="Nome da clínica ou local">
+        </div>
+        <div class="col-md-4">
+          <label for="medico_responsavel_id" class="form-label fw-medium">Médico Responsável (Opcional)</label>
+          <input type="text" id="medico_responsavel_id" name="medico_responsavel_id" class="form-control" value="{{ old('medico_responsavel_id') }}" placeholder="Nome do médico responsável">
+        </div>
+      </div>
+
       {{-- Observações --}}
       <div class="mb-4">
         <div class="d-flex align-items-center justify-content-between">

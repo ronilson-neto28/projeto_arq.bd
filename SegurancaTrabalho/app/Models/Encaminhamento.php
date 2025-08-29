@@ -23,6 +23,9 @@ class Encaminhamento extends Model
         'riscos_extra_json',    // array de riscos adicionais
         'observacoes',
         'previsao_retorno',
+        'status',               // agendado/realizado/faltou/cancelado
+        'local_clinica_id',     // opcional: local ou clínica
+        'medico_responsavel_id', // opcional: médico responsável
         'responsavel_marcacao',
         'escopo_registro',      // solicitacao | solicitacao_conclusao
     ];
