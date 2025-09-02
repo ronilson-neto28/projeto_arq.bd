@@ -212,7 +212,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <label class="d-flex align-items-center fs-10px text-uppercase fw-bolder">
                 <span class="p-1 me-2 rounded-circle" style="background-color: {{ ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'][$loop->index % 5] }}"></span>
-                {{ ucfirst(str_replace('_', ' ', $exame->tipo)) }}
+                {{ ucfirst(str_replace('_', ' ', $exame->tipo_exame)) }}
               </label>
               <span class="fw-bold">{{ $exame->total }}</span>
             </div>
@@ -401,7 +401,7 @@
         
         const series = examesData.map(item => item.total);
         const labels = examesData.map(item => {
-          return item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).replace('_', ' ');
+          return item.tipo_exame.charAt(0).toUpperCase() + item.tipo_exame.slice(1).replace('_', ' ');
         });
         
         const colors = ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'];

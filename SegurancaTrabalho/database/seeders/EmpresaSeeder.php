@@ -21,7 +21,6 @@ class EmpresaSeeder extends Seeder
 
     public function run(): void
     {
-        // Colunas reais da tabela (para evitar erro se sua migration for diferente)
         $allowed = Schema::getColumnListing('empresas');
 
         $baseRows = [
@@ -33,11 +32,11 @@ class EmpresaSeeder extends Seeder
                 'cep'           => $this->onlyDigits('68.045-000'),
                 'bairro'        => null,
                 'cidade'        => 'Santarém',
-                'uf'            => 'PA', // sua migration usa 'uf' (não 'estado')
+                'uf'            => 'PA',
                 'email'         => null,
                 'telefone'      => $this->onlyDigits('(93) 9136-1313'),
                 'grau_risco'    => 2,
-                'cnae_id'       => null, // ajuste aqui se já tiver o ID do CNAE
+                'cnae_id'       => null,
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ],
@@ -59,14 +58,12 @@ class EmpresaSeeder extends Seeder
             ],
         ];
 
-        // Mantém apenas as colunas que existem na tabela
         $rows = array_map(fn($r) => $this->fitToTable($r, $allowed), $baseRows);
 
-        // Cria/atualiza por CNPJ (sem duplicar)
         DB::table('empresas')->upsert(
             $rows,
-            ['cnpj'],                                             // uniqueBy
-            array_diff(array_keys($rows[0]), ['cnpj', 'created_at']) // colunas a atualizar
+            ['cnpj'],
+            array_diff(array_keys($rows[0]), ['cnpj', 'created_at'])
         );
 
         $this->command?->info('Empresas importadas/atualizadas com sucesso.');

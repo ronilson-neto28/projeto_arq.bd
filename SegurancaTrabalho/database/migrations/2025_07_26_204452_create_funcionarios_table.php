@@ -11,16 +11,24 @@ return new class extends Migration
         Schema::create('funcionarios', function (Blueprint $table) {
             $table->id();
 
-            // FKs (tabelas `empresas` e `cargos` já existem antes desta migration)
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('cargo_id')->constrained('cargos')->onDelete('cascade');
+            // vínculos
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('cargo_id')->constrained('cargos')->cascadeOnDelete();
 
-            // Dados do funcionário
-            $table->string('nome', 255);
-            $table->string('cpf', 11)->unique();            // 11 dígitos, sem máscara
-            $table->string('email', 255)->nullable()->unique();
-            $table->enum('genero', ['masculino', 'feminino', 'outro'])->nullable();
+            // dados pessoais
+            $table->string('nome');
+            $table->string('cpf', 11)->unique();           // apenas dígitos
+            $table->string('rg')->nullable();
             $table->date('data_nascimento')->nullable();
+            $table->string('genero')->nullable();          // se quiser restringir, depois trocamos por enum
+            $table->string('estado_civil')->nullable();
+            $table->string('email')->nullable();
+
+            // vínculo
+            $table->date('data_admissao')->nullable();
+
+            // setor opcional (criaremos a tabela depois, por ora deixo nullable sem FK dura)
+            $table->unsignedBigInteger('setor_id')->nullable();
 
             $table->timestamps();
         });

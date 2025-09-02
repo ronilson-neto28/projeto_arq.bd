@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('cnaes', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo')->unique();   // Ex: 46.32-0-03
-            $table->string('descricao');          // Ex: Comércio atacadista
-            $table->tinyInteger('grau_risco');    // Ex: 1, 2, 3 ou 4
+            $table->string('codigo')->unique();   // ex: 0111-3/01
+            $table->string('descricao');
+            $table->unsignedTinyInteger('grau_risco'); // 1..4 (NR-4)
             $table->timestamps();
         });
     }

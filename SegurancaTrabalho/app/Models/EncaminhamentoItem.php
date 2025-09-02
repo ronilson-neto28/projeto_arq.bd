@@ -2,36 +2,40 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EncaminhamentoItem extends Model
 {
-    use HasFactory;
+    protected $table = 'encaminhamento_itens';
 
     protected $fillable = [
         'encaminhamento_id',
-        'procedimento',     // snapshot do nome do catálogo
-        'justificativa',
+        'exame_id',
+        'nome_snapshot',
         'data',
         'hora',
         'prestador',
-        'status',           // solicitado|agendado|realizado|recebido
-        'instrucoes',
+        'status',
         'laudo_path',
         'resultado',
-        'referencia',       // audiometria de referência
-        'regiao',           // RX: região/posição
+        'justificativa',
+        'referencia',
+        'regiao',
     ];
 
     protected $casts = [
-        'data'       => 'date',
+        'data' => 'date',
         'referencia' => 'boolean',
     ];
 
     public function encaminhamento(): BelongsTo
     {
         return $this->belongsTo(Encaminhamento::class);
+    }
+
+    public function exame(): BelongsTo
+    {
+        return $this->belongsTo(Exame::class);
     }
 }

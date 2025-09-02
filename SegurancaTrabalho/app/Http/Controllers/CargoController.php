@@ -4,70 +4,59 @@ namespace App\Http\Controllers;
 
 use App\Models\Cargo;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class CargoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // GET /cargos/listar
+    public function index(Request $request)
     {
-        //
+        $busca = trim((string) $request->get('search', ''));
+        $empresaId = $request->get('empresa_id');
+
+        $query = Cargo::query()
+            ->with('empresa')
+            ->when($empresaId, fn($q) => $q->where('empresa_id', $empresaId))
+            ->when($busca !== '', function ($q) use ($busca) {
+                $driver = DB::getDriverName();
+                $likeOp = $driver === 'pgsql' ? 'ilike' : 'like';
+                $q->where('nome', $likeOp, "%{$busca}%");
+            })
+            ->orderBy('empresa_id')
+            ->orderBy('nome');
+
+        $cargos = $query->paginate(15)->appends($request->only('search','empresa_id'));
+
+        // para filtro por empresa no select
+        $empresas = DB::table('empresas')->select('id','razao_social','nome_fantasia')->orderBy('razao_social')->get();
+
+        return view('pages.forms.listar-cargo', compact('cargos', 'empresas', 'busca', 'empresaId'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // GET /cargos/cadastrar
     public function create()
     {
-        return view('pages.forms.cadastrar-cargo'); // você pode enviar a view depois
+        $empresas = DB::table('empresas')->select('id','razao_social','nome_fantasia')->orderBy('razao_social')->get();
+        return view('pages.forms.cadastrar-cargo', compact('empresas'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // POST /cargos/cadastrar
     public function store(Request $request)
     {
-        $request->validate([
-            'nome' => 'required|string|max:255|unique:cargos,nome',
+        $data = $request->validate([
+            'empresa_id' => ['required', 'exists:empresas,id'],
+            'nome'       => [
+                'required','string','max:255',
+                // unicidade composta (empresa_id + nome)
+                Rule::unique('cargos')->where(fn($q) => $q->where('empresa_id', $request->input('empresa_id'))),
+            ],
         ]);
 
-        Cargo::create([
-            'nome' => $request->nome,
-        ]);
+        Cargo::create($data);
 
-        return redirect()->route('cargos.create')->with('success', 'Cargo cadastrado com sucesso!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cargo $cargo)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cargo $cargo)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cargo $cargo)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cargo $cargo)
-    {
-        //
+        return redirect()
+            ->route('cargos.index')
+            ->with('success', 'Cargo cadastrado com sucesso!');
     }
 }

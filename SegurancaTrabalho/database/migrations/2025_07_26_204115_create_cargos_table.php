@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('cargos', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique();
+
+            // cada cargo pertence a uma empresa
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+
+            // nome/descrição do cargo dentro da empresa
+            $table->string('nome');
+
             $table->timestamps();
+
+            // evita cargos duplicados com o mesmo nome dentro da mesma empresa
+            $table->unique(['empresa_id', 'nome'], 'cargos_empresa_nome_unique');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('cargos');

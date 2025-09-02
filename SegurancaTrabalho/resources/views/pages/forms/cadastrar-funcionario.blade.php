@@ -110,7 +110,7 @@
                 @isset($cargos)
                   @foreach($cargos as $cargo)
                     <option value="{{ $cargo->id }}" data-empresa="{{ $cargo->empresa_id }}" @selected(old('cargo_id') == $cargo->id)>
-                      {{ $cargo->descricao }} — {{ $cargo->empresa->razao_social ?? 'Empresa' }}
+                      {{ $cargo->nome }} — {{ $cargo->empresa->razao_social ?? 'Empresa' }}
                     </option>
                   @endforeach
                 @endisset
@@ -149,36 +149,55 @@
 </div>
 @endsection
 
-@push('plugin-scripts')
-  <script src="{{ asset('build/plugins/select2/select2.min.js') }}"></script>
-  <script src="{{ asset('build/plugins/flatpickr/flatpickr.min.js') }}"></script>
-@endpush
-
 @push('custom-scripts')
-@vite(['resources/js/pages/inputmask.js', 'resources/js/pages/select2.js'])
+@vite(['resources/js/pages/inputmask.js', 'resources/js/pages/select2.js', 'resources/js/pages/flatpickr.js'])
 <script>
-(function($){
-  $('.js-select2').select2({ allowClear:true, placeholder: function(){ return $(this).data('placeholder') || 'Selecione...'; } });
-  $('.js-date').flatpickr({ dateFormat: 'd/m/Y', allowInput:true });
-
-  function filtrarCargos() {
-    const empId = $('#empresa_id').val();
-    $('#cargo_id option').each(function(){
-      const optEmp = $(this).data('empresa');
-      if (!$(this).val()) return;
-      $(this).toggle(!empId || String(optEmp) === String(empId));
-    });
-    const sel = $('#cargo_id').val();
-    if (sel) {
-      const belongs = $('#cargo_id option:selected').data('empresa');
-      if (String(belongs) !== String(empId)) {
-        $('#cargo_id').val(null).trigger('change');
-      }
+document.addEventListener('DOMContentLoaded', function() {
+  // Aguardar o jQuery e Select2 estarem disponíveis
+  function waitForLibraries() {
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fn.select2 !== 'undefined') {
+      initializeComponents();
+    } else {
+      setTimeout(waitForLibraries, 100);
     }
   }
+  
+  function initializeComponents() {
+    const $ = jQuery;
+    
+    $('.js-select2').select2({ 
+      allowClear: true, 
+      placeholder: function(){ 
+        return $(this).data('placeholder') || 'Selecione...'; 
+      } 
+    });
+    
+    $('.js-date').flatpickr({ 
+      dateFormat: 'd/m/Y', 
+      allowInput: true 
+    });
 
-  $('#empresa_id').on('change', filtrarCargos);
-  filtrarCargos();
-})(jQuery);
+    function filtrarCargos() {
+      const empId = $('#empresa_id').val();
+      $('#cargo_id option').each(function(){
+        const optEmp = $(this).data('empresa');
+        if (!$(this).val()) return;
+        $(this).toggle(!empId || String(optEmp) === String(empId));
+      });
+      const sel = $('#cargo_id').val();
+      if (sel) {
+        const belongs = $('#cargo_id option:selected').data('empresa');
+        if (String(belongs) !== String(empId)) {
+          $('#cargo_id').val(null).trigger('change');
+        }
+      }
+    }
+
+    $('#empresa_id').on('change', filtrarCargos);
+    filtrarCargos();
+  }
+  
+  waitForLibraries();
+});
 </script>
 @endpush

@@ -34,7 +34,7 @@ class EncaminhamentoController extends Controller
             ->get();
 
         $cargos = Cargo::with('empresa')
-            ->orderBy('descricao')
+            ->orderBy('nome')
             ->get();
 
         // Se você tiver um catálogo de procedimentos, injete aqui:
@@ -47,23 +47,16 @@ class EncaminhamentoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'numero_guia'       => ['nullable','string','max:60', Rule::unique('encaminhamentos','numero_guia')->where(function($q){
-                // Se quiser limitar por empresa, adapte a regra aqui.
-            })],
-            'data_emissao'      => ['nullable','string','max:20'],
-            'medico_solicitante'=> ['nullable','string','max:255'],
-
             'funcionario_id'    => ['required','exists:funcionarios,id'],
             'empresa_id'        => ['nullable','exists:empresas,id'],
             'cargo_id'          => ['nullable','exists:cargos,id'],
 
-            'tipo_exame'        => ['required','string','max:60'], // Admissional / Periódico / etc.
-            'data_atendimento'  => ['nullable','string','max:20'],
-            'hora_atendimento'  => ['nullable','string','max:10'],
+            'tipo_exame'        => ['required','string','max:60'],
+            'data_atendimento'  => ['required','string','max:20'],
+            'hora_atendimento'  => ['required','string','max:10'],
             'previsao_retorno'  => ['nullable','string','max:20'],
             'status'            => ['required','string','in:agendado,realizado,faltou,cancelado'],
-            'local_clinica_id'  => ['nullable','string','max:255'],
-            'medico_responsavel_id' => ['nullable','string','max:255'],
+            'local_clinica'     => ['nullable','string','max:255'],
 
             'observacoes'       => ['nullable','string','max:2000'],
 
@@ -83,8 +76,7 @@ class EncaminhamentoController extends Controller
         if (empty($data['cargo_id']))   $data['cargo_id']   = $func->cargo_id;
 
         // Normalização de datas pt-BR → ISO
-        $data['data_emissao']     = $this->brDateToIso($data['data_emissao'] ?? null);
-        $data['data_atendimento'] = $this->brDateToIso($data['data_atendimento'] ?? null);
+        $data['data_atendimento'] = $this->brDateToIso($data['data_atendimento']);
         $data['previsao_retorno'] = $this->brDateToIso($data['previsao_retorno'] ?? null);
 
         // Normaliza procedimentos (datas pt-BR para ISO)
@@ -103,38 +95,30 @@ class EncaminhamentoController extends Controller
         // Persistência
         DB::transaction(function() use ($data, $procedimentos, $riscos) {
             $payload = [
-                'numero_guia'        => $data['numero_guia'] ?? null,
-                'data_emissao'       => $data['data_emissao'] ?? null,
-                'medico_solicitante' => $data['medico_solicitante'] ?? null,
-
-                'empresa_id'         => $data['empresa_id'] ?? null,
+                'empresa_id'         => $data['empresa_id'],
                 'funcionario_id'     => $data['funcionario_id'],
-                'cargo_id'           => $data['cargo_id'] ?? null,
+                'cargo_id'           => $data['cargo_id'],
 
                 'tipo_exame'         => $data['tipo_exame'],
-                'data_atendimento'   => $data['data_atendimento'] ?? null,
-                'hora_atendimento'   => $data['hora_atendimento'] ?? null,
-                'previsao_retorno'   => $data['previsao_retorno'] ?? null,
+                'data_atendimento'   => $data['data_atendimento'],
+                'hora_atendimento'   => $data['hora_atendimento'],
+                'previsao_retorno'   => $data['previsao_retorno'],
                 'status'             => $data['status'],
-                'local_clinica_id'   => $data['local_clinica_id'] ?? null,
-                'medico_responsavel_id' => $data['medico_responsavel_id'] ?? null,
+                'local_clinica'      => $data['local_clinica'] ?? null,
+                'medico_responsavel' => null,
 
                 'observacoes'        => $data['observacoes'] ?? null,
             ];
 
-            // Se a tabela tiver colunas JSON
-            if (self::columnExists('encaminhamentos','riscos')) {
-                $payload['riscos'] = $riscos;
-            }
-            if (self::columnExists('encaminhamentos','procedimentos')) {
-                $payload['procedimentos'] = $procedimentos;
-            }
+            // Adicionar riscos e procedimentos como JSON
+            $payload['riscos_extra_json'] = json_encode($riscos);
+            $payload['procedimentos_json'] = json_encode($procedimentos);
 
             Encaminhamento::create($payload);
         });
 
         return redirect()
-            ->route('forms.exames.index')
+            ->route('encaminhamentos.index')
             ->with('success', 'Encaminhamento criado com sucesso!');
     }
 

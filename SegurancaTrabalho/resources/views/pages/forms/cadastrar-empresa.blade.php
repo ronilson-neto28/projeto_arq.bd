@@ -107,38 +107,6 @@
 
           <hr class="my-4">
 
-          {{-- Responsáveis (PCMSO / PGR) --}}
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Médico Coordenador do PCMSO</label>
-              <input type="text" name="medico_pcmso_nome" class="form-control mb-2" value="{{ old('medico_pcmso_nome') }}" placeholder="Nome completo">
-              <div class="row g-2">
-                <div class="col-md-5">
-                  <input type="text" name="medico_pcmso_crm" class="form-control" value="{{ old('medico_pcmso_crm') }}" placeholder="CRM">
-                </div>
-                <div class="col-md-2">
-                  <input type="text" name="medico_pcmso_uf" class="form-control" value="{{ old('medico_pcmso_uf') }}" placeholder="UF">
-                </div>
-                <div class="col-md-5">
-                  <input type="email" name="medico_pcmso_email" class="form-control" value="{{ old('medico_pcmso_email') }}" placeholder="E-mail (opcional)">
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">Resp. PGR / SST</label>
-              <input type="text" name="resp_sst_nome" class="form-control mb-2" value="{{ old('resp_sst_nome') }}" placeholder="Nome completo">
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <input type="text" name="resp_sst_registro" class="form-control" value="{{ old('resp_sst_registro') }}" placeholder="CREA/COREN/CRP...">
-                </div>
-                <div class="col-md-6">
-                  <input type="email" name="resp_sst_email" class="form-control" value="{{ old('resp_sst_email') }}" placeholder="E-mail (opcional)">
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="d-flex justify-content-end mt-4">
             <a href="{{ route('empresas.index') }}" class="btn btn-outline-secondary me-2">Cancelar</a>
             <button type="submit" class="btn btn-primary">Salvar</button>

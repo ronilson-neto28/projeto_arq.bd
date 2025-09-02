@@ -2,26 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cnae extends Model
 {
-    use HasFactory;
+    protected $table = 'cnaes';
 
     protected $fillable = [
         'codigo',
         'descricao',
-        'grau_risco', // 1..4 (NR-4)
-    ];
-
-    protected $casts = [
-        'grau_risco' => 'integer',
+        'grau_risco',
     ];
 
     public function empresas(): HasMany
     {
-        return $this->hasMany(Empresa::class);
+        return $this->hasMany(Empresa::class, 'cnae_id');
     }
 }

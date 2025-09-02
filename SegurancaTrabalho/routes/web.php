@@ -20,6 +20,7 @@ use App\Http\Controllers\RiscoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListarExamesController;
 use App\Http\Controllers\EncaminhamentoController;
+use App\Http\Controllers\ProfileController;
 
 
 ////////////////////////////////////////
@@ -139,6 +140,10 @@ Route::middleware('auth')->group(function () {
         // Listagem/relatório de exames (mantido)
         Route::get('listar-exames', [ListarExamesController::class, 'index'])
             ->name('forms.exames.index');
+        
+        // Impressão de encaminhamento
+        Route::get('imprimir-exame/{id}', [ListarExamesController::class, 'imprimir'])
+            ->name('forms.exames.imprimir');
     });
 
     // GRÁFICOS EXEMPLOS
@@ -156,7 +161,9 @@ Route::middleware('auth')->group(function () {
 
     // PAGINA PERFIL USUARIO
     Route::group(['prefix' => 'general'], function(){
-        Route::get('profile', function () { return view('pages.general.profile'); });
+        Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     });
 
     // (adicione aqui outras rotas protegidas se quiser)

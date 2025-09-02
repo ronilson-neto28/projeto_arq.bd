@@ -1,19 +1,15 @@
 <?php
-
+// app/Models/Risco.php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany};
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Risco extends Model
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'nome',             // ex.: Ruído, Poeiras, Biológicos...
-        'tipo_de_risco_id', // FK -> TipoDeRisco (Físico, Químico, ...)
-    ];
+    protected $table = 'riscos';
+    protected $fillable = ['tipo_de_risco_id','nome','descricao'];
 
     public function tipo(): BelongsTo
     {
@@ -22,8 +18,6 @@ class Risco extends Model
 
     public function cargos(): BelongsToMany
     {
-        return $this->belongsToMany(Cargo::class, 'cargo_risco')
-            ->withPivot(['fonte_geradora','intensidade','medidas_controle'])
-            ->withTimestamps();
+        return $this->belongsToMany(Cargo::class, 'cargo_risco')->withTimestamps();
     }
 }

@@ -3,83 +3,84 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa;
-use App\Models\Cnae;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaController extends Controller
 {
-    public function index()
+    // GET /empresas/listar
+    public function index(Request $request)
     {
-        $empresas = Empresa::with('cnae')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $busca = trim((string) $request->get('search', ''));
 
-        return view('pages.forms.listar-empresa', compact('empresas'));
+        $empresas = Empresa::with('cnae')
+            ->when($busca !== '', function ($q) use ($busca) {
+                // Para Postgres, use ILIKE; para MySQL, LIKE já é case-insensitive por padrão
+                $driver = DB::getDriverName();
+                $likeOp = $driver === 'pgsql' ? 'ilike' : 'like';
+
+                $q->where(function ($w) use ($busca, $likeOp) {
+                    $w->where('razao_social', $likeOp, "%{$busca}%")
+                      ->orWhere('nome_fantasia', $likeOp, "%{$busca}%")
+                      ->orWhere('cnpj', 'like', "%{$busca}%");
+                });
+            })
+            ->orderBy('razao_social')
+            ->paginate(15)
+            ->appends(['search' => $busca]);
+
+        // ajuste o caminho da view conforme sua estrutura
+        return view('pages.forms.listar-empresa', compact('empresas', 'busca'));
     }
 
+    // GET /empresas/cadastrar
     public function create()
     {
-        // Para o select de CNAE no form
-        $cnaes = Cnae::orderBy('codigo')->get();
+        // Se sua tela precisar listar CNAEs no select:
+        $cnaes = DB::table('cnaes')->select('id','codigo','descricao','grau_risco')->orderBy('codigo')->get();
 
+        // ajuste o caminho da view conforme sua estrutura
         return view('pages.forms.cadastrar-empresa', compact('cnaes'));
     }
 
+    // POST /empresas/cadastrar
     public function store(Request $request)
     {
-        // 1) Sanitização: remover máscara de cnpj/cep/telefone e normalizar UF
-        $request->merge([
-            'cnpj'     => preg_replace('/\D/', '', (string) $request->input('cnpj')),
-            'cep'      => preg_replace('/\D/', '', (string) $request->input('cep')),
-            'telefone' => preg_replace('/\D/', '', (string) $request->input('telefone')),
-            'uf'       => strtoupper((string) $request->input('uf')),
-        ]);
-
-        // 2) Validação (considerando valores sem máscara)
         $data = $request->validate([
-            'razao_social'       => ['required','string','max:255'],
-            'nome_fantasia'      => ['nullable','string','max:255'],
-
-            // Sem máscara (apenas dígitos)
-            'cnpj'               => ['required','digits:14', Rule::unique('empresas','cnpj')],
-            'cep'                => ['nullable','digits:8'],
-            'telefone'           => ['nullable','digits_between:10,11'],
-
-            'cnae_id'            => ['nullable','exists:cnaes,id'],
-            'grau_risco'         => ['nullable','integer','min:1','max:4'],
-
-            'endereco'           => ['nullable','string','max:255'],
-            'bairro'             => ['nullable','string','max:120'],
-            'cidade'             => ['nullable','string','max:120'],
-            'uf'                 => ['nullable','string','size:2'],
-
-            'email'              => ['nullable','email','max:255'],
-
-            // PCMSO / PGR
-            'medico_pcmso_nome'  => ['nullable','string','max:255'],
-            'medico_pcmso_crm'   => ['nullable','string','max:50'],
-            'medico_pcmso_uf'    => ['nullable','string','size:2'],
-            'medico_pcmso_email' => ['nullable','email','max:255'],
-
-            'resp_sst_nome'      => ['nullable','string','max:255'],
-            'resp_sst_registro'  => ['nullable','string','max:120'],
-            'resp_sst_email'     => ['nullable','email','max:255'],
+            'razao_social'  => ['required', 'string', 'max:255'],
+            'nome_fantasia' => ['nullable', 'string', 'max:255'],
+            'cnpj'          => ['required', 'regex:/^\D*\d{14}\D*$/', 'unique:empresas,cnpj'],
+            'cnae_id'       => ['nullable', 'exists:cnaes,id'],
+            'grau_risco'    => ['nullable', 'integer', 'between:1,4'],
+            'cep'           => ['nullable', 'regex:/^\D*\d{8}\D*$/'],
+            'endereco'      => ['nullable', 'string', 'max:255'],
+            'bairro'        => ['nullable', 'string', 'max:255'],
+            'cidade'        => ['nullable', 'string', 'max:255'],
+            'uf'            => ['nullable', 'string', 'size:2'],
+            'email'         => ['nullable', 'email', 'max:255'],
         ]);
 
-        // 3) Se não veio grau_risco, tentar puxar do CNAE selecionado
-        if (empty($data['grau_risco']) && !empty($data['cnae_id'])) {
-            $cnae = Cnae::find($data['cnae_id']);
-            if ($cnae && !empty($cnae->grau_risco)) {
-                $data['grau_risco'] = (int) $cnae->grau_risco;
-            }
+        // normaliza CNPJ/CEP antes de salvar
+        $data['cnpj'] = preg_replace('/\D+/', '', $data['cnpj']);
+        if (!empty($data['cep'])) {
+            $data['cep'] = preg_replace('/\D+/', '', $data['cep']);
         }
 
-        // 4) Criar empresa
+        // snapshot automático do grau de risco a partir do CNAE (se não informado)
+        if (empty($data['grau_risco']) && !empty($data['cnae_id'])) {
+            $data['grau_risco'] = DB::table('cnaes')->where('id', $data['cnae_id'])->value('grau_risco');
+        }
+
         Empresa::create($data);
 
         return redirect()
-            ->route('empresas.create')
+            ->route('empresas.index')
             ->with('success', 'Empresa cadastrada com sucesso!');
     }
+
+    // (Opcional) editar/atualizar/excluir se quiser completar o CRUD depois:
+    // public function edit(Empresa $empresa) { ... }
+    // public function update(Request $request, Empresa $empresa) { ... }
+    // public function destroy(Empresa $empresa) { ... }
 }

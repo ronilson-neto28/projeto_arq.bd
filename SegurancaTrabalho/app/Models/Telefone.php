@@ -2,19 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Telefone extends Model
 {
-    use HasFactory;
+    protected $table = 'telefones';
 
-    // Somente as colunas que existem na tabela 'telefones'
     protected $fillable = [
+        'empresa_id',
         'funcionario_id',
-        'numero', // salve apenas dígitos; formata na view
+        'numero',
     ];
+
+    // Relacionamentos
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class);
+    }
 
     public function funcionario(): BelongsTo
     {

@@ -4,31 +4,38 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-  public function up(): void {
-    if (!Schema::hasTable('encaminhamentos')) {
-      Schema::create('encaminhamentos', function (Blueprint $t) {
-        $t->id();
-        $t->string('numero_guia')->nullable()->index();
-        $t->date('data_emissao')->nullable();
-        $t->string('medico_solicitante'); // Nome — CRM/UF
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('encaminhamentos', function (Blueprint $table) {
+            $table->id();
 
-        $t->foreignId('funcionario_id')->constrained('funcionarios');
-        $t->foreignId('empresa_id')->nullable()->constrained('empresas');
-        $t->foreignId('cargo_id')->nullable()->constrained('cargos');
+            // vínculos
+            $table->foreignId('funcionario_id')->constrained('funcionarios')->cascadeOnDelete();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('cargo_id')->constrained('cargos')->cascadeOnDelete();
 
-        $t->string('tipo_exame'); // Admissional/Periódico/...
-        $t->date('data_atendimento')->nullable();
-        $t->string('hora_atendimento', 5)->nullable();
+            // dados do agendamento/guia
+            $table->string('tipo_exame'); // Admissional, Periódico, Retorno, Mudança, Demissional
+            $table->date('data_atendimento')->nullable();
+            $table->string('hora_atendimento', 5)->nullable(); // HH:MM
 
-        $t->json('riscos_extra_json')->nullable();
-        $t->text('observacoes')->nullable();
-        $t->date('previsao_retorno')->nullable();
-        $t->string('responsavel_marcacao')->nullable();
-        $t->string('escopo_registro')->default('solicitacao'); // solicitacao|solicitacao_conclusao
-        $t->timestamps();
-      });
+            $table->string('status')->default('agendado'); // agendado/realizado/cancelado/...
+            $table->string('local_clinica')->nullable();
+            $table->string('medico_responsavel')->nullable(); // texto livre; pode virar FK no futuro
+
+            // exceções/ajustes ao PGR
+            $table->json('riscos_extra_json')->nullable();
+
+            $table->text('observacoes')->nullable();
+
+            $table->timestamps();
+        });
     }
-  }
-  public function down(): void { Schema::dropIfExists('encaminhamentos'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('encaminhamentos');
+    }
 };

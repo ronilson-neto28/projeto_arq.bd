@@ -122,15 +122,13 @@
                   <td>{{ $x['data_realizacao'] ?? '-' }}</td>
                   <td>{{ $x['validade_ate'] ?? '-' }}</td>
                   <td class="text-end">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalDetalhes"
-                      data-reg='@json($x)'
+                    <a
+                      href="{{ route('forms.exames.imprimir', $x['id']) }}"
+                      class="btn btn-sm btn-outline-success"
+                      target="_blank"
                     >
-                      Detalhes
-                    </button>
+                      <i class="fas fa-print me-1"></i>Imprimir
+                    </a>
                   </td>
                 </tr>
               @endforeach

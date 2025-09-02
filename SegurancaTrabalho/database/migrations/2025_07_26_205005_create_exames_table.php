@@ -6,23 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('exames', function (Blueprint $table) {
             $table->id();
-            $table->string('nome'); // exemplo: Exame audiométrico
-            $table->enum('tipo', ['admissional', 'demissional', 'periodico', 'retorno', 'mudanca_funcao']);
+
+            // catálogo de exames/procedimentos
+            $table->string('nome');                             // Ex.: Exame clínico ocupacional, Audiometria, Hemograma
+            $table->string('categoria')->nullable();            // Ex.: Clínica, Laboratório, Imagem, Audiometria
+            $table->unsignedSmallInteger('periodicidade_meses')->nullable(); // Ex.: 12, 24 (se quiser usar)
+            $table->string('instrucoes_padrao')->nullable();    // Ex.: Jejum 8h, levar RX anterior
             $table->text('observacoes')->nullable();
+
             $table->timestamps();
+
+            // (opcional) se quiser evitar duplicados de nome
+            // $table->unique('nome');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('exames');

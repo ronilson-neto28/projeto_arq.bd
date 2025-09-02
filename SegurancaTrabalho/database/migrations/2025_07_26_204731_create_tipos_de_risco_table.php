@@ -6,21 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tipos_de_risco', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique(); // Ex: físico, químico, etc.
+            $table->string('nome')->unique(); // Físico, Químico, Biológico, Ergonômico, Acidente
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tipos_de_risco');

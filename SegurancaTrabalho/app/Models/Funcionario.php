@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Funcionario extends Model
 {
-    use HasFactory;
+    protected $table = 'funcionarios';
 
     protected $fillable = [
         'empresa_id',
@@ -17,18 +17,20 @@ class Funcionario extends Model
         'cpf',
         'rg',
         'data_nascimento',
-        'genero',     // M|F|O
-        'email',
+        'genero',
         'estado_civil',
+        'email',
         'data_admissao',
-        'setor',
-        'turno',
+        'setor_id',
     ];
 
-    protected $casts = [
-        'data_nascimento' => 'date',
-    ];
+    // normaliza CPF (só dígitos)
+    public function setCpfAttribute($value): void
+    {
+        $this->attributes['cpf'] = preg_replace('/\D+/', '', (string) $value);
+    }
 
+    // relacionamentos
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
@@ -39,9 +41,9 @@ class Funcionario extends Model
         return $this->belongsTo(Cargo::class);
     }
 
-    /** Se mantiver tabela de telefones */
+    // quando criarmos a tabela telefones
     public function telefones(): HasMany
     {
-        return $this->hasMany(Telefone::class);
+        return $this->hasMany(Telefone::class, 'funcionario_id');
     }
 }

@@ -48,11 +48,11 @@ class CargoSeeder extends Seeder
 
         // Quais colunas existem?
         $allowed = Schema::getColumnListing('cargos');
-        // Forçar o uso da coluna 'descricao' que é a que existe na tabela
-        $nameCol = 'descricao';
+        // Usar a coluna 'nome' que é a que existe na tabela
+        $nameCol = 'nome';
 
         if (!in_array($nameCol, $allowed)) {
-            $this->command?->error("A tabela 'cargos' precisa ter a coluna 'descricao'.");
+            $this->command?->error("A tabela 'cargos' precisa ter a coluna 'nome'.");
             return;
         }
 
@@ -66,7 +66,7 @@ class CargoSeeder extends Seeder
             foreach ($lista as $cargoNome) {
                 $where = ['empresa_id' => $empresa->id, 'nome' => $cargoNome];
                 $values = [
-                    'descricao' => $cargoNome, // Usar o mesmo valor para nome e descricao
+                    'nome' => $cargoNome,
                     'updated_at' => now(), 
                     'created_at' => now()
                 ];

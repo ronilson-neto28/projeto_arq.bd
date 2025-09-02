@@ -73,7 +73,7 @@
                 <option value="{{ $f->id }}"
                   data-empresa-id="{{ $f->empresa_id }}"
                   data-cargo-id="{{ $f->cargo_id }}">
-                  {{ $f->nome }} — {{ $f->empresa->razao_social ?? 'Empresa' }} {{ $f->cargo ? '/ '.$f->cargo->descricao : '' }}
+                  {{ $f->nome }} — {{ $f->empresa->razao_social ?? 'Empresa' }} {{ $f->cargo ? '/ '.$f->cargo->nome : '' }}
                 </option>
               @endforeach
             @endisset
@@ -87,7 +87,7 @@
             @isset($cargos)
               @foreach($cargos as $c)
                 <option value="{{ $c->id }}" data-empresa-id="{{ $c->empresa_id }}">
-                  {{ $c->empresa->razao_social ?? 'Empresa' }} / {{ $c->descricao }}
+                  {{ $c->empresa->razao_social ?? 'Empresa' }} / {{ $c->nome }}
                 </option>
               @endforeach
             @endisset
