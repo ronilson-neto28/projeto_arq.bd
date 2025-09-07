@@ -77,15 +77,70 @@
                 <hr class="my-3">
                 
                 <div class="text-center">
-                    <div class="avatar-wrapper mb-2">
-                        <div class="avatar avatar-lg">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 24px;">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <div class="profile-photo-section mb-3">
+                        <div class="position-relative d-inline-block">
+                            @if($user->profile_photo)
+                                <img src="{{ asset('storage/' . $user->profile_photo) }}" 
+                                     alt="Foto de Perfil" 
+                                     class="rounded-circle border border-3 border-light shadow" 
+                                     style="width: 120px; height: 120px; object-fit: cover;" 
+                                     id="profileImage">
+                            @else
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center border border-3 border-light shadow" 
+                                     style="width: 120px; height: 120px; font-size: 48px;" 
+                                     id="profilePlaceholder">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            
+                            <!-- Botões de ação da foto -->
+                            <div class="position-absolute bottom-0 end-0">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary btn-sm rounded-circle" 
+                                            type="button" 
+                                            data-bs-toggle="dropdown" 
+                                            aria-expanded="false"
+                                            style="width: 36px; height: 36px;">
+                                        <i data-lucide="camera" style="width: 16px; height: 16px;"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="#" onclick="document.getElementById('photoInput').click()">
+                                                <i data-lucide="upload" class="me-2" style="width: 16px; height: 16px;"></i>
+                                                {{ $user->profile_photo ? 'Alterar Foto' : 'Adicionar Foto' }}
+                                            </a>
+                                        </li>
+                                        @if($user->profile_photo)
+                                        <li>
+                                            <form action="{{ route('profile.photo.remove') }}" method="POST" class="d-inline" id="removePhotoForm">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="dropdown-item text-danger" onclick="confirmRemovePhoto()">
+                                                    <i data-lucide="trash-2" class="me-2" style="width: 16px; height: 16px;"></i>
+                                                    Remover Foto
+                                                </button>
+                                            </form>
+                                        </li>
+                                        @endif
+                                    </ul>
+                                </div>
                             </div>
                         </div>
+                        
+                        <!-- Input oculto para upload -->
+                        <form action="{{ route('profile.photo.upload') }}" method="POST" enctype="multipart/form-data" id="photoForm" class="d-none">
+                            @csrf
+                            <input type="file" 
+                                   id="photoInput" 
+                                   name="profile_photo" 
+                                   accept="image/jpeg,image/png,image/jpg,image/gif" 
+                                   onchange="previewAndUpload(this)">
+                        </form>
                     </div>
-                    <h6 class="mb-1">{{ $user->name }}</h6>
-                    <p class="text-muted fs-12px">Usuário do Sistema</p>
+                    
+                    <h4 class="mb-1 fw-bold">{{ $user->name }}</h4>
+                    <p class="text-muted mb-0">{{ $user->email }}</p>
+                    <small class="text-muted">Usuário do Sistema</small>
                 </div>
             </div>
         </div>
@@ -194,5 +249,75 @@
             editProfileModal.show();
         @endif
     @endif
+    
+    // Função para capitalizar primeira letra e letras após espaços
+    function capitalizeNames(str) {
+        return str.toLowerCase().replace(/\b\w/g, function(char) {
+            return char.toUpperCase();
+        });
+    }
+
+    // Aplicar formatação ao campo nome no modal de edição
+    const nameInputProfile = document.getElementById('name');
+    if (nameInputProfile) {
+        nameInputProfile.addEventListener('input', function(e) {
+            const cursorPosition = e.target.selectionStart;
+            const formattedValue = capitalizeNames(e.target.value);
+            e.target.value = formattedValue;
+            
+            // Manter posição do cursor
+            e.target.setSelectionRange(cursorPosition, cursorPosition);
+        });
+    }
+
+    // Função para preview e upload da foto
+    function previewAndUpload(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Validar tipo de arquivo
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Por favor, selecione apenas arquivos de imagem (JPEG, PNG, JPG, GIF).');
+                return;
+            }
+            
+            // Validar tamanho do arquivo (máximo 2MB)
+            if (file.size > 2048 * 1024) {
+                alert('O arquivo deve ter no máximo 2MB.');
+                return;
+            }
+            
+            // Criar preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profileImage = document.getElementById('profileImage');
+                const profilePlaceholder = document.getElementById('profilePlaceholder');
+                
+                if (profileImage) {
+                    profileImage.src = e.target.result;
+                } else if (profilePlaceholder) {
+                    // Substituir placeholder por imagem
+                    profilePlaceholder.outerHTML = `
+                        <img src="${e.target.result}" 
+                             alt="Foto de Perfil" 
+                             class="rounded-circle border border-3 border-light shadow" 
+                             style="width: 120px; height: 120px; object-fit: cover;" 
+                             id="profileImage">`;
+                }
+            };
+            reader.readAsDataURL(file);
+            
+            // Fazer upload automaticamente
+            document.getElementById('photoForm').submit();
+        }
+    }
+    
+    // Função para confirmar remoção da foto
+    function confirmRemovePhoto() {
+        if (confirm('Tem certeza que deseja remover sua foto de perfil?')) {
+            document.getElementById('removePhotoForm').submit();
+        }
+    }
 </script>
 @endpush

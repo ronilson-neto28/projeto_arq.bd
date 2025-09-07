@@ -145,20 +145,145 @@ app/
 
 **Arquivo**: `app/Http/Controllers/PasswordResetController.php`
 
-**Responsabilidade**: Gerencia reset de senhas via email.
+**Responsabilidade**: Gerencia reset de senhas via email utilizando o sistema nativo do Laravel.
+
+#### Como Funciona o Sistema de Recuperação de Senha
+
+O Laravel possui um sistema completo de recuperação de senha que utiliza:
+
+**1. Funcionalidades Nativas do Laravel**:
+- `Illuminate\Auth\Passwords\PasswordBroker`: Gerencia tokens de reset
+- `Illuminate\Notifications\Messages\MailMessage`: Envia emails
+- `password_resets` table: Armazena tokens temporários
+- Middleware de throttling para segurança
+
+**2. Controllers Envolvidos**:
+
+**PasswordResetController** - Controller principal que herda de:
+- `Illuminate\Foundation\Auth\SendsPasswordResetEmails`
+- `Illuminate\Foundation\Auth\ResetsPasswords`
+
+Essas traits fornecem métodos prontos para:
 
 **Métodos Principais**:
 - `showLinkRequestForm()`: Exibe formulário para solicitar reset
-- `sendResetLinkEmail()`: Envia email com link de reset
-- `showResetForm()`: Exibe formulário de nova senha
-- `reset()`: Processa reset da senha
+  - Renderiza view `auth.passwords.email`
+  - Não requer autenticação
 
-**Fluxo de Reset de Senha**:
-1. Usuário solicita reset informando email
-2. Sistema gera token único e envia email
-3. Usuário clica no link do email
-4. Sistema valida token e permite nova senha
-5. Senha é atualizada no banco de dados
+- `sendResetLinkEmail(Request $request)`: Processa solicitação de reset
+  - Valida se email existe no sistema
+  - Gera token único e seguro
+  - Envia email com link de reset
+  - Retorna resposta JSON ou redirect
+
+- `showResetForm(Request $request, $token)`: Exibe formulário de nova senha
+  - Valida se token é válido
+  - Renderiza view `auth.passwords.reset`
+  - Pré-preenche email se válido
+
+- `reset(Request $request)`: Processa alteração da senha
+  - Valida token e email
+  - Verifica se senha atende critérios
+  - Atualiza senha no banco
+  - Invalida token usado
+  - Autentica usuário automaticamente
+
+**3. Models Envolvidos**:
+
+**User Model** (`app/Models/User.php`):
+- Implementa `Illuminate\Contracts\Auth\CanResetPassword`
+- Método `sendPasswordResetNotification($token)`: Customiza email enviado
+- Método `getEmailForPasswordReset()`: Define email para reset
+
+**Password Reset Token** (tabela `password_resets`):
+- `email`: Email do usuário
+- `token`: Token hasheado para segurança
+- `created_at`: Timestamp de criação (expira em 60 minutos)
+
+**4. Fluxo Completo de Reset de Senha**:
+
+```
+1. SOLICITAÇÃO:
+   Usuário → /password/reset → PasswordResetController@showLinkRequestForm()
+   ↓
+   Formulário com campo email
+
+2. PROCESSAMENTO:
+   POST /password/email → PasswordResetController@sendResetLinkEmail()
+   ↓
+   Validação: email existe?
+   ↓
+   Geração de token único
+   ↓
+   Armazenamento na tabela password_resets
+   ↓
+   Envio de email via User@sendPasswordResetNotification()
+
+3. EMAIL RECEBIDO:
+   Link: /password/reset/{token}?email={email}
+   ↓
+   Usuário clica no link
+
+4. FORMULÁRIO DE NOVA SENHA:
+   GET /password/reset/{token} → PasswordResetController@showResetForm()
+   ↓
+   Validação: token válido e não expirado?
+   ↓
+   Exibição do formulário
+
+5. ALTERAÇÃO DA SENHA:
+   POST /password/reset → PasswordResetController@reset()
+   ↓
+   Validações:
+   - Token válido?
+   - Email correto?
+   - Senha atende critérios?
+   ↓
+   Atualização da senha no User model
+   ↓
+   Remoção do token da tabela
+   ↓
+   Login automático do usuário
+   ↓
+   Redirect para dashboard
+```
+
+**5. Configurações Importantes**:
+
+**No arquivo `config/auth.php`**:
+```php
+'passwords' => [
+    'users' => [
+        'provider' => 'users',
+        'table' => 'password_resets',
+        'expire' => 60, // Token expira em 60 minutos
+        'throttle' => 60, // Throttling de 60 segundos
+    ],
+],
+```
+
+**No arquivo `.env`**:
+```env
+# Configurações de email para envio
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="noreply@segurancatrabalho.com"
+```
+
+**6. Segurança Implementada**:
+- Tokens são hasheados no banco de dados
+- Expiração automática em 60 minutos
+- Throttling para prevenir spam
+- Validação de email existente
+- Token é invalidado após uso
+- Rate limiting por IP
+
+**7. Customizações Possíveis**:
+- Template do email: `resources/views/emails/password-reset.blade.php`
+- Tempo de expiração: `config/auth.php`
+- Validações de senha: `config/auth.php`
+- Mensagens de erro: `resources/lang/pt/passwords.php`
 
 ### 3. ListarExamesController
 
@@ -188,6 +313,179 @@ app/
 - `index()`: Exibe formulário de criação
 - `store()`: Processa criação de novo exame
 - `validate()`: Valida dados do formulário
+
+### 5. ProfileController
+
+**Arquivo**: `app/Http/Controllers/ProfileController.php`
+
+**Responsabilidade**: Gerencia perfil do usuário autenticado.
+
+**Métodos Principais**:
+- `show()`: Exibe dados do perfil
+- `update()`: Atualiza informações pessoais
+- `updatePassword()`: Altera senha do usuário
+
+## Entendendo Controllers e Models (Para Iniciantes)
+
+### O que são Controllers?
+
+**Controllers** são como "gerentes" da aplicação. Eles recebem as solicitações do usuário (quando clica em um botão, envia um formulário, etc.) e decidem o que fazer com essas solicitações.
+
+**Analogia**: Imagine um restaurante:
+- O **Controller** é o garçom
+- Ele recebe o pedido do cliente (usuário)
+- Vai até a cozinha (Model) buscar a comida (dados)
+- Entrega o prato pronto (View) para o cliente
+
+**Responsabilidades dos Controllers**:
+1. **Receber requisições**: GET, POST, PUT, DELETE
+2. **Validar dados**: Verificar se informações estão corretas
+3. **Chamar Models**: Buscar/salvar dados no banco
+4. **Retornar respostas**: Views, JSON, redirects
+
+**Exemplo Prático - PasswordResetController**:
+```php
+public function sendResetLinkEmail(Request $request)
+{
+    // 1. VALIDAÇÃO: Verifica se email é válido
+    $request->validate(['email' => 'required|email']);
+    
+    // 2. BUSCA NO MODEL: Procura usuário no banco
+    $user = User::where('email', $request->email)->first();
+    
+    // 3. LÓGICA DE NEGÓCIO: Se usuário existe, envia email
+    if ($user) {
+        // Gera token e envia email
+        Password::sendResetLink($request->only('email'));
+    }
+    
+    // 4. RESPOSTA: Retorna mensagem para o usuário
+    return back()->with('status', 'Link enviado!');
+}
+```
+
+### O que são Models?
+
+**Models** representam os dados da aplicação e como eles se relacionam. São como "representantes" das tabelas do banco de dados.
+
+**Analogia**: Continuando com o restaurante:
+- O **Model** é a cozinha e o estoque
+- Sabe onde estão os ingredientes (dados)
+- Conhece as receitas (relacionamentos)
+- Prepara os pratos (processa dados)
+
+**Responsabilidades dos Models**:
+1. **Representar tabelas**: Cada Model = uma tabela
+2. **Definir relacionamentos**: Como tabelas se conectam
+3. **Validar dados**: Regras de negócio
+4. **Processar informações**: Cálculos, formatações
+
+**Exemplo Prático - User Model**:
+```php
+class User extends Model
+{
+    // 1. DEFINIR CAMPOS EDITÁVEIS
+    protected $fillable = ['name', 'email', 'password'];
+    
+    // 2. RELACIONAMENTOS
+    public function encaminhamentos()
+    {
+        return $this->hasMany(Encaminhamento::class);
+    }
+    
+    // 3. MÉTODOS PERSONALIZADOS
+    public function sendPasswordResetNotification($token)
+    {
+        // Customiza como email de reset é enviado
+        $this->notify(new ResetPasswordNotification($token));
+    }
+    
+    // 4. ACESSORS (modificam dados ao exibir)
+    public function getNameAttribute($value)
+    {
+        return ucwords($value); // Primeira letra maiúscula
+    }
+}
+```
+
+### Como Controllers e Models Trabalham Juntos?
+
+**Fluxo Típico**:
+```
+1. USUÁRIO FAZ AÇÃO
+   ↓
+2. ROTA DIRECIONA PARA CONTROLLER
+   ↓
+3. CONTROLLER PROCESSA REQUISIÇÃO
+   ↓
+4. CONTROLLER CHAMA MODEL
+   ↓
+5. MODEL ACESSA BANCO DE DADOS
+   ↓
+6. MODEL RETORNA DADOS PARA CONTROLLER
+   ↓
+7. CONTROLLER RETORNA VIEW/RESPOSTA
+   ↓
+8. USUÁRIO VÊ RESULTADO
+```
+
+**Exemplo Real - Reset de Senha**:
+
+```php
+// 1. USUÁRIO CLICA "ESQUECI MINHA SENHA"
+// Rota: GET /password/reset
+
+// 2. CONTROLLER EXIBE FORMULÁRIO
+public function showLinkRequestForm()
+{
+    return view('auth.passwords.email'); // Mostra formulário
+}
+
+// 3. USUÁRIO DIGITA EMAIL E ENVIA
+// Rota: POST /password/email
+
+// 4. CONTROLLER PROCESSA
+public function sendResetLinkEmail(Request $request)
+{
+    // Valida email
+    $request->validate(['email' => 'required|email']);
+    
+    // 5. CHAMA MODEL PARA BUSCAR USUÁRIO
+    $user = User::where('email', $request->email)->first();
+    
+    if ($user) {
+        // 6. MODEL ENVIA EMAIL
+        $user->sendPasswordResetNotification($token);
+    }
+    
+    // 7. CONTROLLER RETORNA RESPOSTA
+    return back()->with('status', 'Email enviado!');
+}
+```
+
+### Principais Diferenças:
+
+| Aspecto | Controller | Model |
+|---------|------------|-------|
+| **Função** | Gerencia fluxo da aplicação | Gerencia dados |
+| **Responsabilidade** | Lógica de apresentação | Lógica de negócio |
+| **Interage com** | Views, Models, Requests | Banco de dados |
+| **Exemplo** | "Quando usuário clicar, faça X" | "Usuário tem nome e email" |
+| **Localização** | `app/Http/Controllers/` | `app/Models/` |
+
+### Boas Práticas:
+
+**Controllers**:
+- Mantenha métodos pequenos e focados
+- Não coloque lógica de banco no controller
+- Use Form Requests para validação complexa
+- Retorne sempre uma resposta (view, json, redirect)
+
+**Models**:
+- Um Model por tabela principal
+- Defina relacionamentos claramente
+- Use Accessors/Mutators para formatação
+- Mantenha lógica de negócio no Model
 
 ## Sistema de Email
 

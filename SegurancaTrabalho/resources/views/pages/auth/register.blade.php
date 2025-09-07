@@ -65,3 +65,29 @@
   </div>
 </div>
 @endsection
+
+@push('custom-scripts')
+<script>
+(function() {
+    // Função para capitalizar primeira letra e letras após espaços
+    function capitalizeNames(str) {
+        return str.toLowerCase().replace(/\b\w/g, function(char) {
+            return char.toUpperCase();
+        });
+    }
+
+    // Aplicar formatação ao campo nome
+    const nameInput = document.getElementById('name');
+    if (nameInput) {
+        nameInput.addEventListener('input', function(e) {
+            const cursorPosition = e.target.selectionStart;
+            const formattedValue = capitalizeNames(e.target.value);
+            e.target.value = formattedValue;
+            
+            // Manter posição do cursor
+            e.target.setSelectionRange(cursorPosition, cursorPosition);
+        });
+    }
+})();
+</script>
+@endpush

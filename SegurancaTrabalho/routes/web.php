@@ -27,6 +27,11 @@ use App\Http\Controllers\ProfileController;
 // ROTAS PARA NÃO AUTENTICADOS (guest)
 ////////////////////////////////////////
 
+// Rota raiz para usuários não autenticados - redireciona para login
+Route::get('/', function () {
+    return redirect()->route('login');
+})->middleware('guest');
+
 Route::get('/test-mail', function () {
     Mail::raw('Teste de e-mail via Mailpit 🚀', function ($m) {
         $m->to('teste@exemplo.local')->subject('Mailpit OK');
@@ -41,6 +46,11 @@ Route::middleware('guest')->prefix('auth')->group(function () {
 
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register'])->name('register.post');
+
+    // Rotas de verificação de email
+    Route::get('verify-code', [RegisterController::class, 'showVerificationForm'])->name('verification.show');
+    Route::post('verify-code', [RegisterController::class, 'verifyCode'])->name('verification.verify');
+    Route::post('resend-code', [RegisterController::class, 'resendCode'])->name('verification.resend');
 
     // Exibe o formulário de esqueci a senha
     Route::get('/forgot-password', [ForgotSenhaController::class, 'showLinkRequestForm'])
@@ -164,6 +174,8 @@ Route::middleware('auth')->group(function () {
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::post('profile/photo', [ProfileController::class, 'uploadPhoto'])->name('profile.photo.upload');
+        Route::delete('profile/photo', [ProfileController::class, 'removePhoto'])->name('profile.photo.remove');
     });
 
     // (adicione aqui outras rotas protegidas se quiser)

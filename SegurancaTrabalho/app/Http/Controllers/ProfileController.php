@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -70,5 +71,57 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.show')
             ->with('success', 'Senha atualizada com sucesso!');
+    }
+
+    /**
+     * Faz upload da foto de perfil
+     */
+    public function uploadPhoto(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'profile_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Remove a foto anterior se existir
+        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
+
+        // Faz upload da nova foto
+        $path = $request->file('profile_photo')->store('profile_photos', 'public');
+
+        $user->update([
+            'profile_photo' => $path,
+        ]);
+
+        return redirect()->route('profile.show')
+            ->with('success', 'Foto de perfil atualizada com sucesso!');
+    }
+
+    /**
+     * Remove a foto de perfil
+     */
+    public function removePhoto()
+    {
+        $user = Auth::user();
+
+        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
+
+        $user->update([
+            'profile_photo' => null,
+        ]);
+
+        return redirect()->route('profile.show')
+            ->with('success', 'Foto de perfil removida com sucesso!');
     }
 }

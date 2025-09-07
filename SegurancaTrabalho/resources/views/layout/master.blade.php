@@ -18,7 +18,7 @@ License: You must have a valid license to legally use the template for your proj
 
   <title>PROATIVA SST</title>
 
-  @vite(['resources\js\app.js'])
+  @vite(['resources/js/app.js'])
 
   <!-- color-modes:js -->
   @vite(['resources/js/pages/color-modes.js'])
@@ -88,13 +88,11 @@ License: You must have a valid license to legally use the template for your proj
 
     <!-- base js -->
     @vite(['resources/js/app.js'])
+    <script src="{{ asset('build/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('build/plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('build/plugins/lucide/lucide.min.js') }}"></script>
     <script src="{{ asset('build/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <!-- end base js -->
-
-  
-
 
     <!-- plugin js -->
     @stack('plugin-scripts')

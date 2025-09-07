@@ -69,6 +69,94 @@ function togglePassword() {
   // Atualiza o ícone Lucide
   lucide.createIcons();
 }
+
+// Funcionalidade "Lembre-se de mim"
+document.addEventListener('DOMContentLoaded', function() {
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const rememberCheckbox = document.getElementById('remember');
+  const loginForm = document.querySelector('form');
+
+  // Carregar dados salvos ao carregar a página
+  loadSavedCredentials();
+
+  // Salvar dados quando o checkbox for alterado
+  rememberCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      saveCredentials();
+    } else {
+      clearSavedCredentials();
+    }
+  });
+
+  // Salvar dados quando os campos forem alterados (se checkbox estiver marcado)
+  emailInput.addEventListener('input', function() {
+    if (rememberCheckbox.checked) {
+      saveCredentials();
+    }
+  });
+
+  passwordInput.addEventListener('input', function() {
+    if (rememberCheckbox.checked) {
+      saveCredentials();
+    }
+  });
+
+  // Permitir login com Enter
+  emailInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (rememberCheckbox.checked && emailInput.value && passwordInput.value) {
+        loginForm.submit();
+      } else if (!rememberCheckbox.checked) {
+        passwordInput.focus();
+      }
+    }
+  });
+
+  passwordInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (rememberCheckbox.checked && emailInput.value && passwordInput.value) {
+        loginForm.submit();
+      } else if (!rememberCheckbox.checked && emailInput.value && passwordInput.value) {
+        loginForm.submit();
+      }
+    }
+  });
+
+  function saveCredentials() {
+    if (emailInput.value) {
+      localStorage.setItem('remember_email', emailInput.value);
+    }
+    if (passwordInput.value) {
+      localStorage.setItem('remember_password', passwordInput.value);
+    }
+    localStorage.setItem('remember_me_checked', 'true');
+  }
+
+  function loadSavedCredentials() {
+    const savedEmail = localStorage.getItem('remember_email');
+    const savedPassword = localStorage.getItem('remember_password');
+    const rememberChecked = localStorage.getItem('remember_me_checked');
+
+    if (rememberChecked === 'true') {
+      rememberCheckbox.checked = true;
+      if (savedEmail) {
+        emailInput.value = savedEmail;
+      }
+      if (savedPassword) {
+        passwordInput.value = savedPassword;
+      }
+    }
+  }
+
+  function clearSavedCredentials() {
+    localStorage.removeItem('remember_email');
+    localStorage.removeItem('remember_password');
+    localStorage.removeItem('remember_me_checked');
+  }
+});
 </script>
 
 @endsection

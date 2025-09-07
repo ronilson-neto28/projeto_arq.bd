@@ -29,131 +29,155 @@
   <div class="col-12 col-xl-12 stretch-card">
     <div class="row flex-grow-1">
       <div class="col-md-3 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0">Total de Empresas cadastradas</h6>
-              <div class="dropdown mb-2">
-                <a type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+          <div class="card-body text-white position-relative overflow-hidden">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="d-flex align-items-center">
+                <div class="icon-wrapper p-2 rounded-circle" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                  <i data-lucide="building-2" style="width: 24px; height: 24px; color: white;"></i>
+                </div>
+                <div class="ms-3">
+                  <h6 class="card-title mb-0 text-white-50 fw-normal" style="font-size: 0.85rem;">TOTAL DE EMPRESAS</h6>
+                  <p class="mb-0 text-white-50" style="font-size: 0.75rem;">CADASTRADAS</p>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="text-white-50">
+                  <i class="icon-sm" data-lucide="more-horizontal"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+                <div class="dropdown-menu shadow border-0" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span>Editar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">{{ number_format($totalEmpresas, 0, ',', '.') }}</h3>
-                <!--<h3 class="mb-2">3,897</h3>-->
+            <div class="d-flex align-items-end justify-content-between">
+              <div>
+                <h2 class="mb-0 fw-bold text-white" style="font-size: 2.5rem;">{{ number_format($totalEmpresas, 0, ',', '.') }}</h2>
+                <p class="mb-0 text-white-50" style="font-size: 0.8rem;">empresas ativas</p>
               </div>
-              <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-center align-items-center">
-                <i data-lucide="home" style="width: 40px; height: 40px;"></i>
-                <!--<div id="customersChart" class="mt-md-3 mt-xl-0"></div>-->
+              <div class="position-absolute" style="right: -10px; bottom: -10px; opacity: 0.1;">
+                <i data-lucide="building-2" style="width: 80px; height: 80px;"></i>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0">Total de Funcionários cadastrados</h6>
-              <div class="dropdown mb-2">
-                <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 15px;">
+          <div class="card-body text-white position-relative overflow-hidden">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="d-flex align-items-center">
+                <div class="icon-wrapper p-2 rounded-circle" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                  <i data-lucide="users" style="width: 24px; height: 24px; color: white;"></i>
+                </div>
+                <div class="ms-3">
+                  <h6 class="card-title mb-0 text-white-50 fw-normal" style="font-size: 0.85rem;">TOTAL DE FUNCIONÁRIOS</h6>
+                  <p class="mb-0 text-white-50" style="font-size: 0.75rem;">CADASTRADOS</p>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="text-white-50">
+                  <i class="icon-sm" data-lucide="more-horizontal"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+                <div class="dropdown-menu shadow border-0" aria-labelledby="dropdownMenuButton1">
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span>Editar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">{{ number_format($totalFuncionarios, 0, ',', '.') }}</h3>
-                <div class="d-flex align-items-baseline">
-                </div>
+            <div class="d-flex align-items-end justify-content-between">
+              <div>
+                <h2 class="mb-0 fw-bold text-white" style="font-size: 2.5rem;">{{ number_format($totalFuncionarios, 0, ',', '.') }}</h2>
+                <p class="mb-0 text-white-50" style="font-size: 0.8rem;">funcionários ativos</p>
               </div>
-              <div class="col-6 col-md-12 col-xl-7">
-                <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
+              <div class="position-absolute" style="right: -10px; bottom: -10px; opacity: 0.1;">
+                <i data-lucide="users" style="width: 80px; height: 80px;"></i>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0">Total de Exames Pendentes</h6>
-              <div class="dropdown mb-2">
-                <a type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 15px;">
+          <div class="card-body text-dark position-relative overflow-hidden">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="d-flex align-items-center">
+                <div class="icon-wrapper p-2 rounded-circle" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+                  <i data-lucide="clock" style="width: 24px; height: 24px; color: #d63384;"></i>
+                </div>
+                <div class="ms-3">
+                  <h6 class="card-title mb-0 fw-normal" style="font-size: 0.85rem; color: #6c5b7b;">TOTAL DE EXAMES</h6>
+                  <p class="mb-0" style="font-size: 0.75rem; color: #6c5b7b;">PENDENTES</p>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #6c5b7b;">
+                  <i class="icon-sm" data-lucide="more-horizontal"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+                <div class="dropdown-menu shadow border-0" aria-labelledby="dropdownMenuButton2">
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span>Editar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">35,084</h3>
-                <div class="d-flex align-items-baseline">
-                  <p class="text-danger">
-                    <span>-2.8%</span>
-                    <i data-lucide="arrow-down" class="icon-sm mb-1"></i>
-                  </p>
+            <div class="d-flex align-items-end justify-content-between">
+              <div>
+                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #d63384;">35,084</h2>
+                <div class="d-flex align-items-center mt-1">
+                  <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1 rounded-pill" style="font-size: 0.7rem;">
+                    <i data-lucide="arrow-down" class="icon-xs me-1"></i>
+                    -2.8%
+                  </span>
+                  <p class="mb-0 ms-2" style="font-size: 0.8rem; color: #6c5b7b;">vs mês anterior</p>
                 </div>
               </div>
-              <div class="col-6 col-md-12 col-xl-7">
-                <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
+              <div class="position-absolute" style="right: -10px; bottom: -10px; opacity: 0.1;">
+                <i data-lucide="clock" style="width: 80px; height: 80px; color: #d63384;"></i>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0">Total de Exames</h6>
-              <div class="dropdown mb-2">
-                <a type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 15px;">
+          <div class="card-body text-dark position-relative overflow-hidden">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="d-flex align-items-center">
+                <div class="icon-wrapper p-2 rounded-circle" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+                  <i data-lucide="file-check" style="width: 24px; height: 24px; color: #198754;"></i>
+                </div>
+                <div class="ms-3">
+                  <h6 class="card-title mb-0 fw-normal" style="font-size: 0.85rem; color: #2d5a27;">TOTAL DE EXAMES</h6>
+                  <p class="mb-0" style="font-size: 0.75rem; color: #2d5a27;">CADASTRADOS</p>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #2d5a27;">
+                  <i class="icon-sm" data-lucide="more-horizontal"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+                <div class="dropdown-menu shadow border-0" aria-labelledby="dropdownMenuButton3">
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span>Editar</span></a>
+                  <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-6 col-md-12 col-xl-5">
-                <h3 class="mb-2">{{ number_format($totalExames, 0, ',', '.') }}</h3>
-                <div class="d-flex align-items-baseline">
-                  <p class="text-success">
-                    <span>Cadastrados</span>
-                  </p>
+            <div class="d-flex align-items-end justify-content-between">
+              <div>
+                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #198754;">{{ number_format($totalExames, 0, ',', '.') }}</h2>
+                <div class="d-flex align-items-center mt-1">
+                  <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill" style="font-size: 0.7rem;">
+                    <i data-lucide="check-circle" class="icon-xs me-1"></i>
+                    Cadastrados
+                  </span>
                 </div>
               </div>
-              <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-center align-items-center">
-                <i data-lucide="file-text" style="width: 40px; height: 40px;"></i>
+              <div class="position-absolute" style="right: -10px; bottom: -10px; opacity: 0.1;">
+                <i data-lucide="file-check" style="width: 80px; height: 80px; color: #198754;"></i>
               </div>
             </div>
           </div>
@@ -206,15 +230,36 @@
           </div>
         </div>
         <div id="examesPieChart"></div>
-        <div class="row mb-3">
+        <div class="row mb-3 mt-3">
           @foreach($examesPorTipo as $exame)
-          <div class="col-12 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <label class="d-flex align-items-center fs-10px text-uppercase fw-bolder">
-                <span class="p-1 me-2 rounded-circle" style="background-color: {{ ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'][$loop->index % 5] }}"></span>
+          <div class="col-12 mb-3">
+            @php
+               $examTypeColors = [
+                  'admissional' => '#28a745',
+                  'periodico' => '#007bff', 
+                  'demissional' => '#dc3545',
+                  'retorno' => '#fd7e14',
+                  'mudanca_de_cargo' => '#ffc107'
+                ];
+               $normalizedType = strtolower(str_replace(' ', '_', $exame->tipo_exame));
+               $color = $examTypeColors[$normalizedType] ?? '#6c757d';
+               $rgbColor = '';
+               if ($color === '#28a745') $rgbColor = '40, 167, 69';
+                elseif ($color === '#007bff') $rgbColor = '0, 123, 255';
+                elseif ($color === '#dc3545') $rgbColor = '220, 53, 69';
+                elseif ($color === '#fd7e14') $rgbColor = '253, 126, 20';
+                elseif ($color === '#ffc107') $rgbColor = '255, 193, 7';
+                else $rgbColor = '108, 117, 125';
+             @endphp
+             <div class="d-flex justify-content-between align-items-center p-2 rounded" style="background: linear-gradient(135deg, rgba({{ $rgbColor }}, 0.1) 0%, rgba({{ $rgbColor }}, 0.05) 100%); border: 1px solid rgba({{ $rgbColor }}, 0.2);">
+                <label class="d-flex align-items-center fs-11px text-uppercase fw-bold mb-0" style="color: #495057;">
+                  <span class="me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 16px; height: 16px; background: {{ $color }}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
                 {{ ucfirst(str_replace('_', ' ', $exame->tipo_exame)) }}
               </label>
-              <span class="fw-bold">{{ $exame->total }}</span>
+              <div class="d-flex align-items-center">
+                <span class="fw-bold me-2" style="color: #495057; font-size: 14px;">{{ $exame->total }}</span>
+                <small class="text-muted" style="font-size: 10px;">exames</small>
+              </div>
             </div>
           </div>
           @endforeach
@@ -404,40 +449,191 @@
           return item.tipo_exame.charAt(0).toUpperCase() + item.tipo_exame.slice(1).replace('_', ' ');
         });
         
-        const colors = ['#6571ff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'];
+        // Cores específicas por tipo de exame
+         const examTypeColors = {
+           'admissional': '#28a745',    // Verde
+           'periodico': '#007bff',      // Azul
+           'demissional': '#dc3545',    // Vermelho
+           'retorno': '#fd7e14',        // Laranja
+           'mudanca_de_cargo': '#ffc107' // Amarelo
+         };
+        
+        const colors = labels.map(label => {
+          const normalizedLabel = label.toLowerCase().replace(/\s+/g, '_');
+          return examTypeColors[normalizedLabel] || '#6c757d'; // Cor padrão se não encontrar
+        });
         
         const examesPieChartOptions = {
-          chart: {
-            height: 300,
-            type: 'pie'
-          },
+           chart: {
+             height: 350,
+             type: 'pie',
+             animations: {
+               enabled: true,
+               easing: 'easeinout',
+               speed: 800,
+               animateGradually: {
+                 enabled: true,
+                 delay: 150
+               },
+               dynamicAnimation: {
+                 enabled: true,
+                 speed: 350
+               }
+             },
+             dropShadow: {
+               enabled: true,
+               top: 3,
+               left: 3,
+               blur: 6,
+               opacity: 0.2
+             },
+             toolbar: {
+               show: false
+             },
+             selection: {
+               enabled: false
+             },
+             zoom: {
+               enabled: false
+             },
+             events: {
+               legendClick: function(chartContext, seriesIndex, config) {
+                 return false;
+               }
+             }
+           },
           series: series,
           labels: labels,
           colors: colors,
+          fill: {
+             type: 'solid'
+           },
+          stroke: {
+             show: true,
+             width: 3,
+             colors: ['#ffffff']
+           },
           legend: {
-            show: false
+            show: false,
+            position: 'bottom',
+            floating: false,
+            offsetX: 0,
+            offsetY: 0,
+            markers: {
+              width: 0,
+              height: 0,
+              strokeWidth: 0,
+              strokeColor: 'transparent',
+              fillColors: 'transparent',
+              radius: 0,
+              customHTML: undefined,
+              onClick: undefined,
+              offsetX: 0,
+              offsetY: 0
+            }
           },
           dataLabels: {
-            enabled: true,
-            formatter: function (val, opts) {
-              return opts.w.config.series[opts.seriesIndex];
-            }
-          },
+             enabled: true,
+             formatter: function (val, opts) {
+               const value = opts.w.config.series[opts.seriesIndex];
+               const percentage = val.toFixed(1);
+               return value + '\n(' + percentage + '%)';
+             },
+             style: {
+               fontSize: '13px',
+               fontFamily: 'Inter, sans-serif',
+               fontWeight: '700',
+               colors: ['#ffffff']
+             },
+             dropShadow: {
+               enabled: true,
+               top: 1,
+               left: 1,
+               blur: 2,
+               color: '#000',
+               opacity: 0.5
+             },
+             background: {
+               enabled: false
+             }
+           },
           plotOptions: {
-            pie: {
-              donut: {
-                size: '0%'
-              }
-            }
-          },
+             pie: {
+               startAngle: -90,
+               endAngle: 270,
+               expandOnClick: false,
+               offsetX: 0,
+               offsetY: 0,
+               customScale: 0.95,
+               dataLabels: {
+                 offset: 0,
+                 minAngleToShowLabel: 15
+               },
+               donut: {
+                 size: '0%',
+                 background: 'transparent'
+               }
+             }
+           },
+          states: {
+             hover: {
+               filter: {
+                 type: 'lighten',
+                 value: 0.1
+               }
+             },
+             active: {
+               allowMultipleDataPointsSelection: false,
+               filter: {
+                 type: 'darken',
+                 value: 0.1
+               }
+             }
+           },
+           tooltip: {
+             enabled: true,
+             theme: 'dark',
+             style: {
+               fontSize: '13px',
+               fontFamily: 'Inter, sans-serif',
+               fontWeight: '500'
+             },
+             y: {
+               formatter: function(val, opts) {
+                 if (!opts || !opts.series || !Array.isArray(opts.series)) {
+                   return val + ' exames';
+                 }
+                 const total = opts.series.reduce((a, b) => a + b, 0);
+                 const percentage = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                 return val + ' exames (' + percentage + '%)';
+               }
+             },
+             marker: {
+               show: false
+             },
+             fixed: {
+               enabled: false
+             },
+             followCursor: false,
+             intersect: false,
+             shared: false
+           },
           responsive: [{
             breakpoint: 480,
             options: {
               chart: {
-                width: 200
+                width: 280,
+                height: 300
               },
-              legend: {
-                position: 'bottom'
+              plotOptions: {
+                pie: {
+                  customScale: 0.8
+                }
+              },
+              dataLabels: {
+                style: {
+                  fontSize: '10px'
+                }
               }
             }
           }]
