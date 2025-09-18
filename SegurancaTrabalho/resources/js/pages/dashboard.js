@@ -410,6 +410,11 @@
   // Monthly Sales Chart
   const monthlySalesChartElement = document.querySelector('#monthlySalesChart');
   if (monthlySalesChartElement) {
+    // Dados dos exames mensais vindos do PHP
+    const examesPorMesData = window.examesPorMes || [];
+    const dadosExames = examesPorMesData.map(item => item.total);
+    const mesesLabels = examesPorMesData.map(item => item.mes);
+    
     const monthlySalesChartOptions = {
       chart: {
         type: 'bar',
@@ -439,12 +444,11 @@
         }
       },
       series: [{
-        name: 'Sales',
-        data: [152,109,93,113,126,161,188,143,102,113,116,124]
+        name: 'Exames',
+        data: dadosExames.length > 0 ? dadosExames : [0,0,0,0,0,0,0,0,0,0,0,0]
       }],
       xaxis: {
-        type: 'datetime',
-        categories: ['01/01/2025','02/01/2025','03/01/2025','04/01/2025','05/01/2025','06/01/2025','07/01/2025', '08/01/2025','09/01/2025','10/01/2025', '11/01/2025', '12/01/2025'],
+        categories: mesesLabels.length > 0 ? mesesLabels : ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
         axisBorder: {
           color: colors.gridBorder,
         },
@@ -454,7 +458,7 @@
       },
       yaxis: {
         title: {
-          text: 'Number of Sales',
+          text: 'Número de Exames',
           style:{
             size: 9,
             color: colors.secondary

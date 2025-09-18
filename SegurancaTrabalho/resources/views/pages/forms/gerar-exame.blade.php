@@ -4,11 +4,6 @@
   <link href="{{ asset('build/plugins/select2/select2.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('build/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" />
   <style>
-    .heading-gradient{
-      background: linear-gradient(90deg,#3b0764 0%, #0ea5a7 100%);
-      color:#fff; border-radius:.6rem; padding:.75rem 1rem; font-weight:700;
-      letter-spacing:.5px; text-transform:uppercase; text-align:center; margin-bottom:1rem;
-    }
     .select2-container--default .select2-selection--single{
       min-height:44px; border-radius:.6rem; border:1px solid var(--bs-border-color,#dee2e6);
       display:flex; align-items:center;
@@ -21,15 +16,73 @@
 
 @section('content')
 <nav class="page-breadcrumb">
-  <ol class="breadcrumb bg-light p-2 rounded">
-    <li class="breadcrumb-item"><a href="#">Formulário</a></li>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#"><i data-lucide="home" class="me-1"></i>Formulário</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('forms.exames.index') }}">Exames</a></li>
     <li class="breadcrumb-item active" aria-current="page">Gerar Exame</li>
   </ol>
 </nav>
 
-<div class="card shadow-sm">
-  <div class="card-body">
-    <div class="heading-gradient">Criar Guia de Encaminhamento</div>
+<div class="row">
+  <div class="col-lg-12">
+    <!-- Header Card -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body bg-gradient header-adaptive" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <i data-lucide="clipboard-plus" class="header-icon" style="width: 32px; height: 32px;"></i>
+          </div>
+          <div>
+            <h4 class="card-title mb-1 header-title">Gerar Encaminhamento para Exame</h4>
+            <p class="mb-0 header-subtitle">Crie uma nova guia de encaminhamento ocupacional</p>
+          </div>
+        </div>
+      </div>
+      
+      <style>
+        /* Tema claro */
+        [data-bs-theme="light"] .header-adaptive,
+        .header-adaptive {
+          color: #333 !important;
+        }
+        
+        [data-bs-theme="light"] .header-title,
+        .header-title {
+          color: #333 !important;
+        }
+        
+        [data-bs-theme="light"] .header-subtitle,
+        .header-subtitle {
+          color: rgba(51, 51, 51, 0.8) !important;
+        }
+        
+        [data-bs-theme="light"] .header-icon,
+        .header-icon {
+          color: #333 !important;
+        }
+        
+        /* Tema escuro */
+        [data-bs-theme="dark"] .header-adaptive {
+          color: #fff !important;
+        }
+        
+        [data-bs-theme="dark"] .header-title {
+          color: #fff !important;
+        }
+        
+        [data-bs-theme="dark"] .header-subtitle {
+          color: rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        [data-bs-theme="dark"] .header-icon {
+          color: #fff !important;
+        }
+      </style>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
 
     @if ($errors->any())
       <div class="alert alert-danger">
@@ -46,22 +99,13 @@
 
       <input type="hidden" id="empresa_id" name="empresa_id" value="{{ old('empresa_id') }}">
 
-      {{-- Identificação da guia --}}
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label class="form-label">Número da Guia</label>
-          <input type="text" name="numero_guia" class="form-control" value="{{ old('numero_guia') }}" placeholder="Opcional (gera automático se vazio)">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Data de Emissão</label>
-          <input type="text" name="data_emissao" class="form-control flatpickr" value="{{ old('data_emissao', date('d/m/Y')) }}">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Médico Solicitante</label>
-          <input type="text" name="medico_solicitante" class="form-control" value="{{ old('medico_solicitante') }}" placeholder="Nome — CRM/UF">
+      {{-- Seleção de Funcionário e Empresa --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="user" class="me-2" style="width: 16px; height: 16px;"></i>Dados do Funcionário</h6>
         </div>
       </div>
-
+      
       {{-- Funcionário / Empresa-Cargo --}}
       <div class="row mb-4">
         <div class="col-md-6">
@@ -96,7 +140,13 @@
         </div>
       </div>
 
-      {{-- Tipo (Exame) / Data / Hora / Previsão de retorno --}}
+      {{-- Dados do Exame --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="clipboard-list" class="me-2" style="width: 16px; height: 16px;"></i>Dados do Exame</h6>
+        </div>
+      </div>
+      
       <div class="row mb-4">
         <div class="col-md-3">
           <label for="selTipo" class="form-label fw-medium">Tipo (Exame)</label>
@@ -125,7 +175,13 @@
         </div>
       </div>
 
-      {{-- Status / Local / Médico Responsável --}}
+      {{-- Informações Complementares --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="info" class="me-2" style="width: 16px; height: 16px;"></i>Informações Complementares</h6>
+        </div>
+      </div>
+      
       <div class="row mb-4">
         <div class="col-md-4">
           <label for="status" class="form-label fw-medium">Status</label>
@@ -147,17 +203,29 @@
       </div>
 
       {{-- Observações --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="file-text" class="me-2" style="width: 16px; height: 16px;"></i>Observações</h6>
+        </div>
+      </div>
+      
       <div class="mb-4">
         <div class="d-flex align-items-center justify-content-between">
-          <label for="obs" class="form-label fw-medium mb-1">Observações</label>
-          <a href="javascript:void(0)" id="puxarHistorico" class="small fw-bold">[PUXAR DO HISTÓRICO]</a>
+          <label for="obs" class="form-label fw-medium mb-1">Observações Gerais</label>
+          <a href="javascript:void(0)" id="puxarHistorico" class="small fw-bold text-primary">[PUXAR DO HISTÓRICO]</a>
         </div>
-        <textarea id="obs" name="observacoes" class="form-control" rows="2" placeholder="Observações adicionais...">{{ old('observacoes') }}</textarea>
+        <textarea id="obs" name="observacoes" class="form-control" rows="3" placeholder="Observações adicionais sobre o exame...">{{ old('observacoes') }}</textarea>
       </div>
 
       {{-- Riscos Ocupacionais --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="alert-triangle" class="me-2" style="width: 16px; height: 16px;"></i>Riscos Ocupacionais</h6>
+        </div>
+      </div>
+      
       <div class="mb-4">
-        <label class="form-label fw-medium">Riscos Ocupacionais</label>
+        <label class="form-label fw-medium">Selecione os Riscos Identificados</label>
         <div id="riscosWrap" class="d-flex flex-wrap">
           @php
             $riscosPadrao = ['Ruído','Calor','Vibração','Radiações','Químicos','Biológicos','Ergonômicos','Acidentes'];
@@ -176,10 +244,16 @@
       </div>
 
       {{-- Exames e Procedimentos --}}
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3"><i data-lucide="stethoscope" class="me-2" style="width: 16px; height: 16px;"></i>Exames e Procedimentos</h6>
+        </div>
+      </div>
+      
       <div class="mb-3">
         <div class="d-flex align-items-center justify-content-between">
-          <label class="form-label fw-medium mb-1">Exames e Procedimentos</label>
-          <a href="javascript:void(0)" id="puxarPcmso" class="small fw-bold">[PUXAR DO PCMSO]</a>
+          <label class="form-label fw-medium mb-1">Adicionar Procedimentos</label>
+          <a href="javascript:void(0)" id="puxarPcmso" class="small fw-bold text-primary">[PUXAR DO PCMSO]</a>
         </div>
         <div class="row g-2">
           <div class="col-md-9">
@@ -259,11 +333,22 @@
         </table>
       </div>
 
-      <div class="d-flex justify-content-end">
-        <a href="{{ route('forms.exames.index') }}" class="btn btn-outline-secondary me-2">Cancelar</a>
-        <button type="submit" class="btn btn-primary">Salvar</button>
+      {{-- Botões de Ação --}}
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="{{ route('forms.exames.index') }}" class="btn btn-light">
+              <i data-lucide="arrow-left" class="me-1" style="width: 16px; height: 16px;"></i>Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="save" class="me-1" style="width: 16px; height: 16px;"></i>Gerar Encaminhamento
+            </button>
+          </div>
+        </div>
       </div>
     </form>
+      </div>
+    </div>
   </div>
 </div>
 @endsection

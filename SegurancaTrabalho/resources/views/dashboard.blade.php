@@ -126,13 +126,9 @@
             </div>
             <div class="d-flex align-items-end justify-content-between">
               <div>
-                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #d63384;">35,084</h2>
+                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #d63384;">0</h2>
                 <div class="d-flex align-items-center mt-1">
-                  <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1 rounded-pill" style="font-size: 0.7rem;">
-                    <i data-lucide="arrow-down" class="icon-xs me-1"></i>
-                    -2.8%
-                  </span>
-                  <p class="mb-0 ms-2" style="font-size: 0.8rem; color: #6c5b7b;">vs mês anterior</p>
+                  <p class="mb-0 ms-2" style="font-size: 0.8rem; color: #6c5b7b;">exames pendentes</p>
                 </div>
               </div>
               <div class="position-absolute" style="right: -10px; bottom: -10px; opacity: 0.1;">
@@ -168,7 +164,7 @@
             </div>
             <div class="d-flex align-items-end justify-content-between">
               <div>
-                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #198754;">{{ number_format($totalExames, 0, ',', '.') }}</h2>
+                <h2 class="mb-0 fw-bold" style="font-size: 2.5rem; color: #198754;">{{ number_format($totalEncaminhamentos, 0, ',', '.') }}</h2>
                 <div class="d-flex align-items-center mt-1">
                   <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill" style="font-size: 0.7rem;">
                     <i data-lucide="check-circle" class="icon-xs me-1"></i>
@@ -215,7 +211,7 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-baseline">
-          <h6 class="card-title mb-0">Exames por Tipo</h6>
+          <h6 class="card-title mb-0">Encaminhamentos por Tipo</h6>
           <div class="dropdown mb-2">
             <a type="button" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
@@ -239,7 +235,7 @@
                   'periodico' => '#007bff', 
                   'demissional' => '#dc3545',
                   'retorno' => '#fd7e14',
-                  'mudanca_de_cargo' => '#ffc107'
+                  'mudanca_de_funcao' => '#ffc107'
                 ];
                $normalizedType = strtolower(str_replace(' ', '_', $exame->tipo_exame));
                $color = $examTypeColors[$normalizedType] ?? '#6c757d';
@@ -258,7 +254,7 @@
               </label>
               <div class="d-flex align-items-center">
                 <span class="fw-bold me-2" style="color: #495057; font-size: 14px;">{{ $exame->total }}</span>
-                <small class="text-muted" style="font-size: 10px;">exames</small>
+                <small class="text-muted" style="font-size: 10px;">encaminhamentos</small>
               </div>
             </div>
           </div>
@@ -428,6 +424,90 @@
 @endpush
 
 </div> <!-- row -->
+
+<!-- Nova seção para gráfico de encaminhamentos por mês -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-baseline mb-4">
+          <h6 class="card-title mb-0">Encaminhamentos por Mês</h6>
+          <div class="d-flex align-items-center">
+            <select class="form-select form-select-sm me-2" id="anoSelecionado" style="width: auto;">
+              @foreach(array_keys($encaminhamentosPorMes) as $ano)
+                <option value="{{ $ano }}" {{ $ano == date('Y') ? 'selected' : '' }}>{{ $ano }}</option>
+              @endforeach
+            </select>
+            <div class="dropdown">
+              <a type="button" id="dropdownMenuButtonEncaminhamentos" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonEncaminhamentos">
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span>Imprimir</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-12">
+            <div id="encaminhamentosPorMesChart" style="height: 400px;"></div>
+          </div>
+        </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-primary">Total</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="totalEncaminhamentosAno">1,234</h6>
+                <small class="text-muted">encaminhamentos no ano</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-success">Média</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="mediaEncaminhamentosMes">103</h6>
+                <small class="text-muted">por mês</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-warning">Pico</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="picoEncaminhamentos">189</h6>
+                <small class="text-muted">em Julho</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-info">Menor</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="menorEncaminhamentos">63</h6>
+                <small class="text-muted">em Março</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @push('plugin-scripts')
@@ -438,13 +518,13 @@
 @push('custom-scripts')
   @vite(['resources/js/pages/dashboard.js'])
   <script>
-    // Gráfico de Pizza dos Exames por Tipo
+    // Gráfico de Pizza dos Encaminhamentos por Tipo
     document.addEventListener('DOMContentLoaded', function() {
       const examesPieChartElement = document.querySelector('#examesPieChart');
       if (examesPieChartElement) {
         const examesData = @json($examesPorTipo);
         
-        const series = examesData.map(item => item.total);
+        const series = examesData.map(item => item.total === 0 ? 1 : item.total); // Converte 0 para 1 para visualização
         const labels = examesData.map(item => {
           return item.tipo_exame.charAt(0).toUpperCase() + item.tipo_exame.slice(1).replace('_', ' ');
         });
@@ -455,7 +535,7 @@
            'periodico': '#007bff',      // Azul
            'demissional': '#dc3545',    // Vermelho
            'retorno': '#fd7e14',        // Laranja
-           'mudanca_de_cargo': '#ffc107' // Amarelo
+           'mudanca_de_funcao': '#ffc107' // Amarelo
          };
         
         const colors = labels.map(label => {
@@ -600,12 +680,14 @@
              },
              y: {
                formatter: function(val, opts) {
+                 const originalData = @json($examesPorTipo);
+                 const realValue = originalData[opts.seriesIndex].total;
                  if (!opts || !opts.series || !Array.isArray(opts.series)) {
-                   return val + ' exames';
+                   return realValue + ' encaminhamentos';
                  }
                  const total = opts.series.reduce((a, b) => a + b, 0);
-                 const percentage = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                 return val + ' exames (' + percentage + '%)';
+                 const percentage = total > 0 ? ((realValue / total) * 100).toFixed(1) : 0;
+                 return realValue + ' encaminhamentos (' + percentage + '%)';
                }
              },
              marker: {
@@ -643,5 +725,210 @@
         examesPieChart.render();
       }
     });
+    
+    // Disponibilizar dados de exames por mês para o JavaScript
+    window.examesPorMes = @json($examesPorMes);
+    
+    // Disponibilizar dados de encaminhamentos por mês para o JavaScript
+    window.encaminhamentosPorMes = @json($encaminhamentosPorMes);
+    
+    // Gráfico de Encaminhamentos por Mês
+    const encaminhamentosPorMesElement = document.querySelector('#encaminhamentosPorMesChart');
+    if (encaminhamentosPorMesElement) {
+      // Dados reais do banco de dados
+      const dadosEncaminhamentosReais = window.encaminhamentosPorMes || {};
+      
+      // Ano atual como padrão
+      const anoAtual = new Date().getFullYear();
+      let dadosAtuais = dadosEncaminhamentosReais[anoAtual] || dadosEncaminhamentosReais[2025] || {
+        'Jan': 0, 'Fev': 0, 'Mar': 0, 'Abr': 0, 'Mai': 0, 'Jun': 0,
+        'Jul': 0, 'Ago': 0, 'Set': 0, 'Out': 0, 'Nov': 0, 'Dez': 0
+      };
+      
+      const encaminhamentosChartOptions = {
+        series: [{
+          name: 'Encaminhamentos',
+          data: Object.values(dadosAtuais)
+        }],
+        chart: {
+          type: 'bar',
+          height: 400,
+          toolbar: {
+            show: true,
+            tools: {
+              download: true,
+              selection: false,
+              zoom: false,
+              zoomin: false,
+              zoomout: false,
+              pan: false,
+              reset: false
+            }
+          },
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 800
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '60%',
+            endingShape: 'rounded',
+            borderRadius: 4
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          style: {
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '600',
+            colors: ['#304758']
+          },
+          offsetY: -20
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: Object.keys(dadosAtuais),
+          labels: {
+            style: {
+              fontSize: '12px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: '500',
+              colors: '#6c757d'
+            }
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'Número de Encaminhamentos',
+            style: {
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: '600',
+              color: '#495057'
+            }
+          },
+          labels: {
+            style: {
+              fontSize: '12px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: '500',
+              colors: '#6c757d'
+            }
+          }
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'light',
+            type: 'vertical',
+            shadeIntensity: 0.3,
+            gradientToColors: ['#667eea'],
+            inverseColors: false,
+            opacityFrom: 0.8,
+            opacityTo: 0.6,
+            stops: [0, 100]
+          }
+        },
+        colors: ['#764ba2'],
+        tooltip: {
+          theme: 'dark',
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Inter, sans-serif'
+          },
+          y: {
+            formatter: function (val) {
+              return val + ' encaminhamentos';
+            }
+          }
+        },
+        grid: {
+          borderColor: '#e9ecef',
+          strokeDashArray: 3,
+          xaxis: {
+            lines: {
+              show: false
+            }
+          },
+          yaxis: {
+            lines: {
+              show: true
+            }
+          }
+        },
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 300
+            },
+            plotOptions: {
+              bar: {
+                columnWidth: '80%'
+              }
+            }
+          }
+        }]
+      };
+      
+      const encaminhamentosChart = new ApexCharts(encaminhamentosPorMesElement, encaminhamentosChartOptions);
+      encaminhamentosChart.render();
+      
+      // Função para atualizar estatísticas
+      function atualizarEstatisticas(dados) {
+        const valores = Object.values(dados);
+        const total = valores.reduce((a, b) => a + b, 0);
+        const media = Math.round(total / valores.length);
+        const maximo = Math.max(...valores);
+        const minimo = Math.min(...valores);
+        const mesPico = Object.keys(dados)[valores.indexOf(maximo)];
+        const mesMenor = Object.keys(dados)[valores.indexOf(minimo)];
+        
+        document.getElementById('totalEncaminhamentosAno').textContent = total.toLocaleString('pt-BR');
+        document.getElementById('mediaEncaminhamentosMes').textContent = media;
+        document.getElementById('picoEncaminhamentos').textContent = maximo;
+        document.getElementById('menorEncaminhamentos').textContent = minimo;
+        document.querySelector('#picoEncaminhamentos').nextElementSibling.textContent = `em ${mesPico}`;
+        document.querySelector('#menorEncaminhamentos').nextElementSibling.textContent = `em ${mesMenor}`;
+      }
+      
+      // Atualizar estatísticas iniciais
+      atualizarEstatisticas(dadosAtuais);
+      
+      // Event listener para mudança de ano
+      document.getElementById('anoSelecionado').addEventListener('change', function() {
+        const anoSelecionado = parseInt(this.value);
+        
+        // Usar dados reais do banco de dados para o ano selecionado
+        dadosAtuais = dadosEncaminhamentosReais[anoSelecionado] || {
+          'Jan': 0, 'Fev': 0, 'Mar': 0, 'Abr': 0, 'Mai': 0, 'Jun': 0,
+          'Jul': 0, 'Ago': 0, 'Set': 0, 'Out': 0, 'Nov': 0, 'Dez': 0
+        };
+        
+        // Atualizar gráfico
+        encaminhamentosChart.updateSeries([{
+          name: 'Encaminhamentos',
+          data: Object.values(dadosAtuais)
+        }]);
+        
+        // Atualizar categorias do eixo X
+        encaminhamentosChart.updateOptions({
+          xaxis: {
+            categories: Object.keys(dadosAtuais)
+          }
+        });
+        
+        // Atualizar estatísticas
+        atualizarEstatisticas(dadosAtuais);
+      });
+    }
   </script>
 @endpush

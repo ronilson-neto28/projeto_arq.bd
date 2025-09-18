@@ -21,30 +21,29 @@ class CargoSeeder extends Seeder
             return;
         }
 
-        // Ajuste conforme sua necessidade
-        $cargosPorEmpresa = [
-            '26719860000173' => [
-                'Gerente Industrial',
-                'Supervisor Administrativo',
-                'Encarregado de Estoque',
-                'Fiscal de Produção',
-                'Gerente de Produção',
-                'Vendedor Externo',
-                'Operador de Máquinas Beneficiamento',
-                'Conferente',
-                'Motorista',
-                'Cozinheira',
-                'Soldador',
-                'Zootecnista',
-                'Auxiliar de Serviços Gerais',
-                'Operador de Empilhadeira',
-                'Mecânico',
-            ],
-            '54446193000150' => [
-                'Analista',
-                'Assistente Administrativo',
-            ],
+        // Lista de cargos padrão para todas as empresas
+        $cargosLista = [
+            'Gerente Industrial',
+            'Supervisor Administrativo',
+            'Encarregado de Estoque',
+            'Fiscal de Produção',
+            'Gerente de Produção',
+            'Vendedor Externo',
+            'Operador de Máquinas Beneficiamento',
+            'Conferente',
+            'Motorista',
+            'Cozinheira',
+            'Soldador',
+            'Zootecnista',
+            'Auxiliar de Serviços Gerais',
+            'Operador de Empilhadeira',
+            'Mecânico',
+            'Analista',
+            'Assistente Administrativo',
         ];
+        
+        // CNPJs das empresas que usarão estes cargos
+        $cnpjsEmpresas = ['35135131303535', '56513515145154', '94656108156546', '89411354984131'];
 
         // Quais colunas existem?
         $allowed = Schema::getColumnListing('cargos');
@@ -56,14 +55,14 @@ class CargoSeeder extends Seeder
             return;
         }
 
-        foreach ($cargosPorEmpresa as $cnpj => $lista) {
+        foreach ($cnpjsEmpresas as $cnpj) {
             $empresa = $empresasByCnpj->get($cnpj);
             if (!$empresa) {
                 $this->command?->warn("CNPJ {$cnpj} não encontrado em 'empresas'. Pulando…");
                 continue;
             }
 
-            foreach ($lista as $cargoNome) {
+            foreach ($cargosLista as $cargoNome) {
                 $where = ['empresa_id' => $empresa->id, 'nome' => $cargoNome];
                 $values = [
                     'nome' => $cargoNome,

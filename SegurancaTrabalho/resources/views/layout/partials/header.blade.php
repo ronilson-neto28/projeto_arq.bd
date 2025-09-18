@@ -3,14 +3,14 @@
     <div class="container">
       <div class="navbar-content">
 						
-        <a href="#" class="navbar-brand d-none d-lg-flex">
+        <!--<a href="#" class="navbar-brand d-none d-lg-flex">
           PRO<span>ATIVA</span>
-        </a>
+        </a>-->
         
         <!-- Logo-mini for small screen devices (mobile/tablet) -->
         <div class="logo-mini-wrapper">
-          <img src="{{ url('build/images/logo-mini-light.png') }}" class="logo-mini logo-mini-light" alt="logo">
-          <img src="{{ url('build/images/logo-mini-dark.png') }}" class="logo-mini logo-mini-dark" alt="logo">
+          <img src="{{ url('build/images/Proativa_logo.png') }}" class="logo-mini logo-mini-light" alt="logo">
+                <img src="{{ url('build/images/Proativa_logo.png') }}" class="logo-mini logo-mini-dark" alt="logo">
         </div>
 
         <form class="search-form">

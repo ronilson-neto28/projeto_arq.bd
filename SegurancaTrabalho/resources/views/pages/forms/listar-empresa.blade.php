@@ -8,6 +8,22 @@
   </div>
 </div>
 
+@if(session('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i data-lucide="check-circle" class="me-2" style="width: 16px; height: 16px;"></i>
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+
+@if(session('error'))
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i data-lucide="x-circle" class="me-2" style="width: 16px; height: 16px;"></i>
+    {{ session('error') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+
 <div class="row">
   <div class="col-12">
     <div class="card shadow-sm rounded-3">
@@ -54,18 +70,18 @@
             <tbody>
               @forelse($empresas ?? [] as $e)
                 <tr
-                  data-nome="{{ $e->nome ?? '' }}"
+                  data-nome="{{ $e->razao_social ?? '' }}"
                   data-cnpj="{{ $e->cnpj ?? '' }}"
                   data-email="{{ $e->email ?? '' }}"
-                  data-tel="{{ $e->telefone ?? '' }}"
+                  data-tel="{{ $e->telefones->first()->numero ?? '' }}"
                   data-cidade="{{ $e->cidade ?? '' }}"
                   data-uf="{{ $e->uf ?? '' }}"
                 >
                   <td>{{ $e->id }}</td>
-                  <td>{{ $e->nome ?? '-' }}</td>
+                  <td>{{ $e->nome_fantasia ?: $e->razao_social ?: '-' }}</td>
                   <td>{{ $e->cnpj ?? '-' }}</td>
                   <td>{{ $e->email ?? '-' }}</td>
-                  <td>{{ $e->telefone ?? '-' }}</td>
+                  <td>{{ $e->telefones->first()->numero ?? '-' }}</td>
                   <td>
                     @php $cid = $e->cidade ?? null; $uf = $e->uf ?? null; @endphp
                     {{ $cid ? $cid : '-' }}{{ $cid && $uf ? ' / ' : '' }}{{ $uf ?? '' }}
@@ -78,10 +94,10 @@
                       data-bs-toggle="modal"
                       data-bs-target="#modalEmpresa"
                       data-id="{{ $e->id }}"
-                      data-nome="{{ $e->nome ?? '-' }}"
+                      data-nome="{{ $e->nome_fantasia ?: $e->razao_social ?: '-' }}"
                       data-cnpj="{{ $e->cnpj ?? '-' }}"
                       data-email="{{ $e->email ?? '-' }}"
-                      data-telefone="{{ $e->telefone ?? '-' }}"
+                      data-telefone="{{ $e->telefones->first()->numero ?? '-' }}"
                       data-cidade="{{ $e->cidade ?? '-' }}"
                       data-uf="{{ $e->uf ?? '-' }}"
                       data-created="{{ optional($e->created_at)->format('d/m/Y') ?? '-' }}"
@@ -120,6 +136,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-warning" id="btnEditarEmpresa">
+          <i data-lucide="edit" class="me-1" style="width: 16px; height: 16px;"></i>Editar
+        </button>
+        <button type="button" class="btn btn-danger" id="btnExcluirEmpresa">
+          <i data-lucide="trash-2" class="me-1" style="width: 16px; height: 16px;"></i>Excluir
+        </button>
       </div>
     </div>
   </div>
@@ -209,6 +231,42 @@
     addRow(dl, 'UF', d.uf);
     addRow(dl, 'Criada em', d.created_at);
     addRow(dl, 'Atualizada em', d.updated_at);
+
+    // Armazenar ID da empresa nos botões
+    document.getElementById('btnEditarEmpresa').setAttribute('data-empresa-id', d.id);
+    document.getElementById('btnExcluirEmpresa').setAttribute('data-empresa-id', d.id);
+  });
+
+  // Botão Editar
+  document.getElementById('btnEditarEmpresa')?.addEventListener('click', function() {
+    const empresaId = this.getAttribute('data-empresa-id');
+    window.location.href = `/empresas/${empresaId}/editar`;
+  });
+
+  // Botão Excluir
+  document.getElementById('btnExcluirEmpresa')?.addEventListener('click', function() {
+    const empresaId = this.getAttribute('data-empresa-id');
+    if (confirm('Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita.')) {
+      // Criar form para DELETE
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/empresas/${empresaId}`;
+      
+      const csrfToken = document.createElement('input');
+      csrfToken.type = 'hidden';
+      csrfToken.name = '_token';
+      csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      const methodField = document.createElement('input');
+      methodField.type = 'hidden';
+      methodField.name = '_method';
+      methodField.value = 'DELETE';
+      
+      form.appendChild(csrfToken);
+      form.appendChild(methodField);
+      document.body.appendChild(form);
+      form.submit();
+    }
   });
 })();
 </script>

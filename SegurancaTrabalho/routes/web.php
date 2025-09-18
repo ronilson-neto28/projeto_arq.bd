@@ -86,14 +86,20 @@ Route::middleware('auth')->group(function () {
         Route::get('cadastrar', [EmpresaController::class, 'create'])->name('empresas.create');
         Route::post('cadastrar', [EmpresaController::class, 'store'])->name('empresas.store');
         Route::get('listar', [EmpresaController::class, 'index'])->name('empresas.index');
+        Route::get('{id}/editar', [EmpresaController::class, 'edit'])->name('empresas.edit');
+        Route::put('{id}', [EmpresaController::class, 'update'])->name('empresas.update');
+        Route::delete('{id}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
     });
 
     // FUNCIONÁRIOS
     Route::prefix('funcionarios')->group(function () {
-        Route::get('cadastrar', [FuncionarioController::class, 'create'])->name('funcionarios.create');
-        Route::post('cadastrar', [FuncionarioController::class, 'store'])->name('funcionarios.store');
-        Route::get('listar', [FuncionarioController::class, 'index'])->name('funcionarios.index');
-    });
+Route::get('cadastrar', [FuncionarioController::class, 'create'])->name('funcionarios.create');
+Route::post('cadastrar', [FuncionarioController::class, 'store'])->name('funcionarios.store');
+Route::get('listar', [FuncionarioController::class, 'index'])->name('funcionarios.index');
+Route::get('{id}/editar', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
+Route::put('{id}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
+Route::delete('{id}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');
+});
 
     // CARGOS
     Route::prefix('cargos')->group(function () {

@@ -4,6 +4,19 @@
 
 O Sistema de Segurança do Trabalho é uma aplicação web desenvolvida em Laravel 10 que gerencia exames ocupacionais, funcionários, empresas e encaminhamentos médicos. O sistema utiliza arquitetura MVC (Model-View-Controller) e segue as melhores práticas do framework Laravel.
 
+### Funcionalidades Principais
+
+1. **Gestão de Empresas**: Cadastro e gerenciamento de empresas clientes
+2. **Gestão de Funcionários**: Cadastro de funcionários vinculados às empresas
+3. **Gestão de Cargos**: Definição de cargos e riscos ocupacionais
+4. **Gestão de Tipos de Risco**: Categorização de riscos ocupacionais
+5. **Gestão de Riscos**: Cadastro específico de riscos por categoria
+6. **Encaminhamentos Médicos**: Geração de encaminhamentos para exames ocupacionais
+7. **Sistema de Impressão**: Geração de documentos para impressão
+8. **Dashboard Analítico**: Visualização de dados e estatísticas
+9. **Sistema de Autenticação**: Login, registro e recuperação de senha
+10. **Gestão de Usuários**: Controle de acesso ao sistema
+
 ## Arquitetura do Sistema
 
 ### Tecnologias Utilizadas
@@ -28,6 +41,315 @@ app/
 ├── Mail/                     # Classes de email
 └── Providers/                # Service Providers
 ```
+
+## Fluxos de Funcionalidades
+
+### Fluxogramas Visuais Disponíveis
+
+O sistema possui fluxogramas detalhados em formato SVG que documentam visualmente cada processo:
+
+- **fluxo-gestao-empresas.svg** - Gestão completa de empresas
+- **fluxo-gestao-funcionarios.svg** - Processo de funcionários
+- **fluxo-encaminhamentos-medicos.svg** - Criação de encaminhamentos
+- **fluxo-sistema-impressao.svg** - Sistema de impressão detalhado
+- **fluxo-dashboard-analitico.svg** - Dashboard com métricas
+
+### 1. Fluxo de Gestão de Empresas
+
+```
+[Usuário] → [Dashboard] → [Empresas] → [Listar/Criar/Editar/Excluir]
+    ↓
+[EmpresaController]
+    ↓
+[Empresa Model] ← → [Banco de Dados]
+    ↓
+[View: empresas.index/create/edit]
+```
+
+**Rotas Envolvidas**:
+- `GET /empresas` - Listar empresas
+- `GET /empresas/create` - Formulário de criação
+- `POST /empresas` - Salvar nova empresa
+- `GET /empresas/{id}/edit` - Formulário de edição
+- `PUT /empresas/{id}` - Atualizar empresa
+- `DELETE /empresas/{id}` - Excluir empresa
+
+### 2. Fluxo de Gestão de Funcionários
+
+```
+[Usuário] → [Dashboard] → [Funcionários] → [Listar/Criar/Editar/Excluir]
+    ↓
+[FuncionarioController]
+    ↓
+[Funcionario Model] ← → [Empresa Model] ← → [Cargo Model]
+    ↓
+[Banco de Dados]
+    ↓
+[View: funcionarios.index/create/edit]
+```
+
+**Relacionamentos**:
+- Funcionário pertence a uma Empresa
+- Funcionário possui um Cargo
+- Validação de CPF único
+
+### 3. Fluxo de Encaminhamentos Médicos
+
+```
+[Usuário] → [Forms] → [Gerar Exame]
+    ↓
+[GerarExameController]
+    ↓
+[Seleção: Empresa → Funcionário → Tipo de Exame]
+    ↓
+[Encaminhamento Model] ← → [Funcionario/Empresa/Cargo Models]
+    ↓
+[Geração de Número de Guia Único]
+    ↓
+[Salvamento no Banco de Dados]
+    ↓
+[Redirecionamento para Listagem]
+```
+
+### 4. Fluxo de Impressão de Encaminhamentos
+
+```
+[Usuário] → [Listar Exames] → [Botão Imprimir]
+    ↓
+[ListarExamesController@imprimir]
+    ↓
+[Busca Encaminhamento por ID]
+    ↓
+[Carregamento de Relacionamentos (Funcionário, Empresa, Cargo)]
+    ↓
+[Formatação de Dados (CPF, CNPJ, Datas)]
+    ↓
+[View: imprimir-encaminhamento.blade.php]
+    ↓
+[Renderização HTML + CSS Print]
+    ↓
+[JavaScript: window.print()]
+    ↓
+[Impressão Física ou PDF]
+```
+
+### 5. Fluxo do Dashboard Analítico
+
+```
+[Usuário] → [Dashboard]
+    ↓
+[DashboardController@index]
+    ↓
+[Consultas Agregadas ao Banco]
+    ↓
+[Processamento de Dados para Gráficos]
+    ↓
+[View: dashboard.blade.php]
+    ↓
+[JavaScript: Chart.js]
+    ↓
+[Renderização de Gráficos Interativos]
+```
+
+**Métricas Calculadas**:
+- Exames mensais por período
+- Distribuição por tipo de exame
+- Estatísticas por empresa
+- Tendências temporais
+
+## Sistema de Impressão - Tecnologias e Implementação
+
+### Tecnologias Utilizadas
+
+#### 1. **HTML + CSS Print Media Queries**
+
+**Localização**: `resources/views/pages/forms/imprimir-encaminhamento.blade.php`
+
+**Características**:
+- **HTML Semântico**: Estrutura bem definida com seções específicas
+- **CSS Print-Specific**: Media queries `@media print` para otimização
+- **Responsividade**: Adaptação automática ao formato A4
+- **Tipografia Otimizada**: Fontes e tamanhos adequados para impressão
+
+**Exemplo de CSS Print**:
+```css
+@media print {
+    .no-print { display: none !important; }
+    body { font-size: 12pt; }
+    .print-container { width: 100%; }
+    .header-section { border-bottom: 2px solid #000; }
+}
+```
+
+#### 2. **JavaScript Window.print() API**
+
+**Implementação**:
+```javascript
+function imprimirEncaminhamento() {
+    window.print();
+}
+```
+
+**Funcionalidades**:
+- **Impressão Direta**: Aciona o diálogo de impressão do navegador
+- **Compatibilidade Universal**: Funciona em todos os navegadores modernos
+- **Controle do Usuário**: Permite escolha de impressora, formato, etc.
+
+#### 3. **Blade Template Engine**
+
+**Processamento de Dados**:
+```php
+// Controller
+$encaminhamento = Encaminhamento::with(['funcionario', 'empresa', 'cargo'])->find($id);
+return view('pages.forms.imprimir-encaminhamento', compact('encaminhamento'));
+```
+
+**Renderização Dinâmica**:
+```blade
+<h2>{{ strtoupper($encaminhamento->funcionario->nome) }}</h2>
+<p>CPF: {{ $this->formatCpf($encaminhamento->funcionario->cpf) }}</p>
+<p>Empresa: {{ strtoupper($encaminhamento->empresa->razao_social) }}</p>
+```
+
+### Fluxo Detalhado do Sistema de Impressão
+
+#### Etapa 1: Preparação dos Dados
+
+```php
+// ListarExamesController@imprimir
+public function imprimir($id)
+{
+    // 1. Busca o encaminhamento com relacionamentos
+    $encaminhamento = Encaminhamento::with([
+        'funcionario', 
+        'empresa', 
+        'cargo'
+    ])->find($id);
+    
+    // 2. Tratamento de dados não encontrados (fallback para mock)
+    if (!$encaminhamento) {
+        $encaminhamento = $this->generateMockData($id);
+    }
+    
+    // 3. Formatação de dados
+    $encaminhamento->funcionario->cpf = $this->formatCpf($cpf);
+    $encaminhamento->empresa->cnpj = $this->formatCnpj($cnpj);
+    
+    return view('pages.forms.imprimir-encaminhamento', compact('encaminhamento'));
+}
+```
+
+#### Etapa 2: Estruturação HTML
+
+**Seções do Documento**:
+1. **Cabeçalho**: Logo, título, informações da clínica
+2. **Informações do Paciente**: Nome, CPF, RG, data de nascimento
+3. **Informações da Empresa**: Razão social, CNPJ
+4. **Detalhes do Exame**: Tipo, data de atendimento, cargo
+5. **Riscos Ocupacionais**: Lista de riscos identificados
+6. **Exames Solicitados**: Procedimentos médicos necessários
+7. **Rodapé**: Assinaturas, carimbos, observações
+
+#### Etapa 3: Estilização para Impressão
+
+**CSS Print Otimizado**:
+```css
+@media print {
+    /* Remove elementos desnecessários */
+    .no-print, .btn, .navbar { display: none !important; }
+    
+    /* Otimiza layout para A4 */
+    body {
+        font-family: 'Times New Roman', serif;
+        font-size: 11pt;
+        line-height: 1.3;
+        color: #000;
+        background: white;
+    }
+    
+    /* Controla quebras de página */
+    .page-break {
+        page-break-before: always;
+    }
+    
+    /* Evita quebras indesejadas */
+    .no-break {
+        page-break-inside: avoid;
+    }
+    
+    /* Margens da página */
+    @page {
+        margin: 2cm;
+        size: A4;
+    }
+}
+```
+
+#### Etapa 4: Interação do Usuário
+
+**Botão de Impressão**:
+```html
+<button onclick="window.print()" class="btn btn-primary no-print">
+    <i class="fas fa-print"></i> Imprimir Encaminhamento
+</button>
+```
+
+**Funcionalidades Disponíveis**:
+- **Visualização Prévia**: O usuário vê exatamente como será impresso
+- **Escolha de Impressora**: Diálogo nativo do sistema operacional
+- **Configurações de Página**: Orientação, margens, escala
+- **Salvar como PDF**: Opção disponível na maioria dos navegadores
+
+### Vantagens da Tecnologia Escolhida
+
+#### 1. **Simplicidade e Eficiência**
+- **Sem Dependências Externas**: Não requer bibliotecas adicionais
+- **Performance**: Renderização rápida e leve
+- **Manutenibilidade**: Código simples e fácil de manter
+
+#### 2. **Compatibilidade Universal**
+- **Cross-Browser**: Funciona em Chrome, Firefox, Safari, Edge
+- **Cross-Platform**: Windows, macOS, Linux
+- **Mobile-Friendly**: Adaptável para dispositivos móveis
+
+#### 3. **Flexibilidade de Design**
+- **CSS Completo**: Controle total sobre aparência
+- **Responsividade**: Adaptação automática a diferentes formatos
+- **Customização**: Fácil alteração de layout e estilos
+
+#### 4. **Integração com Laravel**
+- **Blade Templates**: Renderização dinâmica de dados
+- **Eloquent ORM**: Acesso direto aos dados do banco
+- **Middleware**: Controle de acesso e segurança
+
+### Alternativas Consideradas e Por Que Não Foram Escolhidas
+
+#### 1. **Bibliotecas PDF (TCPDF, DOMPDF)**
+- **Desvantagens**: Maior complexidade, dependências adicionais
+- **Limitações**: Menos flexibilidade de design, performance inferior
+
+#### 2. **Puppeteer/Headless Chrome**
+- **Desvantagens**: Requer Node.js, maior consumo de recursos
+- **Complexidade**: Configuração mais complexa
+
+#### 3. **Bibliotecas JavaScript (jsPDF)**
+- **Limitações**: Controle limitado sobre layout complexo
+- **Performance**: Processamento client-side pode ser lento
+
+### Considerações de Segurança na Impressão
+
+1. **Controle de Acesso**: Apenas usuários autenticados podem imprimir
+2. **Validação de IDs**: Verificação se o encaminhamento existe
+3. **Sanitização de Dados**: Escape de caracteres especiais
+4. **Logs de Auditoria**: Registro de impressões realizadas
+
+### Melhorias Futuras Possíveis
+
+1. **Assinatura Digital**: Integração com certificados digitais
+2. **Códigos QR**: Para verificação de autenticidade
+3. **Templates Customizáveis**: Diferentes layouts por cliente
+4. **Impressão em Lote**: Múltiplos encaminhamentos simultaneamente
+5. **Integração com APIs**: Envio direto para clínicas parceiras
 
 ## Modelos (Models)
 

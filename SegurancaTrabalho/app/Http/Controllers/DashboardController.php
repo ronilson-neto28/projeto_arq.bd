@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use App\Models\Funcionario;
-use App\Models\Exame;
+use App\Models\Encaminhamento;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -17,18 +17,57 @@ class DashboardController extends Controller
         $totalFuncionarios = Funcionario::count();
         $funcionarios = Funcionario::with('empresa')->get(); // carrega os dados com empresa associada
         
-        // Dados para o gráfico de pizza dos exames
-        // Como a tabela exames não tem coluna 'tipo', vamos usar dados mock temporários
-        $examesPorTipo = collect([
-            (object)['tipo_exame' => 'admissional', 'total' => 15],
-            (object)['tipo_exame' => 'periodico', 'total' => 45],
-            (object)['tipo_exame' => 'demissional', 'total' => 8],
-            (object)['tipo_exame' => 'retorno', 'total' => 12],
-            (object)['tipo_exame' => 'mudanca_funcao', 'total' => 5]
-        ]);
-        
-        $totalExames = Exame::count();
+        // Dados para o gráfico de pizza dos encaminhamentos por tipo
+        $examesPorTipo = Encaminhamento::select('tipo_exame', DB::raw('count(*) as total'))
+            ->groupBy('tipo_exame')
+            ->orderBy('total', 'desc')
+            ->get();
 
-        return view('dashboard', compact('totalEmpresas', 'totalFuncionarios', 'funcionarios', 'examesPorTipo', 'totalExames'));
+        // Se não houver encaminhamentos, exibe dados padrão para o gráfico
+        if ($examesPorTipo->isEmpty()) {
+            $examesPorTipo = collect([
+                (object)['tipo_exame' => 'Admissional', 'total' => 0],
+                (object)['tipo_exame' => 'Demissional', 'total' => 0],
+                (object)['tipo_exame' => 'Retorno', 'total' => 0],
+                (object)['tipo_exame' => 'Periodico', 'total' => 0],
+                (object)['tipo_exame' => 'Mudança de Função', 'total' => 0]
+            ]);
+        }
+        
+        // Dados para o gráfico de exames mensais (por data de atendimento)
+        $examesPorMes = [];
+        $meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
+        for ($i = 1; $i <= 12; $i++) {
+            $totalMes = Encaminhamento::whereMonth('data_atendimento', $i)
+                ->whereYear('data_atendimento', date('Y'))
+                ->whereNotNull('data_atendimento')
+                ->count();
+            $examesPorMes[] = [
+                'mes' => $meses[$i-1],
+                'total' => $totalMes
+            ];
+        }
+        
+        // Dados para o gráfico de encaminhamentos por mês para diferentes anos
+        $encaminhamentosPorMes = [];
+        $anosDisponiveis = [2024, 2025, 2026];
+        $mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        
+        foreach ($anosDisponiveis as $ano) {
+            $dadosAno = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $totalMes = Encaminhamento::whereMonth('data_atendimento', $i)
+                    ->whereYear('data_atendimento', $ano)
+                    ->whereNotNull('data_atendimento')
+                    ->count();
+                $dadosAno[$mesesAbrev[$i-1]] = $totalMes;
+            }
+            $encaminhamentosPorMes[$ano] = $dadosAno;
+        }
+        
+        $totalEncaminhamentos = Encaminhamento::count();
+
+        return view('dashboard', compact('totalEmpresas', 'totalFuncionarios', 'funcionarios', 'examesPorTipo', 'totalEncaminhamentos', 'examesPorMes', 'encaminhamentosPorMes'));
     }
 }

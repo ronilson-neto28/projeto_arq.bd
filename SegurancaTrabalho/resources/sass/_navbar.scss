@@ -51,12 +51,10 @@
         @include media-breakpoint-up(md) {
           margin-right: 24px;
         }
-        @include media-breakpoint-up(lg) {
-          display: none;
-        }
         .logo-mini {
-          width: 28px;
-          height: 28px;
+          width: 55px;
+          height: 55px;
+          object-fit: contain;
           &.logo-mini-light {
             [data-bs-theme='dark'] & {
               display: none;

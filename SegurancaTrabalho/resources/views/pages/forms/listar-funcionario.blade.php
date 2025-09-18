@@ -60,7 +60,7 @@
             <tbody>
               @forelse(($funcionarios ?? []) as $f)
                 @php
-                  $empresaNome = $f->empresa->nome ?? ($f->empresa_nome ?? '');
+                  $empresaNome = $f->empresa->razao_social ?? ($f->empresa->nome_fantasia ?? ($f->empresa_nome ?? ''));
                   $cargoNome   = $f->cargo->nome ?? ($f->cargo_nome ?? '');
                   $nascFmt     = !empty($f->data_nascimento) ? \Carbon\Carbon::parse($f->data_nascimento)->format('d/m/Y') : '-';
                   $createdFmt  = optional($f->created_at)->format('d/m/Y') ?? '-';
@@ -125,6 +125,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-warning" id="btnEditarFuncionario">
+          <i data-lucide="edit" class="me-1" style="width: 16px; height: 16px;"></i>Editar
+        </button>
+        <button type="button" class="btn btn-danger" id="btnExcluirFuncionario">
+          <i data-lucide="trash-2" class="me-1" style="width: 16px; height: 16px;"></i>Excluir
+        </button>
       </div>
     </div>
   </div>
@@ -231,6 +237,42 @@
     addRow(dl, 'Nascimento', d.data_nascimento);
     addRow(dl, 'Criado em', d.created_at);
     addRow(dl, 'Atualizado em', d.updated_at);
+
+    // Armazenar ID do funcionário nos botões
+    document.getElementById('btnEditarFuncionario').setAttribute('data-funcionario-id', d.id);
+    document.getElementById('btnExcluirFuncionario').setAttribute('data-funcionario-id', d.id);
+  });
+
+  // Botão Editar
+  document.getElementById('btnEditarFuncionario')?.addEventListener('click', function() {
+    const funcionarioId = this.getAttribute('data-funcionario-id');
+    window.location.href = `/funcionarios/${funcionarioId}/editar`;
+  });
+
+  // Botão Excluir
+  document.getElementById('btnExcluirFuncionario')?.addEventListener('click', function() {
+    const funcionarioId = this.getAttribute('data-funcionario-id');
+    if (confirm('Tem certeza que deseja excluir este funcionário? Esta ação não pode ser desfeita.')) {
+      // Criar form para DELETE
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/funcionarios/${funcionarioId}`;
+      
+      const csrfToken = document.createElement('input');
+      csrfToken.type = 'hidden';
+      csrfToken.name = '_token';
+      csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      const methodField = document.createElement('input');
+      methodField.type = 'hidden';
+      methodField.name = '_method';
+      methodField.value = 'DELETE';
+      
+      form.appendChild(csrfToken);
+      form.appendChild(methodField);
+      document.body.appendChild(form);
+      form.submit();
+    }
   });
 })();
 </script>

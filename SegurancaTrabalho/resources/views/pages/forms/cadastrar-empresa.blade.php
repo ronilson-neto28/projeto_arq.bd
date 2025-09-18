@@ -207,6 +207,33 @@
         }
       });
       
+      // Função para atualizar grau de risco
+      function atualizarGrauRiscoInline() {
+        const selectedOption = $('#cnae_id option:selected');
+        const grauRisco = selectedOption.attr('data-grau');
+        
+        console.log('Inline: Opção selecionada:', selectedOption.text());
+        console.log('Inline: Grau de risco:', grauRisco);
+        
+        if (grauRisco) {
+          $('#grau_risco').val(grauRisco);
+          console.log('Inline: Grau atualizado para:', grauRisco);
+        } else {
+          $('#grau_risco').val('');
+        }
+      }
+      
+      // Configurar eventos do Select2 imediatamente após inicialização
+      $('#cnae_id').on('select2:select', function(e) {
+        console.log('Inline Select2: select event triggered');
+        setTimeout(atualizarGrauRiscoInline, 50);
+      });
+      
+      $('#cnae_id').on('select2:clear', function(e) {
+        console.log('Inline Select2: clear event triggered');
+        $('#grau_risco').val('');
+      });
+      
       // Função para capitalizar primeira letra e letras após espaços
       function capitalizeNames(str) {
         return str.toLowerCase().replace(/\b\w/g, function(char) {
@@ -226,6 +253,10 @@
           e.target.setSelectionRange(cursorPosition, cursorPosition);
         });
       }
+      
+      // Executar uma vez para valor inicial
+      setTimeout(atualizarGrauRiscoInline, 100);
+      
     })(jQuery);
   </script>
 @endpush

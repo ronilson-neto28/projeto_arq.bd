@@ -11,24 +11,10 @@ class CnaeSeeder extends Seeder
 {
     public function run(): void
     {
-        // Corrigindo o caminho para o arquivo Excel
-        $path = database_path('seeders/data/CNAE_Subclasses_2_3_Estrutura_Detalhada.xlsx');
+        // Limpar tabela antes de inserir novos dados
+        DB::table('cnaes')->truncate();
         
-        // Verificar se o caminho está correto
-        if (!file_exists($path)) {
-            // Tentar caminho alternativo
-            $path = database_path('seeders/data/CNAE_Subclasses_2_3_Estrutura_Detalhada.xlsx');
-            if (!file_exists($path)) {
-                $this->command->error("Arquivo não encontrado: $path");
-                return;
-            }
-        }
-        
-        $this->command->info("Usando arquivo: $path");
-        
-        // Usando SimpleXLSX para ler o arquivo Excel
-        // Como não temos o pacote PhpSpreadsheet instalado, vamos usar uma abordagem alternativa
-        // Vamos criar CNAEs de exemplo com graus de risco variados
+        // CNAEs de exemplo com graus de risco variados
         
         $cnaes = [
             ['codigo' => '01.11-3-01', 'descricao' => 'Cultivo de arroz', 'grau_risco' => 3],

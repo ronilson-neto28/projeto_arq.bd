@@ -26,7 +26,7 @@
 }
 
 .splash-screen .logo {
-  background-image: url(./build/images/logo-mini-light.png);
+  background-image: url(./build/images/Proativa_logo.png);
   width: 30px;
   height: 30px;
   background-size: 30px;
@@ -102,5 +102,5 @@
 }
 
 [data-bs-theme="dark"] .splash-screen .logo {
-  background-image: url(./build/images/logo-mini-dark.png);
+  background-image: url(./build/images/Proativa_logo.png);
 }

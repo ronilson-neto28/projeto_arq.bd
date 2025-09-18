@@ -15,6 +15,7 @@ License: You must have a valid license to legally use the template for your proj
   <meta name="description" content="Responsive Laravel Admin Dashboard Template based on Bootstrap 5">
 	<meta name="author" content="NobleUI">
 	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, laravel, theme, front-end, ui kit, web">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>PROATIVA SST</title>
 

@@ -119,7 +119,7 @@
         <div class="info-line"><strong>CNPJ:</strong> {{ $encaminhamento->empresa->cnpj ?? '49.267.000/0001-28' }}</div>
         <div class="info-line"><strong>COLABORADOR:</strong> {{ $encaminhamento->funcionario->nome ?? 'DARLISON GEOVANE PIMENTEL FREITAS' }}</div>
         <div class="info-line"><strong>RG:</strong> {{ $encaminhamento->funcionario->rg ?? '6063417-PA' }}</div>
-        <div class="info-line"><strong>CPF:</strong> {{ $encaminhamento->funcionario->cpf ?? '902861202-59' }}</div>
+        <div class="info-line"><strong>CPF:</strong> {{ $encaminhamento->funcionario->cpf ?? '902.861.202-59' }}</div>
         <div class="info-line"><strong>DATA DE NASCIMENTO:</strong> {{ $encaminhamento->funcionario->data_nascimento ?? '15/03/1990' }}</div>
         <div class="info-line"><strong>FUNÇÃO:</strong> {{ $encaminhamento->funcionario->cargo->nome ?? $encaminhamento->cargo->nome ?? 'MECÂNICO' }}</div>
         <div class="info-line"><strong>TIPO DE EXAME:</strong> {{ $encaminhamento->tipo_exame ?? 'ADMISSIONAL' }}</div>
@@ -161,7 +161,8 @@
     
     <div class="footer">
         <div><strong>PROATIVA</strong> – Soluções em Saúde e Segurança do Trabalho</div>
-        <div>Tv. Assis de Vasconcelos, nº 746 Aldeia - Entre Mendonça Furtado e Presidente Vargas</div>
+        <div>Prédio Aldeia comércio - Trav. barjonas de miranda, Av. São Sebastião, sala 206 - Aldeia, Santarém - PA, 68040-520</div>
+        <div>telefone - 93 99103-1855</div>
         <div>Santarém - PA</div>
     </div>
 </body>

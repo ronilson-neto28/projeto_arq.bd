@@ -5,10 +5,76 @@
 @endpush
 
 @section('content')
+<style>
+  .header-adaptive {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Estilos customizados para paginação */
+  .pagination-rounded .page-link {
+    border-radius: 8px !important;
+    margin: 0 2px;
+    border: 1px solid #e9ecef;
+    color: #6c757d;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .pagination-rounded .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #495057;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .pagination-rounded .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  }
+  
+  .pagination-rounded .page-item.disabled .page-link {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    color: #adb5bd;
+  }
+  
+  /* Melhorias na tabela */
+  .table-responsive {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  
+  .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    font-weight: 600;
+    color: #495057;
+    padding: 1rem 0.75rem;
+  }
+  
+  .table tbody tr {
+    transition: all 0.2s ease;
+  }
+  
+  .table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+</style>
+
 <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
   <div>
-    <h4 class="mb-3 mb-md-0">Exames</h4>
-    <p class="text-muted m-0">Visualização e filtros (dados de exames estão mockados apenas para layout).</p>
+    <h4 class="mb-3 mb-md-0">Encaminhamentos para Exames</h4>
+    <p class="text-muted m-0">Listagem dos encaminhamentos cadastrados no sistema com filtros disponíveis.</p>
   </div>
 </div>
 
@@ -95,18 +161,19 @@
             <tbody>
               @foreach($exames as $x)
                 <tr
-                  data-empresa="{{ $x['empresa_id'] }}"
-                  data-funcionario="{{ $x['funcionario_id'] }}"
-                  data-tipo="{{ $x['tipo'] }}"
-                  data-status="{{ $x['status'] }}"
+                  data-empresa="{{ $x->empresa_id }}"
+                  data-funcionario="{{ $x->funcionario_id }}"
+                  data-tipo="{{ $x->tipo_exame }}"
+                  data-status="{{ $x->status ?? 'pendente' }}"
                 >
-                  <td>{{ $x['id'] }}</td>
-                  <td>{{ $x['empresa'] }}</td>
-                  <td>{{ $x['funcionario'] }}</td>
-                  <td class="text-capitalize">{{ str_replace('_',' ',$x['tipo']) }}</td>
-                  <td>{{ $x['titulo'] }}</td>
+                  <td>{{ $x->id }}</td>
+                  <td>{{ $x->empresa->razao_social ?? 'N/A' }}</td>
+                  <td>{{ $x->funcionario->nome ?? 'N/A' }}</td>
+                  <td class="text-capitalize">{{ str_replace('_',' ', $x->tipo_exame) }}</td>
+                  <td>ASO {{ ucfirst(str_replace('_',' ', $x->tipo_exame)) }}</td>
                   <td>
                     @php
+                      $status = $x->status ?? 'pendente';
                       $map = [
                         'pendente' => 'badge bg-warning text-dark',
                         'agendado' => 'badge bg-info',
@@ -115,19 +182,20 @@
                         'cancelado' => 'badge bg-secondary',
                       ];
                     @endphp
-                    <span class="{{ $map[$x['status']] ?? 'badge bg-light text-dark' }}">{{ ucfirst($x['status']) }}</span>
+                    <span class="{{ $map[$status] ?? 'badge bg-light text-dark' }}">{{ ucfirst($status) }}</span>
                   </td>
-                  <td>{{ $x['data_solicitacao'] ?? '-' }}</td>
-                  <td>{{ $x['data_agendamento'] ?? '-' }}</td>
-                  <td>{{ $x['data_realizacao'] ?? '-' }}</td>
-                  <td>{{ $x['validade_ate'] ?? '-' }}</td>
+                  <td>{{ $x->created_at->format('d/m/Y') ?? '-' }}</td>
+                  <td>{{ $x->data_agendamento ? \Carbon\Carbon::parse($x->data_agendamento)->format('d/m/Y') : '-' }}</td>
+                  <td>{{ $x->data_atendimento ? \Carbon\Carbon::parse($x->data_atendimento)->format('d/m/Y') : '-' }}</td>
+                  <td>{{ $x->data_atendimento ? \Carbon\Carbon::parse($x->data_atendimento)->addYear()->format('d/m/Y') : '-' }}</td>
                   <td class="text-end">
                     <a
-                      href="{{ route('forms.exames.imprimir', $x['id']) }}"
+                      href="{{ route('forms.exames.imprimir', $x->id) }}"
                       class="btn btn-sm btn-outline-success"
                       target="_blank"
+                      title="Imprimir Encaminhamento"
                     >
-                      <i class="fas fa-print me-1"></i>Imprimir
+                      <i data-lucide="printer" class="w-4 h-4 me-1"></i>Imprimir
                     </a>
                   </td>
                 </tr>
@@ -136,7 +204,7 @@
               @if($exames->isEmpty())
                 <tr>
                   <td colspan="11" class="text-center text-muted py-4">
-                    Nenhum exame para exibir (mock).
+                    Nenhum encaminhamento encontrado.
                   </td>
                 </tr>
               @endif
@@ -144,9 +212,11 @@
           </table>
         </div>
 
-        <small class="text-muted">
-          *Esta listagem usa dados mockados para visual. Ao integrar com o banco, substitua pelo collection real.
-        </small>
+        @if($exames->hasPages())
+          <div class="mt-4 px-3">
+            {{ $exames->links('custom.pagination') }}
+          </div>
+        @endif
       </div>
     </div>
   </div>
