@@ -95,26 +95,7 @@
 </div>
 
 @push('plugin-styles')
-<style>
-.auth-form-wrapper .btn-link:hover {
-  text-decoration: underline !important;
-}
-
-#verification_code:focus {
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  border-color: #007bff;
-}
-
-.alert {
-  border-radius: 8px;
-}
-
-.alert-info {
-  background-color: #e7f3ff;
-  border-color: #b3d9ff;
-  color: #004085;
-}
-</style>
+{{-- Estilos movidos para custom.css --}}
 @endpush
 
 @push('custom-scripts')

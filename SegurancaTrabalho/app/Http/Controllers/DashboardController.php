@@ -39,8 +39,8 @@ class DashboardController extends Controller
         $meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         
         for ($i = 1; $i <= 12; $i++) {
-            $totalMes = Encaminhamento::whereMonth('data_atendimento', $i)
-                ->whereYear('data_atendimento', date('Y'))
+            $totalMes = Encaminhamento::whereRaw('EXTRACT(MONTH FROM data_atendimento) = ?', [$i])
+                ->whereRaw('EXTRACT(YEAR FROM data_atendimento) = ?', [date('Y')])
                 ->whereNotNull('data_atendimento')
                 ->count();
             $examesPorMes[] = [
@@ -49,16 +49,32 @@ class DashboardController extends Controller
             ];
         }
         
-        // Dados para o gráfico de encaminhamentos por mês para diferentes anos
+        // Dados para o gráfico de encaminhamentos por mês com filtro por ano
         $encaminhamentosPorMes = [];
-        $anosDisponiveis = [2024, 2025, 2026];
+        $anosDisponiveis = [];
         $mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         
+        // Buscar anos disponíveis nos encaminhamentos (usando data_atendimento)
+        $anosComEncaminhamentos = Encaminhamento::selectRaw('EXTRACT(YEAR FROM data_atendimento) as ano')
+            ->whereNotNull('data_atendimento')
+            ->distinct()
+            ->orderBy('ano', 'desc')
+            ->pluck('ano')
+            ->toArray();
+        
+        // Se não houver dados, incluir o ano atual
+        if (empty($anosComEncaminhamentos)) {
+            $anosComEncaminhamentos = [date('Y')];
+        }
+        
+        $anosDisponiveis = $anosComEncaminhamentos;
+        
+        // Gerar dados para cada ano disponível
         foreach ($anosDisponiveis as $ano) {
             $dadosAno = [];
             for ($i = 1; $i <= 12; $i++) {
-                $totalMes = Encaminhamento::whereMonth('data_atendimento', $i)
-                    ->whereYear('data_atendimento', $ano)
+                $totalMes = Encaminhamento::whereRaw('EXTRACT(MONTH FROM data_atendimento) = ?', [$i])
+                    ->whereRaw('EXTRACT(YEAR FROM data_atendimento) = ?', [$ano])
                     ->whereNotNull('data_atendimento')
                     ->count();
                 $dadosAno[$mesesAbrev[$i-1]] = $totalMes;
@@ -68,6 +84,6 @@ class DashboardController extends Controller
         
         $totalEncaminhamentos = Encaminhamento::count();
 
-        return view('dashboard', compact('totalEmpresas', 'totalFuncionarios', 'funcionarios', 'examesPorTipo', 'totalEncaminhamentos', 'examesPorMes', 'encaminhamentosPorMes'));
+        return view('dashboard', compact('totalEmpresas', 'totalFuncionarios', 'funcionarios', 'examesPorTipo', 'totalEncaminhamentos', 'examesPorMes', 'encaminhamentosPorMes', 'anosDisponiveis'));
     }
 }

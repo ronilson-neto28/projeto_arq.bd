@@ -434,8 +434,8 @@
           <h6 class="card-title mb-0">Encaminhamentos por Mês</h6>
           <div class="d-flex align-items-center">
             <select class="form-select form-select-sm me-2" id="anoSelecionado" style="width: auto;">
-              @foreach(array_keys($encaminhamentosPorMes) as $ano)
-                <option value="{{ $ano }}" {{ $ano == date('Y') ? 'selected' : '' }}>{{ $ano }}</option>
+              @foreach($anosDisponiveis as $ano)
+                <option value="{{ $ano }}" {{ $ano == $anosDisponiveis[0] ? 'selected' : '' }}>{{ $ano }}</option>
               @endforeach
             </select>
             <div class="dropdown">
@@ -731,19 +731,18 @@
     
     // Disponibilizar dados de encaminhamentos por mês para o JavaScript
     window.encaminhamentosPorMes = @json($encaminhamentosPorMes);
+    window.anosDisponiveis = @json($anosDisponiveis);
     
     // Gráfico de Encaminhamentos por Mês
     const encaminhamentosPorMesElement = document.querySelector('#encaminhamentosPorMesChart');
     if (encaminhamentosPorMesElement) {
-      // Dados reais do banco de dados
-      const dadosEncaminhamentosReais = window.encaminhamentosPorMes || {};
+      // Usar dados reais do controller
+      const dadosEncaminhamentos = window.encaminhamentosPorMes;
+      const anosDisponiveis = window.anosDisponiveis;
       
-      // Ano atual como padrão
-      const anoAtual = new Date().getFullYear();
-      let dadosAtuais = dadosEncaminhamentosReais[anoAtual] || dadosEncaminhamentosReais[2025] || {
-        'Jan': 0, 'Fev': 0, 'Mar': 0, 'Abr': 0, 'Mai': 0, 'Jun': 0,
-        'Jul': 0, 'Ago': 0, 'Set': 0, 'Out': 0, 'Nov': 0, 'Dez': 0
-      };
+      // Definir ano inicial (primeiro ano disponível)
+      const anoInicial = anosDisponiveis[0];
+      let dadosAtuais = dadosEncaminhamentos[anoInicial] || {};
       
       const encaminhamentosChartOptions = {
         series: [{
@@ -905,13 +904,10 @@
       
       // Event listener para mudança de ano
       document.getElementById('anoSelecionado').addEventListener('change', function() {
-        const anoSelecionado = parseInt(this.value);
+        const anoSelecionado = this.value;
         
-        // Usar dados reais do banco de dados para o ano selecionado
-        dadosAtuais = dadosEncaminhamentosReais[anoSelecionado] || {
-          'Jan': 0, 'Fev': 0, 'Mar': 0, 'Abr': 0, 'Mai': 0, 'Jun': 0,
-          'Jul': 0, 'Ago': 0, 'Set': 0, 'Out': 0, 'Nov': 0, 'Dez': 0
-        };
+        // Usar dados reais do controller
+        dadosAtuais = dadosEncaminhamentos[anoSelecionado] || {};
         
         // Atualizar gráfico
         encaminhamentosChart.updateSeries([{
