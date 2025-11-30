@@ -2,27 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Aso extends Model
 {
-    protected $table = 'asos';
+    protected $connection = 'mongodb';
+    protected $collection = 'asos';
 
     protected $fillable = [
         'encaminhamento_id',
-        'aptidao',
         'data_emissao',
-        'medico',
-        'arquivo_pdf_path',
+        'resultado',
+        'medico_emissor_id',
     ];
 
     protected $casts = [
         'data_emissao' => 'date',
     ];
 
-    public function encaminhamento(): BelongsTo
+    public function encaminhamento()
     {
-        return $this->belongsTo(Encaminhamento::class);
+        return $this->belongsTo(Encaminhamento::class, 'encaminhamento_id');
     }
 }
+

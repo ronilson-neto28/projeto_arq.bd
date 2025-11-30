@@ -28,6 +28,28 @@
           </div>
         </div>
       </div>
+
+      <style>
+        /*formulario-sombra*/ 
+          .form-control {
+            box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+          }
+          .form-control:focus {
+            box-shadow: 1px 1px 2px 1px rgb(0 0 255 / 0.2) !important;
+          }
+
+          .form-check-input {
+            box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+          }
+
+          .form-select {
+            box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+          }
+
+          .form-select.js-select2 {
+            box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+          }
+      </style>
       
       <style>
         /* Tema claro */
@@ -180,13 +202,13 @@
                 <option></option>
                 @isset($cargos)
                   @foreach($cargos as $cargo)
-                    <option value="{{ $cargo->id }}" data-empresa="{{ $cargo->empresa_id }}" @selected(old('cargo_id') == $cargo->id)>
-                      {{ $cargo->nome }} — {{ $cargo->empresa->razao_social ?? 'Empresa' }}
+                    <option value="{{ $cargo->id }}" @selected(old('cargo_id') == $cargo->id)>
+                      CBO {{ $cargo->cbo }} - {{ $cargo->descricao ?? $cargo->nome }}
                     </option>
                   @endforeach
                 @endisset
               </select>
-              <small class="text-muted"><i data-lucide="info" class="me-1" style="width: 12px; height: 12px;"></i>Após escolher a empresa, o combo filtra os cargos dela.</small>
+              <small class="text-muted"><i data-lucide="info" class="me-1" style="width: 12px; height: 12px;"></i>Cargos são independentes de empresa.</small>
             </div>
 
             <div class="col-md-3">
@@ -263,24 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
       allowInput: true 
     });
 
-    function filtrarCargos() {
-      const empId = $('#empresa_id').val();
-      $('#cargo_id option').each(function(){
-        const optEmp = $(this).data('empresa');
-        if (!$(this).val()) return;
-        $(this).toggle(!empId || String(optEmp) === String(empId));
-      });
-      const sel = $('#cargo_id').val();
-      if (sel) {
-        const belongs = $('#cargo_id option:selected').data('empresa');
-        if (String(belongs) !== String(empId)) {
-          $('#cargo_id').val(null).trigger('change');
-        }
-      }
-    }
-
-    $('#empresa_id').on('change', filtrarCargos);
-    filtrarCargos();
+    // cargos independentes: nenhuma filtragem por empresa
   }
   
   waitForLibraries();

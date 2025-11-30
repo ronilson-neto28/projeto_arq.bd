@@ -2,39 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany, HasMany};
+use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Subdocument\CargoRisco as CargoRiscoSubdoc;
 
 class Cargo extends Model
 {
-    use HasFactory;
+    protected $connection = 'mongodb';
+    protected $collection = 'cargos';
+    protected $primaryKey = '_id';
 
     protected $fillable = [
-        'empresa_id',
         'nome',
+        'cbo',
+        'descricao',
     ];
 
-    /** Empresa dona do cargo */
-    public function empresa(): BelongsTo
-    {
-        return $this->belongsTo(Empresa::class);
-    }
+    
 
-    /** Funcionários que ocupam este cargo */
-    public function funcionarios(): HasMany
+    public function riscos()
     {
-        return $this->hasMany(Funcionario::class);
-    }
-
-    /**
-     * Riscos associados ao cargo (PGR)
-     * Campos extras no pivot permitem registrar fonte/intensidade/medidas de controle
-     */
-    public function riscos(): BelongsToMany
-    {
-        return $this->belongsToMany(Risco::class, 'cargo_risco')
-            ->withPivot(['fonte_geradora','intensidade','medidas_controle'])
-            ->withTimestamps();
+        return $this->embedsMany(CargoRiscoSubdoc::class, 'cargo_risco');
     }
 }

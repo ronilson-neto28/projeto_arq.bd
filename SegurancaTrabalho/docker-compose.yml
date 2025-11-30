@@ -1,43 +1,89 @@
 version: '3.8'
 services:
-  app:
-    image: php:8.2-fpm
-    container_name: laravel-app
-    working_dir: /var/www/html
-    volumes:
-      - .:/var/www/html
-    ports:
-      - "9000:9000"
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15
-    container_name: tcc-postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  
-  mailpit:
-    image: axllent/mailpit
-    container_name: mailpit
-    restart: unless-stopped
-    ports:
-      - "8025:8025"   # UI Web do Mailpit
-      - "1025:1025"   # SMTP
-    volumes:
-      - ./mailpit-data:/data
-    environment:
-      MP_DATABASE: /data/mailpit.db
-      MP_MAX_MESSAGES: 5000
-      MP_SMTP_AUTH_ACCEPT_ANY: 1
-      MP_SMTP_AUTH_ALLOW_INSECURE: 1
-
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: seguranca-trabalho-php:8.2-fpm-mongodb
+        container_name: laravel-app
+        working_dir: /var/www/html
+        volumes:
+            - '.:/var/www/html'
+        ports:
+            - '9000:9000'
+            - '8000:8000'
+        depends_on:
+            - db
+        networks:
+            - sail
+    db:
+        image: 'postgres:15'
+        container_name: seguranca-trabalho-postgres
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 1234
+        ports:
+            - '5432:5432'
+        volumes:
+            - 'pgdata:/var/lib/postgresql/data'
+    mailpit:
+        image: axllent/mailpit
+        container_name: seguranca-trabalho-mailpit
+        restart: unless-stopped
+        ports:
+            - '8025:8025'
+            - '1025:1025'
+        volumes:
+            - './mailpit-data:/data'
+        environment:
+            MP_DATABASE: /data/mailpit.db
+            MP_MAX_MESSAGES: 5000
+            MP_SMTP_AUTH_ACCEPT_ANY: 1
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'sail-mysql:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+    mongodb:
+        image: 'mongo:latest'
+        container_name: seguranca-trabalho-mongodb
+        restart: always
+        ports:
+            - '27017:27017'
+        environment:
+            MONGO_INITDB_DATABASE: '${DB_DATABASE:-proativa}'
+        volumes:
+            - 'mongodb_data:/data/db'
+        networks:
+            - sail
 volumes:
-  pgdata:
+    pgdata: null
+    sail-mysql:
+        driver: local
+    mongodb_data:
+        driver: local
+
+networks:
+  sail:
+    driver: bridge

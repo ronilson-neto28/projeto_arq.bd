@@ -2,58 +2,47 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Subdocument\EncaminhamentoItem;
 
 class Encaminhamento extends Model
 {
-    use HasFactory;
+    protected $connection = 'mongodb';
+    protected $collection = 'encaminhamentos';
 
     protected $fillable = [
-        'numero_guia',
-        'data_emissao',
-        'medico_solicitante',
-        'funcionario_id',
         'empresa_id',
+        'funcionario_id',
         'cargo_id',
-        'tipo_exame',           // Admissional/Periódico/Demissional/Retorno/Mudança de Função
+        'tipo_exame',
         'data_atendimento',
         'hora_atendimento',
-        'riscos_extra_json',    // array de riscos adicionais
+        'status',
         'observacoes',
-        'previsao_retorno',
-        'status',               // agendado/realizado/faltou/cancelado
-        'local_clinica_id',     // opcional: local ou clínica
-        'medico_responsavel_id', // opcional: médico responsável
-        'responsavel_marcacao',
-        'escopo_registro',      // solicitacao | solicitacao_conclusao
     ];
 
     protected $casts = [
-        'data_emissao'      => 'date',
-        'data_atendimento'  => 'date',
-        'previsao_retorno'  => 'date',
-        'riscos_extra_json' => 'array',
+        'data_atendimento' => 'datetime',
     ];
 
-    public function itens(): HasMany
+    public function empresa()
     {
-        return $this->hasMany(EncaminhamentoItem::class);
+        return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
-    public function funcionario(): BelongsTo
+    public function funcionario()
     {
-        return $this->belongsTo(Funcionario::class);
+        return $this->belongsTo(Funcionario::class, 'funcionario_id');
     }
 
-    public function empresa(): BelongsTo
+    public function cargo()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(Cargo::class, 'cargo_id');
     }
 
-    public function cargo(): BelongsTo
+    public function itens()
     {
-        return $this->belongsTo(Cargo::class);
+        return $this->embedsMany(EncaminhamentoItem::class, 'encaminhamentos_itens');
     }
 }
+

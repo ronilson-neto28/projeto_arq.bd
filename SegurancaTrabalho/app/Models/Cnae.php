@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Cnae extends Model
 {
-    protected $table = 'cnaes';
+    protected $connection = 'mongodb';
+    protected $collection = 'cnaes';
 
     protected $fillable = [
         'codigo',
@@ -15,8 +15,9 @@ class Cnae extends Model
         'grau_risco',
     ];
 
-    public function empresas(): HasMany
+    public function empresas()
     {
         return $this->hasMany(Empresa::class, 'cnae_id');
     }
 }
+

@@ -187,24 +187,80 @@
   <div class="col-lg-7 col-xl-8 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <div class="d-flex justify-content-between align-items-baseline mb-2">
-          <h6 class="card-title mb-0">Exames Mensais</h6>
-          <div class="dropdown mb-2">
-            <a type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span class="">View</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="edit-2" class="icon-sm me-2"></i> <span class="">Edit</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="trash" class="icon-sm me-2"></i> <span class="">Delete</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span class="">Print</span></a>
-              <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span class="">Download</span></a>
+        <div class="d-flex justify-content-between align-items-baseline mb-4">
+          <h6 class="card-title mb-0">Encaminhamentos por Mês</h6>
+          <div class="d-flex align-items-center">
+            <select class="form-select form-select-sm me-2" id="anoSelecionado" style="width: auto;">
+              @foreach($anosDisponiveis as $ano)
+                <option value="{{ $ano }}" {{ $ano == $anosDisponiveis[0] ? 'selected' : '' }}>{{ $ano }}</option>
+              @endforeach
+            </select>
+            <div class="dropdown">
+              <a type="button" id="dropdownMenuButtonEncaminhamentos" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonEncaminhamentos">
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span>Imprimir</span></a>
+              </div>
             </div>
           </div>
         </div>
-        <p class="text-secondary">Exames são atividades relacionadas à exames de funcionários em um determinado período de tempo.</p>
-        <div id="monthlySalesChart"></div>
-      </div> 
+        
+        <div class="row">
+          <div class="col-12">
+            <div id="encaminhamentosPorMesChart" style="height: 400px;"></div>
+          </div>
+        </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-primary">Total</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="totalEncaminhamentosAno">1,234</h6>
+                <small class="text-muted">encaminhamentos no ano</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-success">Média</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="mediaEncaminhamentosMes">103</h6>
+                <small class="text-muted">por mês</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-warning">Pico</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="picoEncaminhamentos">189</h6>
+                <small class="text-muted">em Julho</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex align-items-center">
+              <div class="me-2">
+                <span class="badge bg-info">Menor</span>
+              </div>
+              <div>
+                <h6 class="mb-0" id="menorEncaminhamentos">63</h6>
+                <small class="text-muted">em Março</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
@@ -424,89 +480,6 @@
 @endpush
 
 </div> <!-- row -->
-
-<!-- Nova seção para gráfico de encaminhamentos por mês -->
-<div class="row mt-4">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-baseline mb-4">
-          <h6 class="card-title mb-0">Encaminhamentos por Mês</h6>
-          <div class="d-flex align-items-center">
-            <select class="form-select form-select-sm me-2" id="anoSelecionado" style="width: auto;">
-              @foreach($anosDisponiveis as $ano)
-                <option value="{{ $ano }}" {{ $ano == $anosDisponiveis[0] ? 'selected' : '' }}>{{ $ano }}</option>
-              @endforeach
-            </select>
-            <div class="dropdown">
-              <a type="button" id="dropdownMenuButtonEncaminhamentos" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="icon-lg text-secondary pb-3px" data-lucide="more-horizontal"></i>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonEncaminhamentos">
-                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="eye" class="icon-sm me-2"></i> <span>Visualizar</span></a>
-                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="download" class="icon-sm me-2"></i> <span>Exportar</span></a>
-                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-lucide="printer" class="icon-sm me-2"></i> <span>Imprimir</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-12">
-            <div id="encaminhamentosPorMesChart" style="height: 400px;"></div>
-          </div>
-        </div>
-        
-        <div class="row mt-3">
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <div class="me-2">
-                <span class="badge bg-primary">Total</span>
-              </div>
-              <div>
-                <h6 class="mb-0" id="totalEncaminhamentosAno">1,234</h6>
-                <small class="text-muted">encaminhamentos no ano</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <div class="me-2">
-                <span class="badge bg-success">Média</span>
-              </div>
-              <div>
-                <h6 class="mb-0" id="mediaEncaminhamentosMes">103</h6>
-                <small class="text-muted">por mês</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <div class="me-2">
-                <span class="badge bg-warning">Pico</span>
-              </div>
-              <div>
-                <h6 class="mb-0" id="picoEncaminhamentos">189</h6>
-                <small class="text-muted">em Julho</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <div class="me-2">
-                <span class="badge bg-info">Menor</span>
-              </div>
-              <div>
-                <h6 class="mb-0" id="menorEncaminhamentos">63</h6>
-                <small class="text-muted">em Março</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 @endsection
 

@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Exame extends Model
 {
-    protected $table = 'exames';
-    
+    protected $connection = 'mongodb';
+    protected $collection = 'exames';
+    protected $primaryKey = '_id';
+
     protected $fillable = [
         'nome',
-        'tipo',
-        'observacoes'
+        'tipo_exame',
+        'descricao',
     ];
 }
+

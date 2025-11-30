@@ -1,23 +1,30 @@
 <?php
-// app/Models/Risco.php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Subdocument\RiscoExame;
 
 class Risco extends Model
 {
-    protected $table = 'riscos';
-    protected $fillable = ['tipo_de_risco_id','nome','descricao'];
+    protected $connection = 'mongodb';
+    protected $collection = 'riscos';
+    protected $primaryKey = '_id';
 
-    public function tipo(): BelongsTo
+    protected $fillable = [
+        'nome',
+        'tipo_risco_id',
+        'descricao',
+    ];
+
+    public function tipoRisco()
     {
-        return $this->belongsTo(TipoDeRisco::class, 'tipo_de_risco_id');
+        return $this->belongsTo(TipoDeRisco::class, 'tipo_risco_id');
     }
 
-    public function cargos(): BelongsToMany
+    public function examesObrigatorios()
     {
-        return $this->belongsToMany(Cargo::class, 'cargo_risco')->withTimestamps();
+        return $this->embedsMany(RiscoExame::class, 'risco_exame');
     }
 }
+

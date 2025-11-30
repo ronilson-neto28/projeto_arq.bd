@@ -41,6 +41,28 @@
   }
 </style>
 
+<style>
+  /*formulario-sombra*/ 
+  .form-control {
+    box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+  }
+  .form-control:focus {
+    box-shadow: 1px 1px 2px 1px rgb(0 0 255 / 0.2) !important;
+  }
+
+  .form-check-input {
+    box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+  }
+
+  .form-select {
+    box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+  }
+
+  .form-select.js-select2 {
+    box-shadow: 0px 0px 2px 1px rgb(0 0 255 / 0.2) !important;
+  }
+</style>
+
 <nav class="page-breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="#">Formulário</a></li>

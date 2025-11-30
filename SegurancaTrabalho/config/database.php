@@ -112,6 +112,15 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'host' => env('MONGO_DB_HOST', env('DB_HOST', 'localhost')),
+            'port' => env('MONGO_DB_PORT', env('DB_PORT', 27017)),
+            'database' => env('MONGO_DB_DATABASE', env('DB_DATABASE', 'proativa')),
+            'username' => env('MONGO_DB_USERNAME', env('DB_USERNAME', null)),
+            'password' => env('MONGO_DB_PASSWORD', env('DB_PASSWORD', null)),
+        ],
+
     ],
 
     /*
