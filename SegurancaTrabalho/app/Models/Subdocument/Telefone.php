@@ -8,6 +8,7 @@ class Telefone extends Model
 {
     protected $fillable = [
         'numero',
+        'tipo',
+        'contato',
     ];
 }
-

@@ -316,11 +316,14 @@ Route::get('/dashboard', fn() => view('dashboard'));
 Route::get('/sample', fn() => view('sample'));
 
 Route::get('/pages/forms/cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
+Route::get('/forms/cadastrar-empresa', [EmpresaController::class, 'create'])->name('empresas.create');
 Route::get('/pages/forms/listar-empresa', fn() => view('pages.forms.listar-empresa'));
+Route::get('/forms/listar-empresa', [EmpresaController::class, 'index'])->name('forms.empresas.index');
 Route::get('/pages/forms/editar-empresa', fn() => view('pages.forms.editar-empresa'));
 
 Route::get('/pages/forms/cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
-Route::get('/pages/forms/listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
+Route::get('/pages/forms/listar-funcionario', [FuncionarioController::class, 'index'])->name('funcionarios.index');
+Route::get('/forms/listar-funcionario', [FuncionarioController::class, 'index'])->name('forms.funcionarios.index');
 Route::get('/pages/forms/editar-funcionario', fn() => view('pages.forms.editar-funcionario'));
 
 Route::get('/pages/forms/listar-exames', fn() => view('pages.forms.listar-exames'));
@@ -345,8 +348,17 @@ Route::get('/pages/{path}', function ($path) {
 Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
 Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+Route::get('/empresas/{id}/editar', [EmpresaController::class, 'edit'])->name('empresas.edit');
+Route::delete('/empresas/{id}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
+Route::put('/empresas/{id}', [EmpresaController::class, 'update'])->name('empresas.update');
 
 // Rotas de funcionários (sem proteção)
 Route::get('/funcionarios/create', [FuncionarioController::class, 'create'])->name('funcionarios.create');
 Route::post('/funcionarios', [FuncionarioController::class, 'store'])->name('funcionarios.store')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 Route::get('/funcionarios', [FuncionarioController::class, 'index'])->name('funcionarios.index');
+Route::get('/funcionarios/{id}/editar', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
+Route::put('/funcionarios/{id}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
+// Alias para URLs antigas de forms
+Route::get('/forms/cadastrar-funcionario', [FuncionarioController::class, 'create'])->name('forms.funcionarios.create');
+Route::get('/funcionarios/{id}/editar', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
+Route::delete('/funcionarios/{id}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');

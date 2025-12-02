@@ -4,6 +4,8 @@ namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
 use App\Models\Subdocument\Telefone;
+use App\Models\Cnae;
+use App\Models\Funcionario;
 
 class Empresa extends Model
 {
@@ -28,5 +30,15 @@ class Empresa extends Model
     public function telefones()
     {
         return $this->embedsMany(Telefone::class, 'telefones');
+    }
+
+    public function funcionarios()
+    {
+        return $this->hasMany(Funcionario::class, 'empresa_id');
+    }
+
+    public function cnae()
+    {
+        return $this->belongsTo(Cnae::class, 'cnae_id');
     }
 }

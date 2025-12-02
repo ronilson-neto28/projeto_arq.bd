@@ -202,13 +202,13 @@
                 <option></option>
                 @isset($cargos)
                   @foreach($cargos as $cargo)
-                    <option value="{{ $cargo->id }}" @selected(old('cargo_id') == $cargo->id)>
-                      CBO {{ $cargo->cbo }} - {{ $cargo->descricao ?? $cargo->nome }}
+                    <option value="{{ $cargo->id }}" data-empresa="{{ $cargo->empresa_id }}" @selected(old('cargo_id') == $cargo->id)>
+                      {{ $cargo->nome }} — {{ $cargo->empresa->razao_social ?? 'Empresa' }}
                     </option>
                   @endforeach
                 @endisset
               </select>
-              <small class="text-muted"><i data-lucide="info" class="me-1" style="width: 12px; height: 12px;"></i>Cargos são independentes de empresa.</small>
+              <small class="text-muted"><i data-lucide="info" class="me-1" style="width: 12px; height: 12px;"></i>Após escolher a empresa, o combo filtra os cargos dela.</small>
             </div>
 
             <div class="col-md-3">
@@ -285,7 +285,24 @@ document.addEventListener('DOMContentLoaded', function() {
       allowInput: true 
     });
 
-    // cargos independentes: nenhuma filtragem por empresa
+    function filtrarCargos() {
+      const empId = $('#empresa_id').val();
+      $('#cargo_id option').each(function(){
+        const optEmp = $(this).data('empresa');
+        if (!$(this).val()) return;
+        $(this).toggle(!empId || String(optEmp) === String(empId));
+      });
+      const sel = $('#cargo_id').val();
+      if (sel) {
+        const belongs = $('#cargo_id option:selected').data('empresa');
+        if (String(belongs) !== String(empId)) {
+          $('#cargo_id').val(null).trigger('change');
+        }
+      }
+    }
+
+    $('#empresa_id').on('change', filtrarCargos);
+    filtrarCargos();
   }
   
   waitForLibraries();

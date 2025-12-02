@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Subdocument\Telefone;
+use App\Models\Cargo;
 
 class Funcionario extends Model
 {
@@ -17,7 +19,6 @@ class Funcionario extends Model
         'data_nascimento',
         'genero',
         'estado_civil',
-        'telefone',
         'email',
         'empresa_id',
         'cargo_id',
@@ -34,5 +35,15 @@ class Funcionario extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function cargo()
+    {
+        return $this->belongsTo(Cargo::class, 'cargo_id');
+    }
+
+    public function telefones()
+    {
+        return $this->embedsMany(Telefone::class, 'telefones');
     }
 }
