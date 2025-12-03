@@ -12,8 +12,8 @@ class Exame extends Model
 
     protected $fillable = [
         'nome',
-        'tipo_exame',
+        'codigo',
+        'tipo_procedimento',
         'descricao',
     ];
 }
-

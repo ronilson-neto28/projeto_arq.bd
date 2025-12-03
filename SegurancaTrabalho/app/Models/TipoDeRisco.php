@@ -15,5 +15,9 @@ class TipoDeRisco extends Model
         'cor',
         'descricao',
     ];
-}
 
+    public function riscos()
+    {
+        return $this->hasMany(Risco::class, 'tipo_risco_id');
+    }
+}

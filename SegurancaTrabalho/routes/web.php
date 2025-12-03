@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\Api\RiscoExameController;
+use App\Http\Controllers\EncaminhamentoController;
+use App\Http\Controllers\AsoController;
 
 
 ////////////////////////////////////////
@@ -360,5 +363,16 @@ Route::get('/funcionarios/{id}/editar', [FuncionarioController::class, 'edit'])-
 Route::put('/funcionarios/{id}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
 // Alias para URLs antigas de forms
 Route::get('/forms/cadastrar-funcionario', [FuncionarioController::class, 'create'])->name('forms.funcionarios.create');
+Route::post('/forms/exames/store', [EncaminhamentoController::class, 'store'])->name('forms.exames.store')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+Route::get('/forms/gerar-exame', [EncaminhamentoController::class, 'gerar'])->name('forms.exames.gerar');
+Route::get('/forms/exames/listar', [EncaminhamentoController::class, 'index'])->name('forms.exames.index');
+Route::get('/encaminhamentos/imprimir/{encaminhamentoId}', [EncaminhamentoController::class, 'imprimir'])->name('encaminhamentos.imprimir');
+
+Route::resource('asos', AsoController::class);
+Route::get('/asos/emitir/{encaminhamentoId}', [AsoController::class, 'create'])->name('asos.emitir');
+
+// API para riscos → exames (sem proteção, para testes)
+Route::post('/api/risco/exames', [RiscoExameController::class, 'examesPorRisco'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+Route::get('/api/risco/exames', [RiscoExameController::class, 'examesPorRisco']);
 Route::get('/funcionarios/{id}/editar', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
 Route::delete('/funcionarios/{id}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');

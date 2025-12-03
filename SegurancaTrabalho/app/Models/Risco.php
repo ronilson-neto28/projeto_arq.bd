@@ -15,6 +15,7 @@ class Risco extends Model
         'nome',
         'tipo_risco_id',
         'descricao',
+        'limite_tolerancia',
     ];
 
     public function tipoRisco()
@@ -27,4 +28,3 @@ class Risco extends Model
         return $this->embedsMany(RiscoExame::class, 'risco_exame');
     }
 }
-

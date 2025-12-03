@@ -11,6 +11,11 @@
     .select2-container--default .select2-selection--single .select2-selection__rendered{ padding-left:.75rem; }
     .btn-risk { margin: .2rem .35rem .2rem 0; }
     .table-actions small a{ text-decoration:none; font-weight:700; margin-left:.5rem; }
+    .btn-check:checked + .btn-risk{ color:#fff; border-color:transparent; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); box-shadow:0 4px 14px rgba(102,126,234,.35); }
+    #examesObrigatoriosLista .exams-card{ border:1px dashed #e9ecef; border-radius:12px; padding:.75rem 1rem; background:#fafbff; }
+    #examesObrigatoriosLista .exams-card ul{ margin:.5rem 0 0; padding:0; list-style:none; }
+    #examesObrigatoriosLista .exams-card li{ padding:.35rem .5rem; border-radius:8px; display:flex; align-items:center; gap:.5rem; }
+    #examesObrigatoriosLista .badge{ border-radius:6px; }
   </style>
 @endpush
 
@@ -94,7 +99,7 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('encaminhamentos.store') }}">
+    <form method="POST" action="{{ route('forms.exames.store') }}" id="formGerarExame">
       @csrf
 
       <input type="hidden" id="empresa_id" name="empresa_id" value="{{ old('empresa_id') }}">
@@ -116,8 +121,10 @@
               @foreach($funcionarios as $f)
                 <option value="{{ $f->id }}"
                   data-empresa-id="{{ $f->empresa_id }}"
-                  data-cargo-id="{{ $f->cargo_id }}">
-                  {{ $f->nome }} — {{ $f->empresa->razao_social ?? 'Empresa' }} {{ $f->cargo ? '/ '.$f->cargo->nome : '' }}
+                  data-cargo-id="{{ $f->cargo_id }}"
+                  data-cpf="{{ $f->cpf }}"
+                  data-telefone="{{ optional($f->telefones->first())->numero }}">
+                  {{ $f->nome }}
                 </option>
               @endforeach
             @endisset
@@ -130,13 +137,22 @@
             <option></option>
             @isset($cargos)
               @foreach($cargos as $c)
-                <option value="{{ $c->id }}" data-empresa-id="{{ $c->empresa_id }}">
-                  {{ $c->empresa->razao_social ?? 'Empresa' }} / {{ $c->nome }}
+                <option value="{{ $c->id }}" data-empresa-id="{{ $c->empresa_id }}" data-empresa-nome="{{ $c->empresa->razao_social ?? ($c->empresa->nome_fantasia ?? '') }}">
+                  @php $empresaNome = $c->empresa->razao_social ?? ($c->empresa->nome_fantasia ?? ''); @endphp
+                  {{ $empresaNome ? $empresaNome.' / ' : '' }}{{ $c->nome }}
                 </option>
               @endforeach
             @endisset
           </select>
           <small class="text-muted">Ao escolher o cargo, o <b>empresa_id</b> é preenchido automaticamente.</small>
+        </div>
+        <div class="col-md-3">
+          <label for="funcionario_cpf" class="form-label">CPF</label>
+          <input type="text" id="funcionario_cpf" class="form-control" placeholder="000.000.000-00">
+        </div>
+        <div class="col-md-3">
+          <label for="funcionario_telefone" class="form-label">Telefone</label>
+          <input type="text" id="funcionario_telefone" class="form-control" placeholder="(00) 00000-0000">
         </div>
       </div>
 
@@ -157,21 +173,16 @@
             @endforeach
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-medium">Data do Atendimento</label>
+        <div class="col-md-5">
+          <label for="data_atendimento" class="form-label">Data e Hora do Atendimento <span class="text-danger">*</span></label>
           <div class="input-group">
-            <input id="atendimentoData" name="data_atendimento" type="text" class="form-control flatpickr"
-                   value="{{ old('data_atendimento', date('d/m/Y')) }}" placeholder="dd/mm/aaaa">
-            <span class="input-group-text"><i data-lucide="calendar"></i></span>
+            <input type="text" id="data_atendimento" name="data_atendimento" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('data_atendimento', date('d/m/Y')) }}" required>
+            <input type="time" id="hora_atendimento" name="hora_atendimento" class="form-control" value="{{ old('hora_atendimento','08:00') }}" required>
           </div>
         </div>
         <div class="col-md-3">
-          <label class="form-label fw-medium">Hora</label>
-          <input id="atendimentoHora" name="hora_atendimento" type="time" class="form-control" step="60" value="{{ old('hora_atendimento') }}">
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-medium">Previsão Retorno</label>
-          <input type="text" name="previsao_retorno" class="form-control flatpickr" value="{{ old('previsao_retorno') }}" placeholder="dd/mm/aaaa">
+          <label for="previsao_retorno" class="form-label">Previsão Retorno</label>
+          <input type="text" id="previsao_retorno" name="previsao_retorno" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('previsao_retorno') }}">
         </div>
       </div>
 
@@ -224,23 +235,66 @@
         </div>
       </div>
       
-      <div class="mb-4">
+      <div class="mb-4" id="riscosWrap">
         <label class="form-label fw-medium">Selecione os Riscos Identificados</label>
-        <div id="riscosWrap" class="d-flex flex-wrap">
-          @php
-            $riscosPadrao = ['Ruído','Calor','Vibração','Radiações','Químicos','Biológicos','Ergonômicos','Acidentes'];
-          @endphp
-          @foreach($riscosPadrao as $i => $risco)
+        <h6 class="mt-3 mb-2 text-secondary border-bottom">1. RISCOS FÍSICOS</h6>
+        <div class="d-flex flex-wrap">
+          @php $fisicos = ['Ruído','Calor','Vibração','Radiações']; @endphp
+          @foreach($fisicos as $risco)
             @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}"
-                   @checked(collect(old('riscos',[]))->contains($risco))>
+            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
             <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
           @endforeach
         </div>
+        <h6 class="mt-3 mb-2 text-secondary border-bottom">2. RISCOS QUÍMICOS</h6>
+        <div class="d-flex flex-wrap">
+          @php $quimicos = ['Químicos']; @endphp
+          @foreach($quimicos as $risco)
+            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
+            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
+            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
+          @endforeach
+        </div>
+        <h6 class="mt-3 mb-2 text-secondary border-bottom">3. BIOLÓGICOS</h6>
+        <div class="d-flex flex-wrap">
+          @php $biologicos = ['Biológicos']; @endphp
+          @foreach($biologicos as $risco)
+            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
+            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
+            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
+          @endforeach
+        </div>
+        <h6 class="mt-3 mb-2 text-secondary border-bottom">4. ERGONÔMICOS</h6>
+        <div class="d-flex flex-wrap">
+          @php $erg = ['Ergonômicos']; @endphp
+          @foreach($erg as $risco)
+            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
+            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
+            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
+          @endforeach
+        </div>
+        <h6 class="mt-3 mb-2 text-secondary border-bottom">5. ACIDENTES</h6>
+        <div class="d-flex flex-wrap">
+          @php $acid = ['Acidentes']; @endphp
+          @foreach($acid as $risco)
+            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
+            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
+            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
+          @endforeach
+        </div>
+      </div>
         <div class="d-flex mt-2 gap-2">
           <input type="text" id="novoRisco" class="form-control" placeholder="Adicionar outro risco...">
           <button type="button" id="btnAddRisco" class="btn btn-outline-primary">Adicionar</button>
         </div>
+      </div>
+
+      <input type="hidden" id="exames_finais_json" name="exames_finais_json">
+      <hr>
+      <div class="section-title fw-bold text-success mb-3"><i data-lucide="check-circle" class="me-2" style="width: 18px; height: 18px;"></i>EXAMES OBRIGATÓRIOS CALCULADOS</div>
+      <div id="examesObrigatoriosLista" class="p-3 rounded-3 bg-success-subtle border border-success-subtle">
+        <small class="text-success">Selecione os riscos ocupacionais acima para calcular a lista de exames obrigatórios.</small>
+      </div>
       </div>
 
       {{-- Exames e Procedimentos --}}
@@ -495,11 +549,80 @@
   $('#selFuncionario').on('change', function(){
     const empId = $(this).find('option:selected').data('empresa-id') || '';
     const cargoId = $(this).find('option:selected').data('cargo-id') || '';
+    const cpf = $(this).find('option:selected').data('cpf') || '';
+    const tel = $(this).find('option:selected').data('telefone') || '';
     if(empId) $('#empresa_id').val(empId);
     if(cargoId) $('#selEmpresaCargo').val(cargoId).trigger('change');
+    if(cpf) $('#funcionario_cpf').val(cpf);
+    if(tel) $('#funcionario_telefone').val(tel);
   });
 
   $(function(){ initPlugins(); });
+  // integração riscos → exames obrigatórios
+  const form = document.getElementById('formGerarExame');
+  const selFuncionario = $('#selFuncionario');
+  const selEmpresaCargo = $('#selEmpresaCargo');
+  const examesFinaisInput = document.getElementById('exames_finais_json');
+  const examesListaDiv = document.getElementById('examesObrigatoriosLista');
+  let listaExamesCalculados = [];
+
+  function renderizarExames(resp){
+    const exames = Array.isArray(resp.exames) ? resp.exames : (Array.isArray(resp) ? resp : []);
+    let html = '<div class="exams-card">';
+    html += '<div class="d-flex align-items-center gap-2"><i data-lucide="stethoscope"></i><span class="fw-semibold">Exames solicitados</span></div>';
+    if (exames.length === 0) {
+      html += '<div class="mt-2 text-muted">Nenhum exame obrigatório encontrado para os riscos selecionados.</div>';
+    } else {
+      html += '<ul>';
+      exames.forEach(function(exame){
+        const periodicidade = exame.periodicidade_meses ? exame.periodicidade_meses+' meses' : 'N/A';
+        const adm = exame.obrigatorio_admissional ? '<span class="badge bg-primary-subtle text-primary">Admissional</span>' : '';
+        const code = exame.codigo ? `<span class="badge bg-light text-dark">${exame.codigo}</span>` : '';
+        const tipo = exame.tipo_procedimento ? `<span class="badge bg-info-subtle text-info">${exame.tipo_procedimento}</span>` : '';
+        html += `<li>
+          <i data-lucide="check-circle-2" class="text-success"></i>
+          <strong>${exame.nome}</strong>
+          <span class="ms-2 d-inline-flex gap-1">${code}${tipo}${adm}</span>
+          <small class="ms-2 text-muted">Periodicidade: ${periodicidade}</small>
+        </li>`;
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    examesListaDiv.innerHTML = html;
+  }
+
+  function atualizarExamesPorRisco(){
+    const riscosSelecionados = [];
+    $('#riscosWrap input[type="checkbox"]:checked').each(function(){ riscosSelecionados.push($(this).val()); });
+    if (riscosSelecionados.length === 0) {
+      examesListaDiv.innerHTML = '<div class="exams-card text-muted">Nenhum risco selecionado. Nenhuma obrigatoriedade de exame calculada.</div>';
+      listaExamesCalculados = [];
+      return;
+    }
+    $.ajax({
+      url: '{{ url("api/risco/exames") }}',
+      method: 'POST',
+      contentType: 'application/json',
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      data: JSON.stringify({ riscos: riscosSelecionados }),
+      success: function(response){ listaExamesCalculados = response.exames || response; renderizarExames(response); },
+      error: function(xhr){ console.error('Erro ao buscar exames:', xhr.responseText); examesListaDiv.innerHTML = '<div class="exams-card text-danger">Erro ao calcular exames.</div>'; }
+    });
+  }
+
+  $('#selFuncionario').on('change', function(){ atualizarExamesPorRisco(); });
+  $('#riscosWrap').on('change', 'input[type="checkbox"]', atualizarExamesPorRisco);
+  form?.addEventListener('submit', function(){ examesFinaisInput.value = JSON.stringify(listaExamesCalculados||[]); });
+  form?.addEventListener('submit', function(){
+    const empHidden = document.getElementById('empresa_id');
+    if (empHidden && !empHidden.value) {
+      const empFromFunc = $('#selFuncionario').find('option:selected').data('empresa-id') || '';
+      const empFromCargo = $('#selEmpresaCargo').find('option:selected').data('empresa-id') || '';
+      empHidden.value = empFromFunc || empFromCargo || '';
+    }
+  });
+  atualizarExamesPorRisco();
 })(jQuery);
 </script>
 @endpush

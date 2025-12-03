@@ -89,7 +89,7 @@
             <select id="filtroEmpresa" class="form-select">
               <option value="">Todas</option>
               @foreach($empresas as $e)
-                <option value="{{ $e->id }}">{{ $e->nome }}</option>
+                <option value="{{ $e->id }}">{{ $e->razao_social ?? $e->nome_fantasia }}</option>
               @endforeach
             </select>
           </div>
@@ -159,7 +159,7 @@
               </tr>
             </thead>
             <tbody>
-              @foreach($exames as $x)
+              @foreach($encaminhamentos as $x)
                 <tr
                   data-empresa="{{ $x->empresa_id }}"
                   data-funcionario="{{ $x->funcionario_id }}"
@@ -184,24 +184,19 @@
                     @endphp
                     <span class="{{ $map[$status] ?? 'badge bg-light text-dark' }}">{{ ucfirst($status) }}</span>
                   </td>
-                  <td>{{ $x->created_at->format('d/m/Y') ?? '-' }}</td>
-                  <td>{{ $x->data_agendamento ? \Carbon\Carbon::parse($x->data_agendamento)->format('d/m/Y') : '-' }}</td>
+                  <td>{{ optional($x->created_at)->format('d/m/Y') ?? '-' }}</td>
+                  <td>-</td>
                   <td>{{ $x->data_atendimento ? \Carbon\Carbon::parse($x->data_atendimento)->format('d/m/Y') : '-' }}</td>
                   <td>{{ $x->data_atendimento ? \Carbon\Carbon::parse($x->data_atendimento)->addYear()->format('d/m/Y') : '-' }}</td>
                   <td class="text-end">
-                    <a
-                      href="{{ route('forms.exames.imprimir', $x->id) }}"
-                      class="btn btn-sm btn-outline-success"
-                      target="_blank"
-                      title="Imprimir Encaminhamento"
-                    >
+                    <a href="{{ route('encaminhamentos.imprimir', $x->id) }}" class="btn btn-sm btn-outline-success" target="_blank" title="Imprimir Encaminhamento">
                       <i data-lucide="printer" class="w-4 h-4 me-1"></i>Imprimir
                     </a>
                   </td>
                 </tr>
               @endforeach
 
-              @if($exames->isEmpty())
+              @if($encaminhamentos->isEmpty())
                 <tr>
                   <td colspan="11" class="text-center text-muted py-4">
                     Nenhum encaminhamento encontrado.
@@ -212,9 +207,9 @@
           </table>
         </div>
 
-        @if($exames->hasPages())
+        @if($encaminhamentos->hasPages())
           <div class="mt-4 px-3">
-            {{ $exames->links('custom.pagination') }}
+            {{ $encaminhamentos->links('custom.pagination') }}
           </div>
         @endif
       </div>

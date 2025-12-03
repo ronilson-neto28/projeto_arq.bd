@@ -9,6 +9,8 @@ class EncaminhamentoItem extends Model
     protected $fillable = [
         'exame_id',
         'nome_snapshot',
+        'nome_exame_snapshot',
+        'periodicidade',
         'data',
         'hora',
         'prestador',
@@ -25,4 +27,3 @@ class EncaminhamentoItem extends Model
         'referencia' => 'boolean',
     ];
 }
-

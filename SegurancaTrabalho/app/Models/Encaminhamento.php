@@ -19,10 +19,16 @@ class Encaminhamento extends Model
         'hora_atendimento',
         'status',
         'observacoes',
+        'previsao_retorno',
+        'local_clinica',
+        'medico',
+        'riscos_ids',
     ];
 
     protected $casts = [
         'data_atendimento' => 'datetime',
+        'previsao_retorno' => 'datetime',
+        'riscos_ids' => 'array',
     ];
 
     public function empresa()
@@ -44,5 +50,14 @@ class Encaminhamento extends Model
     {
         return $this->embedsMany(EncaminhamentoItem::class, 'encaminhamentos_itens');
     }
-}
 
+    public function itensSolicitados()
+    {
+        return $this->embedsMany(EncaminhamentoItem::class, 'itens_solicitados');
+    }
+
+    public function riscosSelecionados()
+    {
+        return \App\Models\Risco::query()->whereIn('_id', (array)($this->riscos_ids ?? []));
+    }
+}
