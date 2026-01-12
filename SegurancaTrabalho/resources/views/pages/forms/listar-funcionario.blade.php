@@ -47,7 +47,6 @@
           <table class="table table-hover align-middle" id="tabelaFuncionarios">
             <thead class="table-light">
               <tr>
-                <th>#</th>
                 <th>Funcionário</th>
                 <th>Empresa</th>
                 <th>Cargo</th>
@@ -73,7 +72,6 @@
                   data-nome="{{ $f->nome ?? '' }}"
                   data-email="{{ $f->email ?? '' }}"
                 >
-                  <td>{{ $f->id }}</td>
                   <td>{{ $f->nome ?? '-' }}</td>
                   <td>{{ $empresaNome ?: '-' }}</td>
                   <td>{{ $cargoNome ?: '-' }}</td>

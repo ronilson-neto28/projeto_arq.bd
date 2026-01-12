@@ -16,6 +16,10 @@
     #examesObrigatoriosLista .exams-card ul{ margin:.5rem 0 0; padding:0; list-style:none; }
     #examesObrigatoriosLista .exams-card li{ padding:.35rem .5rem; border-radius:8px; display:flex; align-items:center; gap:.5rem; }
     #examesObrigatoriosLista .badge{ border-radius:6px; }
+    .form-section{ border:1px solid var(--bs-border-color,#e9ecef); border-radius:12px; overflow:hidden; margin-bottom:1rem; box-shadow:0 1px 6px rgba(0,0,0,.04); }
+    .form-section-header{ display:flex; align-items:center; gap:.5rem; padding:.75rem 1rem; background:#f5f6fa; border-bottom:1px solid var(--bs-border-color,#e9ecef); }
+    .form-section-header .title{ font-weight:600; color:#4b5563; }
+    .form-section-body{ padding:1rem; }
   </style>
 @endpush
 
@@ -102,208 +106,176 @@
     <form method="POST" action="{{ route('forms.exames.store') }}" id="formGerarExame">
       @csrf
 
-      <input type="hidden" id="empresa_id" name="empresa_id" value="{{ old('empresa_id') }}">
-
-      {{-- Seleção de Funcionário e Empresa --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="user" class="me-2" style="width: 16px; height: 16px;"></i>Dados do Funcionário</h6>
-        </div>
-      </div>
       
-      {{-- Funcionário / Empresa-Cargo --}}
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <label for="selFuncionario" class="form-label fw-medium">Nome — Funcionário</label>
-          <select id="selFuncionario" name="funcionario_id" class="form-control select2-single" data-placeholder="Selecione o funcionário" required>
-            <option></option>
-            @isset($funcionarios)
-              @foreach($funcionarios as $f)
-                <option value="{{ $f->id }}"
-                  data-empresa-id="{{ $f->empresa_id }}"
-                  data-cargo-id="{{ $f->cargo_id }}"
-                  data-cpf="{{ $f->cpf }}"
-                  data-telefone="{{ optional($f->telefones->first())->numero }}">
-                  {{ $f->nome }}
-                </option>
-              @endforeach
-            @endisset
-          </select>
-        </div>
 
-        <div class="col-md-6">
-          <label for="selEmpresaCargo" class="form-label fw-medium">Empresa / Cargo</label>
-          <select id="selEmpresaCargo" name="cargo_id" class="form-control select2-single" data-placeholder="Selecione a empresa/cargo">
-            <option></option>
-            @isset($cargos)
-              @foreach($cargos as $c)
-                <option value="{{ $c->id }}" data-empresa-id="{{ $c->empresa_id }}" data-empresa-nome="{{ $c->empresa->razao_social ?? ($c->empresa->nome_fantasia ?? '') }}">
-                  @php $empresaNome = $c->empresa->razao_social ?? ($c->empresa->nome_fantasia ?? ''); @endphp
-                  {{ $empresaNome ? $empresaNome.' / ' : '' }}{{ $c->nome }}
-                </option>
-              @endforeach
-            @endisset
-          </select>
-          <small class="text-muted">Ao escolher o cargo, o <b>empresa_id</b> é preenchido automaticamente.</small>
+      <div class="form-section">
+        <div class="form-section-header">
+          <i data-lucide="user"></i>
+          <span class="title">Dados do Funcionário</span>
         </div>
-        <div class="col-md-3">
-          <label for="funcionario_cpf" class="form-label">CPF</label>
-          <input type="text" id="funcionario_cpf" class="form-control" placeholder="000.000.000-00">
-        </div>
-        <div class="col-md-3">
-          <label for="funcionario_telefone" class="form-label">Telefone</label>
-          <input type="text" id="funcionario_telefone" class="form-control" placeholder="(00) 00000-0000">
-        </div>
-      </div>
-
-      {{-- Dados do Exame --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="clipboard-list" class="me-2" style="width: 16px; height: 16px;"></i>Dados do Exame</h6>
-        </div>
-      </div>
-      
-      <div class="row mb-4">
-        <div class="col-md-3">
-          <label for="selTipo" class="form-label fw-medium">Tipo (Exame)</label>
-          <select id="selTipo" name="tipo_exame" class="form-control select2-single" required>
-            @php $tipos = ['Admissional','Periódico','Demissional','Retorno','Mudança de Função']; @endphp
-            @foreach($tipos as $t)
-              <option value="{{ $t }}" @selected(old('tipo_exame') === $t)>{{ $t }}</option>
-            @endforeach
-          </select>
-        </div>
-        <div class="col-md-5">
-          <label for="data_atendimento" class="form-label">Data e Hora do Atendimento <span class="text-danger">*</span></label>
-          <div class="input-group">
-            <input type="text" id="data_atendimento" name="data_atendimento" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('data_atendimento', date('d/m/Y')) }}" required>
-            <input type="time" id="hora_atendimento" name="hora_atendimento" class="form-control" value="{{ old('hora_atendimento','08:00') }}" required>
+        <div class="form-section-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="selFuncionario" class="form-label fw-medium">Nome — Funcionário</label>
+              <select id="selFuncionario" name="funcionario_id" class="form-control select2-single" data-placeholder="Selecione o funcionário" required>
+                <option></option>
+                @isset($funcionarios)
+                  @foreach($funcionarios as $f)
+                    <option value="{{ $f->id }}"
+                      data-empresa-id="{{ $f->empresa_id }}"
+                      data-cargo-id="{{ $f->cargo_id }}"
+                      data-cpf="{{ $f->cpf }}"
+                      data-telefone="{{ optional($f->telefones->first())->numero }}">
+                      {{ $f->nome }}
+                    </option>
+                  @endforeach
+                @endisset
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="selEmpresa" class="form-label fw-medium">Empresa</label>
+              <select id="selEmpresa" name="empresa_id" class="form-control select2-single" data-placeholder="Selecione a empresa" required>
+                <option></option>
+                @isset($empresas)
+                  @foreach($empresas as $e)
+                    <option value="{{ $e->id }}">{{ $e->razao_social ?? ($e->nome_fantasia ?? '') }}</option>
+                  @endforeach
+                @endisset
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="selCargo" class="form-label fw-medium">Cargo</label>
+              <select id="selCargo" name="cargo_id" class="form-control select2-single" data-placeholder="Selecione o cargo">
+                <option></option>
+                @isset($cargos)
+                  @foreach($cargos as $c)
+                    <option value="{{ $c->id }}">{{ $c->nome }}</option>
+                  @endforeach
+                @endisset
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="funcionario_cpf" class="form-label">CPF</label>
+              <input type="text" id="funcionario_cpf" class="form-control" placeholder="000.000.000-00">
+            </div>
+            <div class="col-md-3">
+              <label for="funcionario_telefone" class="form-label">Telefone</label>
+              <input type="text" id="funcionario_telefone" class="form-control" placeholder="(00) 00000-0000">
+            </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <label for="previsao_retorno" class="form-label">Previsão Retorno</label>
-          <input type="text" id="previsao_retorno" name="previsao_retorno" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('previsao_retorno') }}">
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <i data-lucide="clipboard-list"></i>
+          <span class="title">Dados do Exame</span>
+        </div>
+        <div class="form-section-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="selTipo" class="form-label fw-medium">Tipo (Exame)</label>
+              <select id="selTipo" name="tipo_exame" class="form-control select2-single" required>
+                @php $tipos = ['Admissional','Periódico','Demissional','Retorno','Mudança de Função']; @endphp
+                @foreach($tipos as $t)
+                  <option value="{{ $t }}" @selected(old('tipo_exame') === $t)>{{ $t }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col-md-5">
+              <label for="data_atendimento" class="form-label">Data e Hora do Atendimento <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="text" id="data_atendimento" name="data_atendimento" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('data_atendimento', date('d/m/Y')) }}" required>
+                <input type="time" id="hora_atendimento" name="hora_atendimento" class="form-control" value="{{ old('hora_atendimento','08:00') }}" required>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="previsao_retorno" class="form-label">Previsão Retorno</label>
+              <input type="text" id="previsao_retorno" name="previsao_retorno" class="form-control js-date" placeholder="dd/mm/aaaa" value="{{ old('previsao_retorno') }}">
+            </div>
+            <div class="col-md-4">
+              <label for="status" class="form-label fw-medium">Status</label>
+              <select id="status" name="status" class="form-control select2-single" required>
+                @php $statusOptions = ['agendado','realizado','faltou','cancelado']; @endphp
+                @foreach($statusOptions as $s)
+                  <option value="{{ $s }}" @selected(old('status', 'agendado') === $s)>{{ ucfirst($s) }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="local_clinica_id" class="form-label fw-medium">Local/Clínica (Opcional)</label>
+              <input type="text" id="local_clinica_id" name="local_clinica_id" class="form-control" value="{{ old('local_clinica_id') }}" placeholder="Nome da clínica ou local">
+            </div>
+            <div class="col-md-4">
+              <label for="medico_responsavel_id" class="form-label fw-medium">Médico Responsável (Opcional)</label>
+              <input type="text" id="medico_responsavel_id" name="medico_responsavel_id" class="form-control" value="{{ old('medico_responsavel_id') }}" placeholder="Nome do médico responsável">
+            </div>
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between">
+                <label for="obs" class="form-label fw-medium mb-1">Observações Gerais</label>
+                <a href="javascript:void(0)" id="puxarHistorico" class="small fw-bold text-primary">[PUXAR DO HISTÓRICO]</a>
+              </div>
+              <textarea id="obs" name="observacoes" class="form-control" rows="3" placeholder="Observações adicionais sobre o exame...">{{ old('observacoes') }}</textarea>
+            </div>
+          </div>
         </div>
       </div>
 
-      {{-- Informações Complementares --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="info" class="me-2" style="width: 16px; height: 16px;"></i>Informações Complementares</h6>
+      <div class="form-section">
+        <div class="form-section-header">
+          <i data-lucide="alert-triangle"></i>
+          <span class="title">Riscos Ocupacionais</span>
         </div>
-      </div>
-      
-      <div class="row mb-4">
-        <div class="col-md-4">
-          <label for="status" class="form-label fw-medium">Status</label>
-          <select id="status" name="status" class="form-control select2-single" required>
-            @php $statusOptions = ['agendado','realizado','faltou','cancelado']; @endphp
-            @foreach($statusOptions as $s)
-              <option value="{{ $s }}" @selected(old('status', 'agendado') === $s)>{{ ucfirst($s) }}</option>
-            @endforeach
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label for="local_clinica_id" class="form-label fw-medium">Local/Clínica (Opcional)</label>
-          <input type="text" id="local_clinica_id" name="local_clinica_id" class="form-control" value="{{ old('local_clinica_id') }}" placeholder="Nome da clínica ou local">
-        </div>
-        <div class="col-md-4">
-          <label for="medico_responsavel_id" class="form-label fw-medium">Médico Responsável (Opcional)</label>
-          <input type="text" id="medico_responsavel_id" name="medico_responsavel_id" class="form-control" value="{{ old('medico_responsavel_id') }}" placeholder="Nome do médico responsável">
-        </div>
-      </div>
-
-      {{-- Observações --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="file-text" class="me-2" style="width: 16px; height: 16px;"></i>Observações</h6>
-        </div>
-      </div>
-      
-      <div class="mb-4">
-        <div class="d-flex align-items-center justify-content-between">
-          <label for="obs" class="form-label fw-medium mb-1">Observações Gerais</label>
-          <a href="javascript:void(0)" id="puxarHistorico" class="small fw-bold text-primary">[PUXAR DO HISTÓRICO]</a>
-        </div>
-        <textarea id="obs" name="observacoes" class="form-control" rows="3" placeholder="Observações adicionais sobre o exame...">{{ old('observacoes') }}</textarea>
-      </div>
-
-      {{-- Riscos Ocupacionais --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="alert-triangle" class="me-2" style="width: 16px; height: 16px;"></i>Riscos Ocupacionais</h6>
-        </div>
-      </div>
-      
-      <div class="mb-4" id="riscosWrap">
-        <label class="form-label fw-medium">Selecione os Riscos Identificados</label>
+        <div class="form-section-body">
+      <div id="riscosWrap">
+        <label class="form-label fw-medium">Riscos Identificados</label>
         <h6 class="mt-3 mb-2 text-secondary border-bottom">1. RISCOS FÍSICOS</h6>
-        <div class="d-flex flex-wrap">
-          @php $fisicos = ['Ruído','Calor','Vibração','Radiações']; @endphp
-          @foreach($fisicos as $risco)
-            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
-            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
-          @endforeach
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" id="novoRiscoFisico" class="form-control" placeholder="adicionar risco fisico">
+          <button type="button" id="btnAddRiscoFisico" class="btn btn-outline-primary">Adicionar</button>
         </div>
+        <div class="d-flex flex-wrap" id="listaRiscoFisico"></div>
         <h6 class="mt-3 mb-2 text-secondary border-bottom">2. RISCOS QUÍMICOS</h6>
-        <div class="d-flex flex-wrap">
-          @php $quimicos = ['Químicos']; @endphp
-          @foreach($quimicos as $risco)
-            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
-            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
-          @endforeach
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" id="novoRiscoQuimico" class="form-control" placeholder="adicionar risco quimico">
+          <button type="button" id="btnAddRiscoQuimico" class="btn btn-outline-primary">Adicionar</button>
         </div>
+        <div class="d-flex flex-wrap" id="listaRiscoQuimico"></div>
         <h6 class="mt-3 mb-2 text-secondary border-bottom">3. BIOLÓGICOS</h6>
-        <div class="d-flex flex-wrap">
-          @php $biologicos = ['Biológicos']; @endphp
-          @foreach($biologicos as $risco)
-            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
-            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
-          @endforeach
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" id="novoRiscoBiologico" class="form-control" placeholder="adicionar risco biologico">
+          <button type="button" id="btnAddRiscoBiologico" class="btn btn-outline-primary">Adicionar</button>
         </div>
+        <div class="d-flex flex-wrap" id="listaRiscoBiologico"></div>
         <h6 class="mt-3 mb-2 text-secondary border-bottom">4. ERGONÔMICOS</h6>
-        <div class="d-flex flex-wrap">
-          @php $erg = ['Ergonômicos']; @endphp
-          @foreach($erg as $risco)
-            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
-            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
-          @endforeach
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" id="novoRiscoErgonomico" class="form-control" placeholder="adicionar risco ergonomico">
+          <button type="button" id="btnAddRiscoErgonomico" class="btn btn-outline-primary">Adicionar</button>
         </div>
+        <div class="d-flex flex-wrap" id="listaRiscoErgonomico"></div>
         <h6 class="mt-3 mb-2 text-secondary border-bottom">5. ACIDENTES</h6>
-        <div class="d-flex flex-wrap">
-          @php $acid = ['Acidentes']; @endphp
-          @foreach($acid as $risco)
-            @php $id = 'risco_'.\Illuminate\Support\Str::slug($risco,'_'); @endphp
-            <input type="checkbox" class="btn-check" id="{{ $id }}" autocomplete="off" name="riscos[]" value="{{ $risco }}" @checked(collect(old('riscos',[]))->contains($risco))>
-            <label class="btn btn-outline-secondary btn-sm btn-risk" for="{{ $id }}">{{ $risco }}</label>
-          @endforeach
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" id="novoRiscoAcidente" class="form-control" placeholder="adicionar risco acidente">
+          <button type="button" id="btnAddRiscoAcidente" class="btn btn-outline-primary">Adicionar</button>
         </div>
+        <div class="d-flex flex-wrap" id="listaRiscoAcidente"></div>
       </div>
-        <div class="d-flex mt-2 gap-2">
-          <input type="text" id="novoRisco" class="form-control" placeholder="Adicionar outro risco...">
-          <button type="button" id="btnAddRisco" class="btn btn-outline-primary">Adicionar</button>
+        <div class="mt-3">
+          <div id="examesObrigatoriosLista" class="p-3 rounded-3 bg-success-subtle border border-success-subtle">
+            <small class="text-success">Selecione os riscos ocupacionais acima para calcular a lista de exames obrigatórios.</small>
+          </div>
+        </div>
         </div>
       </div>
 
       <input type="hidden" id="exames_finais_json" name="exames_finais_json">
-      <hr>
-      <div class="section-title fw-bold text-success mb-3"><i data-lucide="check-circle" class="me-2" style="width: 18px; height: 18px;"></i>EXAMES OBRIGATÓRIOS CALCULADOS</div>
-      <div id="examesObrigatoriosLista" class="p-3 rounded-3 bg-success-subtle border border-success-subtle">
-        <small class="text-success">Selecione os riscos ocupacionais acima para calcular a lista de exames obrigatórios.</small>
-      </div>
-      </div>
 
-      {{-- Exames e Procedimentos --}}
-      <div class="row mb-4">
-        <div class="col-12">
-          <h6 class="text-muted mb-3"><i data-lucide="stethoscope" class="me-2" style="width: 16px; height: 16px;"></i>Exames e Procedimentos</h6>
+      <div class="form-section">
+        <div class="form-section-header">
+          <i data-lucide="stethoscope"></i>
+          <span class="title">Exames e Procedimentos</span>
         </div>
-      </div>
-      
+        <div class="form-section-body">
       <div class="mb-3">
         <div class="d-flex align-items-center justify-content-between">
           <label class="form-label fw-medium mb-1">Adicionar Procedimentos</label>
@@ -311,28 +283,13 @@
         </div>
         <div class="row g-2">
           <div class="col-md-9">
-            <select id="procedimentoAdd" class="form-control select2-single" data-placeholder="Selecione um procedimento">
-              <option></option>
-              @isset($procedimentos)
-                @foreach($procedimentos as $p)
-                  <option value="{{ $p->nome }}"
-                    data-prestador="{{ $p->prestador_padrao }}"
-                    data-cat="{{ $p->categoria }}">
-                    {{ $p->nome }}
-                  </option>
-                @endforeach
-              @else
-                <option value="Audiometria Tonal Ocupacional">Audiometria Tonal Ocupacional</option>
-                <option value="Avaliação Clínica Ocupacional">Avaliação Clínica Ocupacional</option>
-                <option value="Glicemia">Glicemia</option>
-              @endisset
-            </select>
+            <input type="text" id="procedimentoTexto" class="form-control" placeholder="Digite o procedimento">
           </div>
           <div class="col-md-3 d-grid">
             <button type="button" id="btnAddProc" class="btn btn-primary">Adicionar</button>
           </div>
         </div>
-        <small class="text-muted">Use o seletor acima para incluir itens 1-a-1 na tabela.</small>
+        <small class="text-muted">Digite o procedimento e clique em Adicionar para incluir na tabela.</small>
       </div>
 
       {{-- Tabela de procedimentos --}}
@@ -385,6 +342,8 @@
             @endif
           </tbody>
         </table>
+      </div>
+        </div>
       </div>
 
       {{-- Botões de Ação --}}
@@ -472,8 +431,8 @@
     $('#tbodyProcedimentos').append($row);
     rebindRowPlugins();
 
-    const dTop = $('#atendimentoData').val();
-    const hTop = $('#atendimentoHora').val();
+    const dTop = $('#data_atendimento').val();
+    const hTop = $('#hora_atendimento').val();
     if (dTop) $row.find('.flatpickr-proc').val(dTop);
     if (hTop) $row.find('.input-hora').val(hTop);
   }
@@ -491,28 +450,24 @@
   $('#datasHoje').on('click', function(){ $('.flatpickr-proc').val(todayBR()).trigger('change'); });
 
   // propagar data/hora
-  $('#atendimentoData').on('change', function(){
+  $('#data_atendimento').on('change', function(){
     const v = $(this).val();
     $('#tbodyProcedimentos .flatpickr-proc').each(function(){ if(!this.value) this.value = v; });
   });
-  $('#atendimentoHora').on('change', function(){
+  $('#hora_atendimento').on('change', function(){
     const v = $(this).val();
     $('#tbodyProcedimentos .input-hora').each(function(){ if(!this.value) this.value = v; });
   });
 
   // adicionar procedimento
   $('#btnAddProc').on('click', function(){
-    const $opt = $('#procedimentoAdd').find('option:selected');
-    const name = $opt.val();
-    const prest = $opt.data('prestador') || 'Clínica';
-    addProc(name, prest);
-    $('#procedimentoAdd').val(null).trigger('change');
+    const name = ($('#procedimentoTexto').val() || '').trim();
+    if(!name) return;
+    addProc(name, 'Clínica');
+    $('#procedimentoTexto').val('');
   });
-  $('#procedimentoAdd').on('select2:select', function(e){
-    const name = e.params.data.id;
-    const $opt = $(this).find(`option[value="${name}"]`);
-    addProc(name, $opt.data('prestador') || 'Clínica');
-    $(this).val(null).trigger('change');
+  $('#procedimentoTexto').on('keydown', function(e){
+    if(e.key==='Enter'){ e.preventDefault(); $('#btnAddProc').click(); }
   });
 
   // histórico (exemplo)
@@ -522,37 +477,56 @@
     $ta.val(($ta.val()? $ta.val()+'\n' : '') + texto).focus();
   });
 
-  // riscos personalizados
-  $('#btnAddRisco').on('click', function(){
-    const txt = ($('#novoRisco').val() || '').trim();
+  function addRisco(listSel, textSel){
+    const txt = ($(textSel).val() || '').trim();
     if(!txt) return;
     const id = 'risco_' + txt.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
     if(document.getElementById(id)) {
       const el = document.getElementById(id);
       el.checked = true;
-      $('#novoRisco').val('');
+      $(textSel).val('');
       return;
     }
     const safe = $('<div>').text(txt).html();
-    const $input = $(`<input type="checkbox" class="btn-check" id="${id}" autocomplete="off" name="riscos[]" value="${safe}">`);
-    const $label = $(`<label class="btn btn-outline-secondary btn-sm btn-risk" for="${id}">${safe}</label>`);
-    $('#riscosWrap').append($input, $label);
-    $input.prop('checked', true);
-    $('#novoRisco').val('');
-  });
+    const $wrap = $(`<div class="risk-item d-inline-flex align-items-center me-2 mb-2"></div>`);
+    let catKey = '';
+    if (listSel.includes('Fisico')) catKey = 'fisico';
+    else if (listSel.includes('Quimico')) catKey = 'quimico';
+    else if (listSel.includes('Biologico')) catKey = 'biologico';
+    else if (listSel.includes('Ergonomico')) catKey = 'ergonomico';
+    else if (listSel.includes('Acidente')) catKey = 'acidentes';
+    const $input = $(`<input type="checkbox" class="btn-check" id="${id}" autocomplete="off" name="${catKey}[]" value="${txt}" checked>`);
+    const $label = $(`<label class="btn btn-outline-secondary btn-sm btn-risk" for="${id}">${txt}</label>`);
+    const $edit = $(`<button type="button" class="btn btn-light btn-sm ms-1">Editar</button>`);
+    const $del = $(`<button type="button" class="btn btn-outline-danger btn-sm ms-1">Excluir</button>`);
+    $wrap.append($input, $label, $edit, $del);
+    $(listSel).append($wrap);
+    $del.on('click', function(){ $wrap.remove(); atualizarExamesPorRisco(); });
+    $edit.on('click', function(){
+      const current = $label.text().trim();
+      const novo = (prompt('Editar risco', current) || '').trim();
+      if(!novo) return;
+      const newId = 'risco_' + novo.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+      $input.attr('id', newId).val(novo);
+      $label.attr('for', newId).text(novo);
+      atualizarExamesPorRisco();
+    });
+    $(textSel).val('');
+    atualizarExamesPorRisco();
+  }
+  $('#btnAddRiscoFisico').on('click', function(){ addRisco('#listaRiscoFisico','#novoRiscoFisico'); });
+  $('#btnAddRiscoQuimico').on('click', function(){ addRisco('#listaRiscoQuimico','#novoRiscoQuimico'); });
+  $('#btnAddRiscoBiologico').on('click', function(){ addRisco('#listaRiscoBiologico','#novoRiscoBiologico'); });
+  $('#btnAddRiscoErgonomico').on('click', function(){ addRisco('#listaRiscoErgonomico','#novoRiscoErgonomico'); });
+  $('#btnAddRiscoAcidente').on('click', function(){ addRisco('#listaRiscoAcidente','#novoRiscoAcidente'); });
 
-  // sincronizar empresa_id
-  $('#selEmpresaCargo').on('change', function(){
-    const empId = $(this).find('option:selected').data('empresa-id') || '';
-    $('#empresa_id').val(empId);
-  });
   $('#selFuncionario').on('change', function(){
     const empId = $(this).find('option:selected').data('empresa-id') || '';
     const cargoId = $(this).find('option:selected').data('cargo-id') || '';
     const cpf = $(this).find('option:selected').data('cpf') || '';
     const tel = $(this).find('option:selected').data('telefone') || '';
-    if(empId) $('#empresa_id').val(empId);
-    if(cargoId) $('#selEmpresaCargo').val(cargoId).trigger('change');
+    if(empId) $('#selEmpresa').val(empId).trigger('change');
+    if(cargoId) $('#selCargo').val(cargoId).trigger('change');
     if(cpf) $('#funcionario_cpf').val(cpf);
     if(tel) $('#funcionario_telefone').val(tel);
   });
@@ -561,7 +535,7 @@
   // integração riscos → exames obrigatórios
   const form = document.getElementById('formGerarExame');
   const selFuncionario = $('#selFuncionario');
-  const selEmpresaCargo = $('#selEmpresaCargo');
+  const selCargo = $('#selCargo');
   const examesFinaisInput = document.getElementById('exames_finais_json');
   const examesListaDiv = document.getElementById('examesObrigatoriosLista');
   let listaExamesCalculados = [];
@@ -615,11 +589,10 @@
   $('#riscosWrap').on('change', 'input[type="checkbox"]', atualizarExamesPorRisco);
   form?.addEventListener('submit', function(){ examesFinaisInput.value = JSON.stringify(listaExamesCalculados||[]); });
   form?.addEventListener('submit', function(){
-    const empHidden = document.getElementById('empresa_id');
-    if (empHidden && !empHidden.value) {
+    const selEmp = $('#selEmpresa');
+    if (!selEmp.val()) {
       const empFromFunc = $('#selFuncionario').find('option:selected').data('empresa-id') || '';
-      const empFromCargo = $('#selEmpresaCargo').find('option:selected').data('empresa-id') || '';
-      empHidden.value = empFromFunc || empFromCargo || '';
+      if (empFromFunc) selEmp.val(empFromFunc).trigger('change');
     }
   });
   atualizarExamesPorRisco();

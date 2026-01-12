@@ -33,8 +33,54 @@ Route::get('/test-mail', function () {
 });
 
 Route::get('/', function () {
-    return view('dashboard');
+    return redirect('/dashboard');
 });
+
+Route::get('/dashboard', function () {
+    $totalEmpresas = \App\Models\Empresa::count();
+    $totalFuncionarios = \App\Models\Funcionario::count();
+    $totalEncaminhamentos = \App\Models\Encaminhamento::count();
+
+    $currentYear = (int)date('Y');
+    $anosDisponiveis = [];
+    for ($i = 0; $i < 5; $i++) { $anosDisponiveis[] = $currentYear - $i; }
+
+    $meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+    $encaminhamentos = \App\Models\Encaminhamento::all(['created_at','tipo_exame']);
+    $encaminhamentosPorMes = [];
+    foreach ($anosDisponiveis as $ano) { $encaminhamentosPorMes[$ano] = array_fill_keys($meses, 0); }
+    foreach ($encaminhamentos as $e) {
+        $date = $e->created_at ?? null;
+        try {
+            $dt = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+            $yr = $dt->year; $mo = $dt->month;
+        } catch (\Throwable $ex) { continue; }
+        if (!in_array($yr, $anosDisponiveis)) continue;
+        $encaminhamentosPorMes[$yr][$meses[$mo-1]]++;
+    }
+
+    $group = [];
+    foreach ($encaminhamentos as $e) {
+        $tipo = $e->tipo_exame ?: 'outros';
+        $key = strtolower(str_replace(' ', '_', $tipo));
+        if (!isset($group[$key])) $group[$key] = ['tipo_exame' => $key, 'total' => 0];
+        $group[$key]['total']++;
+    }
+    $examesPorTipo = array_values($group);
+
+    $examesPorMes = $encaminhamentosPorMes;
+
+    $funcionarios = \App\Models\Funcionario::with('empresa')->get();
+
+    return view('dashboard', compact(
+        'totalEmpresas', 'totalFuncionarios', 'totalEncaminhamentos',
+        'anosDisponiveis', 'encaminhamentosPorMes', 'examesPorMes', 'examesPorTipo',
+        'funcionarios'
+    ));
+});
+
+Route::get('/ping', function(){ return response('pong', 200); });
 
 Route::get('/login', function () {
     return view('pages.auth.login');
@@ -158,42 +204,24 @@ Route::delete('{id}', [FuncionarioController::class, 'destroy'])->name('funciona
     // ===== Encaminhamentos (CRUD REST) =====
     // Route::resource('encaminhamentos', EncaminhamentoController::class);
 
-    // FORMULÁRIOS EXTRAS (se desejar manter)
-    // Route::prefix('forms')->group(function(){
-    //     //Route::get('cadastrar-funcionario', fn() => view('pages.forms.cadastrar-funcionario'));
-    //     //Route::get('listar-funcionario', fn() => view('pages.forms.listar-funcionario'));
-    //     //Route::get('cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
-    //     //Route::get('listar-empresa', fn() => view('pages.forms.listar-empresa'));
-    //     Route::get('gerar-exame', fn() => view('pages.forms.gerar-exame'));
-    //     // EMPRESAS
-    //     Route::get('listar-empresa',   [EmpresaController::class, 'index'])->name('empresas.index');
-    //     Route::get('cadastrar-empresa',[EmpresaController::class, 'create'])->name('empresas.create');
-    //     Route::post('cadastrar-empresa',[EmpresaController::class, 'store'])->name('empresas.store');
+// FORMULÁRIOS
+Route::prefix('forms')->group(function(){
+    // Funcionários
+    Route::get('cadastrar-funcionario', [FuncionarioController::class, 'create'])->name('funcionarios.create');
+    Route::post('cadastrar-funcionario', [FuncionarioController::class, 'store'])->name('funcionarios.store');
+    Route::get('listar-funcionario', [FuncionarioController::class, 'index'])->name('funcionarios.index');
 
-    //     // FUNCIONÁRIOS
-    //     Route::get('listar-funcionario',   [FuncionarioController::class, 'index'])->name('funcionarios.index');
-    //     Route::get('cadastrar-funcionario',[FuncionarioController::class, 'create'])->name('funcionarios.create');
-    //     Route::post('cadastrar-funcionario',[FuncionarioController::class, 'store'])->name('funcionarios.store');
-    //     
+    // Empresas
+    Route::get('cadastrar-empresa', [EmpresaController::class, 'create'])->name('empresas.create');
+    Route::post('cadastrar-empresa', [EmpresaController::class, 'store'])->name('empresas.store');
+    Route::get('listar-empresa', [EmpresaController::class, 'index'])->name('empresas.index');
 
-    //     // agora usando controller (clean & testável)
-    //     Route::get('listar-exames', [ListarExamesController::class, 'index'])
-    //         ->name('forms.exames.index');
-    //     
-    //     //Route::get('gerar-exame',[FuncionarioController::class, 'create'])->name('gerar-exame.create');
-
-    //     // **Gerar Exame**: usa o create do EncaminhamentoController
-    //     Route::get('gerar-exame', [EncaminhamentoController::class, 'create'])
-    //         ->name('encaminhamentos.create');
-
-    //     // Listagem/relatório de exames (mantido)
-    //     Route::get('listar-exames', [ListarExamesController::class, 'index'])
-    //         ->name('forms.exames.index');
-    //     
-    //     // Impressão de encaminhamento
-    //     Route::get('imprimir-exame/{id}', [ListarExamesController::class, 'imprimir'])
-    //         ->name('forms.exames.imprimir');
-    // });
+    // Exames (Encaminhamentos)
+    Route::get('gerar-exame', [EncaminhamentoController::class, 'gerar'])->name('forms.exames.create');
+    Route::post('gerar-exame', [EncaminhamentoController::class, 'store'])->name('forms.exames.store');
+    Route::get('listar-exames', [EncaminhamentoController::class, 'index'])->name('forms.exames.index');
+    Route::get('imprimir-exame/{id}', [EncaminhamentoController::class, 'imprimir'])->name('forms.exames.imprimir');
+});
 
     // GRÁFICOS EXEMPLOS
     // Route::prefix('charts')->group(function () {
@@ -315,7 +343,35 @@ Route::prefix('auth')->group(function () {
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 // Páginas livres para navegação (sem proteção)
-Route::get('/dashboard', fn() => view('dashboard'));
+Route::get('/dashboard', function(){
+    try {
+        $stats = [
+            'totalEmpresas' => \App\Models\Empresa::query()->count(),
+            'totalFuncionarios' => \App\Models\Funcionario::query()->count(),
+            'totalEncaminhamentos' => \App\Models\Encaminhamento::query()->count(),
+            'totalAsos' => \App\Models\Aso::query()->count(),
+            'totalCargos' => \App\Models\Cargo::query()->count(),
+            'totalRiscos' => \App\Models\Risco::query()->count(),
+            'totalExames' => \App\Models\Exame::query()->count(),
+        ];
+    } catch (\Throwable $e) {
+        $stats = [
+            'totalEmpresas' => 0,
+            'totalFuncionarios' => 0,
+            'totalEncaminhamentos' => 0,
+            'totalAsos' => 0,
+            'totalCargos' => 0,
+            'totalRiscos' => 0,
+            'totalExames' => 0,
+        ];
+    }
+    $anoAtual = (int)date('Y');
+    $anosDisponiveis = [];
+    for ($y = $anoAtual; $y >= $anoAtual - 4; $y--) { $anosDisponiveis[] = $y; }
+    $stats['anosDisponiveis'] = $anosDisponiveis;
+    $stats['anoSelecionado'] = $anosDisponiveis[0] ?? $anoAtual;
+    return view('dashboard', $stats);
+});
 Route::get('/sample', fn() => view('sample'));
 
 Route::get('/pages/forms/cadastrar-empresa', fn() => view('pages.forms.cadastrar-empresa'));
@@ -330,7 +386,7 @@ Route::get('/forms/listar-funcionario', [FuncionarioController::class, 'index'])
 Route::get('/pages/forms/editar-funcionario', fn() => view('pages.forms.editar-funcionario'));
 
 Route::get('/pages/forms/listar-exames', fn() => view('pages.forms.listar-exames'));
-Route::get('/pages/forms/gerar-exame', fn() => view('pages.forms.gerar-exame'));
+Route::get('/pages/forms/gerar-exame', [EncaminhamentoController::class, 'gerar']);
 Route::get('/pages/forms/imprimir-encaminhamento', fn() => view('pages.forms.imprimir-encaminhamento'));
 
 Route::get('/pages/general/profile', fn() => view('pages.general.profile'));

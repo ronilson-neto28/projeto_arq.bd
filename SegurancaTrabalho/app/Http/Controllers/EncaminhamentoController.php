@@ -14,12 +14,20 @@ class EncaminhamentoController extends Controller
     public function gerar()
     {
         $funcionarios = Funcionario::with(['empresa','cargo','telefones'])->get();
+        $empresas = Empresa::orderBy('razao_social')->orderBy('nome_fantasia')->get();
         $cargos = \App\Models\Cargo::with('empresa')->get();
         foreach ($cargos as $c) {
             $label = $c->empresa? ($c->empresa->razao_social ?: ($c->empresa->nome_fantasia ?: '')) : '';
             $c->setAttribute('empresa_label', $label);
         }
-        return view('pages.forms.gerar-exame', compact('funcionarios','cargos'));
+        $exames = \App\Models\Exame::query()->orderBy('tipo_procedimento')->orderBy('nome')->get();
+        $examesPorTipo = [];
+        foreach ($exames as $ex) {
+            $tipo = $ex->tipo_procedimento ?: 'Outros';
+            if (!isset($examesPorTipo[$tipo])) $examesPorTipo[$tipo] = [];
+            $examesPorTipo[$tipo][] = $ex;
+        }
+        return view('pages.forms.gerar-exame', compact('funcionarios','empresas','cargos','examesPorTipo'));
     }
     public function index(Request $request)
     {
@@ -81,6 +89,20 @@ class EncaminhamentoController extends Controller
             } catch (\Throwable $e) {}
         }
 
+        $categorias = ['fisico','quimico','biologico','ergonomico','acidentes'];
+        $riscosAgrupados = [];
+        $riscosNomes = [];
+        foreach ($categorias as $cat) {
+            $lista = (array)($request->input($cat, []));
+            $lista = array_values(array_filter(array_map(function($v){ return trim((string)$v); }, $lista)));
+            if (empty($lista)) {
+                $riscosAgrupados[$cat] = 'ausencia de risco';
+            } else {
+                $riscosAgrupados[$cat] = $lista;
+                foreach ($lista as $nm) { $riscosNomes[] = $nm; }
+            }
+        }
+
         $enc = [
             'funcionario_id' => new ObjectId($data['funcionario_id']),
             'empresa_id' => new ObjectId($data['empresa_id']),
@@ -92,7 +114,8 @@ class EncaminhamentoController extends Controller
             'previsao_retorno' => !empty($data['previsao_retorno']) ? Carbon::createFromFormat('d/m/Y', $data['previsao_retorno']) : null,
             'local_clinica' => $data['local_clinica'] ?? null,
             'medico' => $data['medico'] ?? null,
-            'riscos_ids' => $data['riscos'] ?? [],
+            'riscos_ids' => $riscosNomes,
+            'riscos_ocupacionais' => $riscosAgrupados,
         ];
 
         $encaminhamento = Encaminhamento::create($enc);

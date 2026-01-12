@@ -57,7 +57,6 @@
           <table class="table table-hover align-middle" id="tabelaEmpresas">
             <thead class="table-light">
               <tr>
-                <th>#</th>
                 <th>Empresa</th>
                 <th>CNPJ</th>
                 <th>E-mail</th>
@@ -77,11 +76,18 @@
                   data-cidade="{{ $e->cidade ?? '' }}"
                   data-uf="{{ $e->uf ?? '' }}"
                 >
-                  <td>{{ $e->id }}</td>
                   <td>{{ $e->nome_fantasia ?: $e->razao_social ?: '-' }}</td>
-                  <td>{{ $e->cnpj ?? '-' }}</td>
+                  @php $c = preg_replace('/\D+/','', $e->cnpj ?? ''); $cnpjFmt = ($c && strlen($c)===14) ? (substr($c,0,2).'.'.substr($c,2,3).'.'.substr($c,5,3).'/'.substr($c,8,4).'-'.substr($c,12,2)) : ($e->cnpj ?? '-'); @endphp
+                  <td>{{ $cnpjFmt }}</td>
                   <td>{{ $e->email ?? '-' }}</td>
-                  <td>{{ $e->telefones->first()->numero ?? '-' }}</td>
+                  @php
+                    $telRaw = $e->telefones->first()->numero ?? '';
+                    $t = preg_replace('/\D+/','', $telRaw);
+                    $telFmt = $telRaw ?: '-';
+                    if (strlen($t)===11) { $telFmt = '(' . substr($t,0,2) . ') ' . substr($t,2,5) . '-' . substr($t,7,4); }
+                    elseif (strlen($t)===10) { $telFmt = '(' . substr($t,0,2) . ') ' . substr($t,2,4) . '-' . substr($t,6,4); }
+                  @endphp
+                  <td>{{ $telFmt }}</td>
                   <td>
                     @php $cid = $e->cidade ?? null; $uf = $e->uf ?? null; @endphp
                     {{ $cid ? $cid : '-' }}{{ $cid && $uf ? ' / ' : '' }}{{ $uf ?? '' }}
@@ -95,9 +101,9 @@
                       data-bs-target="#modalEmpresa"
                       data-id="{{ $e->id }}"
                       data-nome="{{ $e->nome_fantasia ?: $e->razao_social ?: '-' }}"
-                      data-cnpj="{{ $e->cnpj ?? '-' }}"
+                      data-cnpj="{{ $cnpjFmt }}"
                       data-email="{{ $e->email ?? '-' }}"
-                      data-telefone="{{ $e->telefones->first()->numero ?? '-' }}"
+                      data-telefone="{{ $telFmt }}"
                       data-cidade="{{ $e->cidade ?? '-' }}"
                       data-uf="{{ $e->uf ?? '-' }}"
                       data-created="{{ optional($e->created_at)->format('d/m/Y') ?? '-' }}"

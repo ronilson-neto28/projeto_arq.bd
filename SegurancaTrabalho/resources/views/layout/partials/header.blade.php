@@ -13,14 +13,14 @@
                 <img src="{{ url('build/images/Proativa_logo.png') }}" class="logo-mini logo-mini-dark" alt="logo">
         </div>
 
-        <form class="search-form">
+        <!--<form class="search-form">
           <div class="input-group">
             <div class="input-group-text">
               <i data-lucide="search"></i>
             </div>
             <input type="text" class="form-control" id="navbarForm" placeholder="Pesquise aqui...">
           </div>
-        </form>
+        </form> -->
         
         <ul class="navbar-nav">
           <li class="theme-switcher-wrapper nav-item">
