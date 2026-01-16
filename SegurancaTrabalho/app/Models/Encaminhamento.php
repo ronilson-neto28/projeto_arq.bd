@@ -23,12 +23,13 @@ class Encaminhamento extends Model
         'local_clinica',
         'medico',
         'riscos_ids',
+        'riscos_ocupacionais',
     ];
 
     protected $casts = [
         'data_atendimento' => 'datetime',
         'previsao_retorno' => 'datetime',
-        'riscos_ids' => 'array',
+        'riscos_ocupacionais' => 'array',
     ];
 
     public function empresa()

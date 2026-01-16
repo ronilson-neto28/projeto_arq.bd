@@ -5,6 +5,16 @@
 @endpush
 
 @section('content')
+@php
+  $totalEmpresas = $totalEmpresas ?? 0;
+  $totalFuncionarios = $totalFuncionarios ?? 0;
+  $totalEncaminhamentos = $totalEncaminhamentos ?? 0;
+  $anosDisponiveis = $anosDisponiveis ?? [date('Y')];
+  $encaminhamentosPorMes = $encaminhamentosPorMes ?? [$anosDisponiveis[0] => ['Jan'=>0,'Fev'=>0,'Mar'=>0,'Abr'=>0,'Mai'=>0,'Jun'=>0,'Jul'=>0,'Ago'=>0,'Set'=>0,'Out'=>0,'Nov'=>0,'Dez'=>0]];
+  $examesPorMes = $examesPorMes ?? $encaminhamentosPorMes;
+  $examesPorTipo = $examesPorTipo ?? [];
+  $funcionarios = $funcionarios ?? collect();
+@endphp
 <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
   <div>
     <h4 class="mb-3 mb-md-0">Bem vindo ao Painel</h4>
@@ -394,27 +404,26 @@
               </tr>
             </thead>
             <tbody id="listaExamesTbody">
-              @foreach ($funcionarios as $funcionario)
+              @foreach (($encaminhamentosRecentes ?? []) as $enc)
+                @php
+                  $encId = (string)($enc->_id ?? $enc->id ?? '');
+                  $nomeFunc = $enc->funcionario->nome ?? '—';
+                  $empresaNome = $enc->funcionario->empresa->nome ?? ($enc->funcionario->empresa->razao_social ?? '—');
+                  $dt = $enc->data_atendimento ?? null;
+                  try { $dtFmt = $dt ? (\Carbon\Carbon::parse($dt)->format('d/m/Y')) : ''; } catch (\Throwable $e) { $dtFmt = ''; }
+                  $status = $enc->status ?? 'Agendado';
+                @endphp
                 <tr class="exame-row">
-                  <td>{{ $funcionario->id }}</td>
-                  <td>{{ $funcionario->nome }}</td>
-                  <td></td> <!-- Data Inicial -->
-                  <td></td> <!-- Data Final -->
+                  <td>{{ $encId }}</td>
+                  <td>{{ $nomeFunc }}</td>
+                  <td>{{ $dtFmt }}</td>
+                  <td></td>
+                  <td><span class="badge bg-primary">{{ $status }}</span></td>
+                  <td>{{ $empresaNome }}</td>
                   <td>
-                    @php
-                      $status = collect([
-                        ['label' => 'Vencido', 'class' => 'bg-danger'],
-                        ['label' => 'No Prazo', 'class' => 'bg-success'],
-                        ['label' => 'Work in Progress', 'class' => 'bg-warning'],
-                        ['label' => 'Coming soon', 'class' => 'bg-primary'],
-                        ['label' => 'Pending', 'class' => 'bg-info'],
-                      ])->random();
-                    @endphp
-                    <span class="badge {{ $status['class'] }}">{{ $status['label'] }}</span>
-                  </td>
-                  <td>{{ $funcionario->empresa->nome ?? '—' }}</td>
-                  <td>
-                    <a href="{{ url('/forms/gerar-exame') }}" class="btn btn-primary">Gerar Exame</a>
+                    @if($encId)
+                      <a href="{{ url('/forms/imprimir-exame/'.$encId) }}" class="btn btn-outline-secondary">Imprimir</a>
+                    @endif
                   </td>
                 </tr>
               @endforeach
@@ -423,7 +432,7 @@
         </div>
 
         {{-- Botão Mostrar mais/menos --}}
-        @if($funcionarios->count() > 5)
+        @if(($encaminhamentosRecentes ?? collect())->count() > 5)
           <div class="d-flex justify-content-center mt-3">
             <button
               type="button"

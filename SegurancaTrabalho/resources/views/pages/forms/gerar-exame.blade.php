@@ -283,13 +283,22 @@
         </div>
         <div class="row g-2">
           <div class="col-md-9">
-            <input type="text" id="procedimentoTexto" class="form-control" placeholder="Digite o procedimento">
+            @if(isset($exames) && count($exames))
+              <select id="procedimentoAdd" class="form-control select2-single" data-placeholder="Selecione um procedimento">
+                <option></option>
+                @foreach($exames as $p)
+                  <option value="{{ $p->nome }}" data-prestador="Clínica" data-codigo="{{ $p->codigo }}">{{ $p->codigo ? $p->codigo.' - ' : '' }}{{ $p->nome }}</option>
+                @endforeach
+              </select>
+            @else
+              <input type="text" id="procedimentoTexto" class="form-control" placeholder="Digite o procedimento">
+            @endif
           </div>
           <div class="col-md-3 d-grid">
             <button type="button" id="btnAddProc" class="btn btn-primary">Adicionar</button>
           </div>
         </div>
-        <small class="text-muted">Digite o procedimento e clique em Adicionar para incluir na tabela.</small>
+        <small class="text-muted">Selecione um procedimento da lista ou digite para incluir na tabela.</small>
       </div>
 
       {{-- Tabela de procedimentos --}}
@@ -374,6 +383,21 @@
 @push('custom-scripts')
 <script>
 (function($){
+  function onlyDigits(s){ return String(s||'').replace(/\D+/g,''); }
+  function formatCPF(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=3)return d; if(d.length<=6)return d.replace(/(\d{3})(\d+)/,'$1.$2'); if(d.length<=9)return d.replace(/(\d{3})(\d{3})(\d+)/,'$1.$2.$3'); return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4'); }
+  function formatPhone(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=2)return d; if(d.length<=6)return d.replace(/(\d{2})(\d+)/,'($1) $2'); if(d.length<=10)return d.replace(/(\d{2})(\d{4})(\d+)/,'($1) $2-$3'); return d.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3'); }
+  function applyMasks(){
+    const cpfEl = document.getElementById('funcionario_cpf');
+    const telEl = document.getElementById('funcionario_telefone');
+    if(!cpfEl || !telEl) return;
+    if(window.Inputmask){
+      window.Inputmask('999.999.999-99').mask(cpfEl);
+      window.Inputmask('(99) 99999-9999').mask(telEl);
+    } else {
+      $('#funcionario_cpf').on('input', function(){ this.value = formatCPF(this.value); });
+      $('#funcionario_telefone').on('input', function(){ this.value = formatPhone(this.value); });
+    }
+  }
   function todayBR(){
     const d=new Date(), dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yy=d.getFullYear();
     return `${dd}/${mm}/${yy}`;
@@ -383,6 +407,7 @@
     $('.select2-single').select2({ width:'100%', allowClear:true, placeholder: function(){ return $(this).data('placeholder') || 'Selecione...'; } });
     $('.flatpickr').flatpickr({ dateFormat: "d/m/Y" });
     rebindRowPlugins();
+    applyMasks();
   }
 
   function rebindRowPlugins(){
@@ -419,12 +444,15 @@
           <input name="procedimentos[${idx}][hora]" type="time" class="form-control input-hora" step="60">
         </td>
         <td>
-          <select name="procedimentos[${idx}][prestador]" class="form-control select2-single prestador-select">
-            <option ${prest==='Clínica' ? 'selected':''}>Clínica</option>
-            <option ${prest==='Laboratório' ? 'selected':''}>Laboratório</option>
-            <option ${prest==='Audiometria' ? 'selected':''}>Audiometria</option>
-            <option ${prest==='Imagem' ? 'selected':''}>Imagem</option>
-          </select>
+          <div class="d-flex gap-2">
+            <select name="procedimentos[${idx}][prestador]" class="form-control select2-single prestador-select" style="min-width:140px">
+              <option ${prest==='Clínica' ? 'selected':''}>Clínica</option>
+              <option ${prest==='Laboratório' ? 'selected':''}>Laboratório</option>
+              <option ${prest==='Audiometria' ? 'selected':''}>Audiometria</option>
+              <option ${prest==='Imagem' ? 'selected':''}>Imagem</option>
+            </select>
+            <input name="procedimentos[${idx}][prestador_nome]" type="text" class="form-control prestador-nome" placeholder="Nome da clínica">
+          </div>
         </td>
       </tr>
     `);
@@ -433,8 +461,10 @@
 
     const dTop = $('#data_atendimento').val();
     const hTop = $('#hora_atendimento').val();
+    const clinicTop = $('#local_clinica_id').val();
     if (dTop) $row.find('.flatpickr-proc').val(dTop);
     if (hTop) $row.find('.input-hora').val(hTop);
+    if (clinicTop) $row.find('.prestador-nome').val(clinicTop);
   }
 
   // ações por linha
@@ -458,13 +488,27 @@
     const v = $(this).val();
     $('#tbodyProcedimentos .input-hora').each(function(){ if(!this.value) this.value = v; });
   });
+  $('#local_clinica_id').on('input', function(){
+    const v = $(this).val();
+    $('#tbodyProcedimentos .prestador-nome').each(function(){ if(!this.value) this.value = v; });
+  });
 
   // adicionar procedimento
   $('#btnAddProc').on('click', function(){
-    const name = ($('#procedimentoTexto').val() || '').trim();
-    if(!name) return;
-    addProc(name, 'Clínica');
-    $('#procedimentoTexto').val('');
+    const $select = $('#procedimentoAdd');
+    if ($select.length) {
+      const $opt = $select.find('option:selected');
+      const name = ($opt.val() || '').trim();
+      const prest = $opt.data('prestador') || 'Clínica';
+      if(!name) return;
+      addProc(name, prest);
+      $select.val(null).trigger('change');
+    } else {
+      const name = ($('#procedimentoTexto').val() || '').trim();
+      if(!name) return;
+      addProc(name, 'Clínica');
+      $('#procedimentoTexto').val('');
+    }
   });
   $('#procedimentoTexto').on('keydown', function(e){
     if(e.key==='Enter'){ e.preventDefault(); $('#btnAddProc').click(); }
@@ -527,8 +571,9 @@
     const tel = $(this).find('option:selected').data('telefone') || '';
     if(empId) $('#selEmpresa').val(empId).trigger('change');
     if(cargoId) $('#selCargo').val(cargoId).trigger('change');
-    if(cpf) $('#funcionario_cpf').val(cpf);
-    if(tel) $('#funcionario_telefone').val(tel);
+    if(cpf) $('#funcionario_cpf').val(window.Inputmask ? cpf : formatCPF(cpf));
+    if(tel) $('#funcionario_telefone').val(window.Inputmask ? tel : formatPhone(tel));
+    applyMasks();
   });
 
   $(function(){ initPlugins(); });

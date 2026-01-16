@@ -27,7 +27,7 @@ class EncaminhamentoController extends Controller
             if (!isset($examesPorTipo[$tipo])) $examesPorTipo[$tipo] = [];
             $examesPorTipo[$tipo][] = $ex;
         }
-        return view('pages.forms.gerar-exame', compact('funcionarios','empresas','cargos','examesPorTipo'));
+        return view('pages.forms.gerar-exame', compact('funcionarios','empresas','cargos','examesPorTipo','exames'));
     }
     public function index(Request $request)
     {
@@ -114,7 +114,6 @@ class EncaminhamentoController extends Controller
             'previsao_retorno' => !empty($data['previsao_retorno']) ? Carbon::createFromFormat('d/m/Y', $data['previsao_retorno']) : null,
             'local_clinica' => $data['local_clinica'] ?? null,
             'medico' => $data['medico'] ?? null,
-            'riscos_ids' => $riscosNomes,
             'riscos_ocupacionais' => $riscosAgrupados,
         ];
 

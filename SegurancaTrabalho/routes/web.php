@@ -47,11 +47,11 @@ Route::get('/dashboard', function () {
 
     $meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-    $encaminhamentos = \App\Models\Encaminhamento::all(['created_at','tipo_exame']);
+    $encTodos = \App\Models\Encaminhamento::all(['created_at','data_atendimento','tipo_exame']);
     $encaminhamentosPorMes = [];
     foreach ($anosDisponiveis as $ano) { $encaminhamentosPorMes[$ano] = array_fill_keys($meses, 0); }
-    foreach ($encaminhamentos as $e) {
-        $date = $e->created_at ?? null;
+    foreach ($encTodos as $e) {
+        $date = $e->data_atendimento ?? $e->created_at ?? null;
         try {
             $dt = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
             $yr = $dt->year; $mo = $dt->month;
@@ -61,7 +61,7 @@ Route::get('/dashboard', function () {
     }
 
     $group = [];
-    foreach ($encaminhamentos as $e) {
+    foreach ($encTodos as $e) {
         $tipo = $e->tipo_exame ?: 'outros';
         $key = strtolower(str_replace(' ', '_', $tipo));
         if (!isset($group[$key])) $group[$key] = ['tipo_exame' => $key, 'total' => 0];
@@ -71,12 +71,15 @@ Route::get('/dashboard', function () {
 
     $examesPorMes = $encaminhamentosPorMes;
 
-    $funcionarios = \App\Models\Funcionario::with('empresa')->get();
+    $encaminhamentosRecentes = \App\Models\Encaminhamento::with(['funcionario','funcionario.empresa'])
+        ->orderByDesc('data_atendimento')
+        ->limit(20)
+        ->get();
 
     return view('dashboard', compact(
         'totalEmpresas', 'totalFuncionarios', 'totalEncaminhamentos',
         'anosDisponiveis', 'encaminhamentosPorMes', 'examesPorMes', 'examesPorTipo',
-        'funcionarios'
+        'encaminhamentosRecentes'
     ));
 });
 

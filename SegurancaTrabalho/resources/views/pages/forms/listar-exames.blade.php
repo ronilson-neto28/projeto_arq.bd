@@ -145,11 +145,9 @@
           <table class="table table-hover align-middle" id="tabelaExames">
             <thead class="table-light">
               <tr>
-                <th>#</th>
                 <th>Empresa</th>
                 <th>Funcionário</th>
                 <th>Tipo</th>
-                <th>Título</th>
                 <th>Status</th>
                 <th>Solicitado</th>
                 <th>Agendado</th>
@@ -166,11 +164,9 @@
                   data-tipo="{{ $x->tipo_exame }}"
                   data-status="{{ $x->status ?? 'pendente' }}"
                 >
-                  <td>{{ $x->id }}</td>
                   <td>{{ $x->empresa->razao_social ?? 'N/A' }}</td>
                   <td>{{ $x->funcionario->nome ?? 'N/A' }}</td>
                   <td class="text-capitalize">{{ str_replace('_',' ', $x->tipo_exame) }}</td>
-                  <td>ASO {{ ucfirst(str_replace('_',' ', $x->tipo_exame)) }}</td>
                   <td>
                     @php
                       $status = $x->status ?? 'pendente';

@@ -138,7 +138,7 @@
         <li class="nav-item {{ active_class(['forms/cadastrar-funcionario']) }}">
           <a href="#" class="nav-link">
             <i class="link-icon" data-lucide="user"></i>
-            <span class="menu-title">Funcionários</span>
+            <span class="menu-title">Funcionarios</span>
             <i class="link-arrow"></i>
           </a>
           <div class="submenu">
